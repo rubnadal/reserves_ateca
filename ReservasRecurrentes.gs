@@ -612,21 +612,40 @@ function cancelarRecurrenciaAprobada(idSolicitud) {
  * Envía email notificando la cancelación/revocación de una recurrencia
  */
 function enviarEmailCancelacionRecurrente(solicitud, numReservas) {
+  Logger.log('📧 Preparando email de revocación...');
+  Logger.log('📧 Datos de solicitud: ' + JSON.stringify(solicitud));
+
   const config = getConfig();
   const tituloApp = config.TITULO_APP || 'Sistema de Reservas';
 
-  // Formatear días
+  // Formatear días y tramos
   const diasMap = { 'L': 'Lunes', 'M': 'Martes', 'X': 'Miércoles', 'J': 'Jueves', 'V': 'Viernes', 'S': 'Sábado', 'D': 'Domingo' };
-  let diasDisplay = solicitud.dias_semana || '';
-  if (diasDisplay.includes(':')) {
+  const diasSemanaStr = solicitud.dias_semana || '';
+  let diasDisplay = '';
+  let tramosDisplay = solicitud.nombre_tramo || '';
+
+  if (diasSemanaStr.includes(':')) {
+    // Formato nuevo: "L:T001,M:T002,X:T001"
     const diasSet = new Set();
-    diasDisplay.split(',').forEach(item => {
-      const [d] = item.trim().split(':');
+    const tramosSet = new Set();
+
+    diasSemanaStr.split(',').forEach(item => {
+      const [d, t] = item.trim().split(':');
       if (d && diasMap[d.toUpperCase()]) diasSet.add(diasMap[d.toUpperCase()]);
+      if (t) tramosSet.add(t);
     });
+
     diasDisplay = Array.from(diasSet).join(', ');
+
+    // Obtener nombres de tramos desde la tabla
+    if (tramosSet.size > 0) {
+      const tramosIds = Array.from(tramosSet);
+      const tramosNombres = obtenerNombresTramos(tramosIds);
+      tramosDisplay = tramosNombres.join(', ');
+    }
   } else {
-    diasDisplay = diasDisplay.split(',').map(d => diasMap[d.trim().toUpperCase()] || d.trim()).join(', ');
+    // Formato antiguo
+    diasDisplay = diasSemanaStr.split(',').map(d => diasMap[d.trim().toUpperCase()] || d.trim()).join(', ');
   }
 
   // Formatear fechas
@@ -639,13 +658,13 @@ function enviarEmailCancelacionRecurrente(solicitud, numReservas) {
   const htmlBody = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h2 style="color: #dc2626;">Reserva Recurrente Revocada</h2>
-      <p>Hola ${solicitud.nombre_usuario},</p>
+      <p>Hola ${solicitud.nombre_usuario || 'Usuario'},</p>
       <p>Tu reserva recurrente ha sido <strong>revocada</strong> por un administrador.</p>
       <p>Todas las reservas futuras asociadas han sido canceladas.</p>
       <div style="background: #fef2f2; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #dc2626;">
-        <p style="margin: 5px 0;"><strong>Recurso:</strong> ${solicitud.nombre_recurso}</p>
+        <p style="margin: 5px 0;"><strong>Recurso:</strong> ${solicitud.nombre_recurso || ''}</p>
         <p style="margin: 5px 0;"><strong>Días:</strong> ${diasDisplay}</p>
-        <p style="margin: 5px 0;"><strong>Tramo:</strong> ${solicitud.nombre_tramo || ''}</p>
+        <p style="margin: 5px 0;"><strong>Tramos:</strong> ${tramosDisplay}</p>
         <p style="margin: 5px 0;"><strong>Periodo:</strong> ${formatFecha(solicitud.fecha_inicio)} - ${formatFecha(solicitud.fecha_fin)}</p>
         <p style="margin: 5px 0;"><strong>Reservas canceladas:</strong> ${numReservas}</p>
       </div>
@@ -655,13 +674,49 @@ function enviarEmailCancelacionRecurrente(solicitud, numReservas) {
     </div>
   `;
 
+  const destinatario = solicitud.email_usuario;
+  if (!destinatario) {
+    Logger.log('❌ Error: No hay email de destinatario');
+    throw new Error('No hay email de destinatario');
+  }
+
+  Logger.log('📧 Enviando email a: ' + destinatario);
+
   MailApp.sendEmail({
-    to: solicitud.email_usuario,
+    to: destinatario,
     subject: `${tituloApp} - Reserva Recurrente Revocada`,
     htmlBody: htmlBody
   });
 
-  Logger.log('📧 Email de revocación enviado a: ' + solicitud.email_usuario);
+  Logger.log('📧 Email de revocación enviado correctamente a: ' + destinatario);
+}
+
+/**
+ * Obtiene los nombres de tramos a partir de sus IDs
+ */
+function obtenerNombresTramos(tramosIds) {
+  try {
+    const ss = getDB();
+    const sheetTramos = ss.getSheetByName(SHEETS.TRAMOS);
+    if (!sheetTramos) return tramosIds;
+
+    const data = sheetTramos.getDataRange().getValues();
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const idCol = headers.indexOf('id_tramo');
+    const nombreCol = headers.indexOf('nombre_tramo');
+
+    if (idCol === -1 || nombreCol === -1) return tramosIds;
+
+    const tramosMap = {};
+    for (let i = 1; i < data.length; i++) {
+      tramosMap[data[i][idCol]] = data[i][nombreCol];
+    }
+
+    return tramosIds.map(id => tramosMap[id] || id);
+  } catch (e) {
+    Logger.log('⚠️ Error obteniendo nombres de tramos: ' + e.message);
+    return tramosIds;
+  }
 }
 
 /* ============================================
