@@ -2065,6 +2065,12 @@ async function revocarRecurrencia(idSolicitud) {
       cerrarModalDetalleRecurrencia();
       // Recargar matriz
       if (DispState.recursoId) cargarMatrizDisponibilidad(DispState.recursoId);
+      // Actualizar historial: marcar como cancelada y re-renderizar
+      const idx = datosHistorialRecurrencias.findIndex(s => s.id_solicitud === idSolicitud);
+      if (idx !== -1) {
+        datosHistorialRecurrencias[idx].estado = 'Cancelada';
+        renderizarHistorialRecurrencias();
+      }
     } else {
       showToast('error', result?.error || 'Error al revocar');
       // Restaurar boton
