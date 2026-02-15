@@ -615,8 +615,16 @@ function enviarEmailCancelacionRecurrente(solicitud, numReservas) {
   Logger.log('📧 Preparando email de revocación...');
   Logger.log('📧 Datos de solicitud: ' + JSON.stringify(solicitud));
 
-  const config = getConfig();
-  const tituloApp = config.TITULO_APP || 'Sistema de Reservas';
+  // Obtener título de la app de forma segura (igual que en email de aprobación)
+  let tituloApp = 'Sistema de Reservas';
+  try {
+    const config = getConfiguracion();
+    if (config && config.TITULO_APP) {
+      tituloApp = config.TITULO_APP;
+    }
+  } catch (e) {
+    Logger.log('⚠️ No se pudo obtener configuración, usando título por defecto');
+  }
 
   // Formatear días y tramos
   const diasMap = { 'L': 'Lunes', 'M': 'Martes', 'X': 'Miércoles', 'J': 'Jueves', 'V': 'Viernes', 'S': 'Sábado', 'D': 'Domingo' };
@@ -660,13 +668,13 @@ function enviarEmailCancelacionRecurrente(solicitud, numReservas) {
       <h2 style="color: #dc2626;">Reserva Recurrente Revocada</h2>
       <p>Hola ${solicitud.nombre_usuario || 'Usuario'},</p>
       <p>Tu reserva recurrente ha sido <strong>revocada</strong> por un administrador.</p>
-      <p>Todas las reservas futuras asociadas han sido canceladas.</p>
+      <p>Todas las reservas futuras asociadas han sido eliminadas.</p>
       <div style="background: #fef2f2; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #dc2626;">
         <p style="margin: 5px 0;"><strong>Recurso:</strong> ${solicitud.nombre_recurso || ''}</p>
         <p style="margin: 5px 0;"><strong>Días:</strong> ${diasDisplay}</p>
         <p style="margin: 5px 0;"><strong>Tramos:</strong> ${tramosDisplay}</p>
         <p style="margin: 5px 0;"><strong>Periodo:</strong> ${formatFecha(solicitud.fecha_inicio)} - ${formatFecha(solicitud.fecha_fin)}</p>
-        <p style="margin: 5px 0;"><strong>Reservas canceladas:</strong> ${numReservas}</p>
+        <p style="margin: 5px 0;"><strong>Reservas eliminadas:</strong> ${numReservas}</p>
       </div>
       <p>Si tienes alguna duda, contacta con el administrador.</p>
       <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
@@ -870,12 +878,12 @@ function generarReservasDesdeRecurrente(solicitud) {
    ============================================ */
 
 /**
- * Cancela todas las reservas de un grupo recurrente
+ * Elimina todas las reservas futuras de un grupo recurrente
  * @param {string} idSolicitud - ID de la solicitud recurrente
  */
 function cancelarGrupoRecurrente(idSolicitud) {
   try {
-    Logger.log('🗑️ Cancelando grupo recurrente: ' + idSolicitud);
+    Logger.log('🗑️ Eliminando reservas del grupo recurrente: ' + idSolicitud);
 
     const userEmail = Session.getActiveUser().getEmail();
     const ss = getDB();
@@ -896,9 +904,9 @@ function cancelarGrupoRecurrente(idSolicitud) {
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
 
-    let canceladas = 0;
+    // Recolectar filas a eliminar (de abajo hacia arriba para no afectar índices)
+    const filasAEliminar = [];
 
-    // Buscar y cancelar reservas futuras del grupo
     for (let i = data.length - 1; i >= 1; i--) {
       const idSolReserva = data[i][colIdSolicitud];
       const emailReserva = data[i][colEmail];
@@ -915,21 +923,27 @@ function cancelarGrupoRecurrente(idSolicitud) {
           continue; // Saltar reservas de otros usuarios si no es admin
         }
 
-        // Cancelar la reserva
-        sheetReservas.getRange(i + 1, colEstado + 1).setValue('Cancelada');
-        canceladas++;
+        // Agregar fila a la lista de eliminación
+        filasAEliminar.push(i + 1); // +1 porque los índices de Sheets son 1-based
       }
+    }
+
+    // Eliminar filas de abajo hacia arriba (ya están ordenadas así)
+    let eliminadas = 0;
+    for (const fila of filasAEliminar) {
+      sheetReservas.deleteRow(fila);
+      eliminadas++;
     }
 
     // Purgar caché
     if (typeof purgarCache === 'function') purgarCache();
 
-    Logger.log(`✅ Canceladas ${canceladas} reservas del grupo ${idSolicitud}`);
+    Logger.log(`✅ Eliminadas ${eliminadas} reservas del grupo ${idSolicitud}`);
 
     return {
       success: true,
-      message: `Se han cancelado ${canceladas} reservas futuras`,
-      canceladas: canceladas
+      message: `Se han eliminado ${eliminadas} reservas futuras`,
+      canceladas: eliminadas
     };
 
   } catch (error) {
