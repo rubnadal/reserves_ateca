@@ -1627,6 +1627,12 @@ async function aprobarTodasPendientesRecurso() {
   if (DispState.recursoId) {
     cargarMatrizDisponibilidad(DispState.recursoId);
   }
+  // Recargar reservas para que el historial refleje las nuevas
+  if (aprobadas > 0) {
+    adminDataReady = false;
+    adminDataLoading = false;
+    loadAdminData(true);
+  }
 }
 
 function togglePanelPendientes() {
@@ -2080,10 +2086,11 @@ async function revocarRecurrencia(idSolicitud) {
           r => r.id_solicitud_recurrente !== idSolicitud
         );
       }
-      // Actualizar reservas en AdminState
+      // Actualizar reservas en AdminState y re-renderizar tabla
       AdminState.reservas = AdminState.reservas.filter(
         r => r.id_solicitud_recurrente !== idSolicitud
       );
+      if (typeof renderTablaReservas === 'function') renderTablaReservas();
     } else {
       showToast('error', result?.error || 'Error al revocar');
       // Restaurar boton
@@ -2122,6 +2129,10 @@ async function aprobarSolicitudRapida(idSolicitud) {
       }
       // También actualizar la lista global de recurrentes
       cargarSolicitudesRecurrentes();
+      // Recargar reservas para que el historial refleje las nuevas
+      adminDataReady = false;
+      adminDataLoading = false;
+      loadAdminData(true);
     } else {
       showToast('error', result?.error || 'Error al aprobar');
     }
