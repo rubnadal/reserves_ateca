@@ -2062,6 +2062,24 @@ function confirmarEliminarTramoRecurrencia(idSolicitud, diaLetra, idTramo, btnEl
 }
 
 async function eliminarTramoRecurrencia(idSolicitud, diaLetra, idTramo) {
+  // Deshabilitar todos los botones del modal y mostrar overlay de carga
+  const modal = document.getElementById('modalDetalleRecurrencia');
+  const botones = modal?.querySelectorAll('button') || [];
+  botones.forEach(b => b.disabled = true);
+
+  // Añadir overlay spinner al modal
+  const contenedor = modal?.querySelector('.relative');
+  if (contenedor) {
+    contenedor.insertAdjacentHTML('beforeend', `
+      <div id="overlayEliminandoTramo" class="absolute inset-0 bg-white/70 flex items-center justify-center z-10 rounded-2xl">
+        <div class="flex items-center gap-3 text-blue-600">
+          <iconify-icon icon="mdi:loading" class="text-2xl animate-spin"></iconify-icon>
+          <span class="text-sm font-medium">Eliminando tramo...</span>
+        </div>
+      </div>
+    `);
+  }
+
   try {
     const result = await new Promise((resolve, reject) => {
       google.script.run
@@ -2080,9 +2098,14 @@ async function eliminarTramoRecurrencia(idSolicitud, diaLetra, idTramo) {
       // Recargar la lista de recurrentes
       cargarSolicitudesRecurrentes();
     } else {
+      // Quitar overlay y rehabilitar botones en caso de error
+      document.getElementById('overlayEliminandoTramo')?.remove();
+      botones.forEach(b => b.disabled = false);
       showToast('error', result?.error || 'Error al eliminar tramo');
     }
   } catch (error) {
+    document.getElementById('overlayEliminandoTramo')?.remove();
+    botones.forEach(b => b.disabled = false);
     console.error('Error eliminando tramo:', error);
     showToast('error', 'Error: ' + (error.message || String(error)));
   }
