@@ -670,18 +670,6 @@ function loadTramos() {
 
   // 3. MAPA RESERVAS
   const reservasMap = new Map();
-
-  // 🔍 DEBUG: Ver todas las reservas del recurso seleccionado (sin filtro de fecha)
-  const reservasRecurso = globalState.reservas.filter(r => String(r.id_recurso) === String(recursoId));
-  console.log(`🔍 [DEBUG loadTramos] recursoId=${recursoId}, fechaISO=${fechaISO}`);
-  console.log(`🔍 [DEBUG loadTramos] Total reservas en globalState: ${globalState.reservas.length}`);
-  console.log(`🔍 [DEBUG loadTramos] Reservas para este recurso: ${reservasRecurso.length}`);
-  reservasRecurso.forEach(r => {
-    const matchFecha = r.fecha === fechaISO;
-    const matchEstado = r.estado && r.estado.toLowerCase() === 'confirmada';
-    console.log(`🔍   reserva: id_tramo="${r.id_tramo}" (tipo:${typeof r.id_tramo}), fecha="${r.fecha}" (tipo:${typeof r.fecha}), estado="${r.estado}", matchFecha=${matchFecha}, matchEstado=${matchEstado}, id_sol_rec="${r.id_solicitud_recurrente || ''}"`);
-  });
-
   globalState.reservas
     .filter(r => String(r.id_recurso) === String(recursoId) && r.fecha === fechaISO && r.estado.toLowerCase() === 'confirmada')
     .forEach(r => {
@@ -689,8 +677,6 @@ function loadTramos() {
       const cantidad = parseInt(r.cantidad, 10) || 1;
       reservasMap.set(tramoId, (reservasMap.get(tramoId) || 0) + cantidad);
     });
-
-  console.log(`🔍 [DEBUG loadTramos] reservasMap resultado:`, Object.fromEntries(reservasMap));
     
   let tramosHtml = '';
   let tramosCount = 0;

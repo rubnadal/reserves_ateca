@@ -4174,8 +4174,8 @@ var adminDataLoading = false; // ¿Cargando ahora mismo?
    8.2. FUNCIÓN DE CARGA MAESTRA (Modo Ninja 🥷)
    ========================================================= */
 function loadAdminData(isSilent = false) {
-  if (adminDataReady) return; 
-  
+  if (adminDataReady || adminDataLoading) return;
+
   adminDataLoading = true;
 
   if (!isSilent) showLoading(); 
