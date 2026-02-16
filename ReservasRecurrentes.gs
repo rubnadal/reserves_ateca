@@ -813,6 +813,10 @@ function generarReservasDesdeRecurrente(solicitud) {
     let fechasSaltadas = [];
     const nuevasReservas = [];
 
+    Logger.log(`[generarReservas] Rango: ${Utilities.formatDate(fechaInicio, Session.getScriptTimeZone(), 'yyyy-MM-dd')} → ${Utilities.formatDate(fechaFin, Session.getScriptTimeZone(), 'yyyy-MM-dd')}`);
+    Logger.log(`[generarReservas] seleccionesMap: ${JSON.stringify(seleccionesMap)}`);
+    Logger.log(`[generarReservas] diasSeleccionados: ${JSON.stringify(diasSeleccionados)}`);
+
     // Iterar desde fecha inicio hasta fecha fin
     let fechaActual = new Date(fechaInicio);
     fechaActual.setHours(0, 0, 0, 0);
@@ -834,10 +838,15 @@ function generarReservasDesdeRecurrente(solicitud) {
           );
 
           if (yaReservado) {
+            Logger.log(`[generarReservas] SALTADA: ${fechaISO} ${diaLetra}:${tramoActual} (ya reservado)`);
             fechasSaltadas.push(fechaISO + ' (' + tramoActual + ')');
           } else {
             // Generar ID único para la reserva
             const idReserva = 'RES-' + Utilities.getUuid().substring(0, 8).toUpperCase();
+
+            // Fecha como mediodía UTC (consistente con crearNuevaReserva)
+            // Evita desplazamientos de día por diferencias de timezone
+            const fechaReserva = new Date(fechaISO + 'T12:00:00Z');
 
             // Crear fila de reserva
             const numCols = sheetReservas.getLastColumn();
@@ -846,7 +855,7 @@ function generarReservasDesdeRecurrente(solicitud) {
             if (headerMap['id_reserva'] !== undefined) nuevaFila[headerMap['id_reserva']] = idReserva;
             if (headerMap['id_recurso'] !== undefined) nuevaFila[headerMap['id_recurso']] = solicitud.id_recurso;
             if (headerMap['email_usuario'] !== undefined) nuevaFila[headerMap['email_usuario']] = solicitud.email_usuario;
-            if (headerMap['fecha'] !== undefined) nuevaFila[headerMap['fecha']] = new Date(fechaActual);
+            if (headerMap['fecha'] !== undefined) nuevaFila[headerMap['fecha']] = fechaReserva;
             if (headerMap['curso'] !== undefined) nuevaFila[headerMap['curso']] = '';
             if (headerMap['id_tramo'] !== undefined) nuevaFila[headerMap['id_tramo']] = tramoActual;
             if (headerMap['cantidad'] !== undefined) nuevaFila[headerMap['cantidad']] = 1;
@@ -857,6 +866,7 @@ function generarReservasDesdeRecurrente(solicitud) {
 
             nuevasReservas.push(nuevaFila);
             reservasCreadas++;
+            Logger.log(`[generarReservas] CREADA: ${fechaISO} ${diaLetra}:${tramoActual} → ${idReserva}`);
           }
         }
       }
