@@ -1901,31 +1901,63 @@ function abrirMenuRecurrencia(idTramo, dia) {
  * Abre el modal de detalle para recurrencias aprobadas
  */
 function abrirModalDetalleRecurrencia(rec) {
-  // Construir contenido del modal
   const diasNombres = { 'L': 'Lunes', 'M': 'Martes', 'X': 'Miércoles', 'J': 'Jueves', 'V': 'Viernes', 'S': 'Sábado', 'D': 'Domingo' };
   const diasStr = rec.dias_semana || '';
-  let diasFormateados = '';
-  let tramosFormateados = '';
 
   const getNombreTramo = (idTramo) => {
     const tramo = AdminState.tramos?.find(t => t.id_tramo === idTramo);
     return tramo?.Nombre_Tramo || tramo?.nombre_tramo || idTramo;
   };
 
+  // Parsear pares día:tramo
+  let paresDiaTramo = [];
   if (diasStr.includes(':')) {
-    const items = diasStr.split(',');
-    const diasSet = new Set();
-    const tramosSet = new Set();
-    items.forEach(item => {
+    diasStr.split(',').forEach(item => {
       const [dia, tramo] = item.trim().split(':');
-      if (dia) diasSet.add(dia.toUpperCase());
-      if (tramo) tramosSet.add(tramo);
+      if (dia && tramo) {
+        paresDiaTramo.push({ dia: dia.toUpperCase(), tramo: tramo });
+      }
     });
-    diasFormateados = Array.from(diasSet).map(d => diasNombres[d] || d).join(', ');
-    tramosFormateados = Array.from(tramosSet).map(getNombreTramo).join(', ');
   } else {
-    diasFormateados = diasStr.split(',').map(d => diasNombres[d.trim().toUpperCase()] || d).join(', ');
-    tramosFormateados = rec.nombre_tramo || getNombreTramo(rec.id_tramo);
+    const tramoId = rec.id_tramo || '';
+    diasStr.split(',').forEach(d => {
+      const dd = d.trim().toUpperCase();
+      if (dd) paresDiaTramo.push({ dia: dd, tramo: tramoId });
+    });
+  }
+
+  const tieneMultiplesTramos = paresDiaTramo.length > 1;
+
+  // Construir HTML de la lista de tramos
+  let tramosListHTML = '';
+  if (tieneMultiplesTramos) {
+    const tramosItems = paresDiaTramo.map(p => {
+      const diaNombre = diasNombres[p.dia] || p.dia;
+      const tramoNombre = getNombreTramo(p.tramo);
+      return `
+        <div class="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-gray-100 group transition-colors">
+          <span class="text-sm text-gray-700">
+            <span class="font-medium">${escaparHTML(diaNombre)}</span> — ${escaparHTML(tramoNombre)}
+          </span>
+          <button onclick="confirmarEliminarTramoRecurrencia('${rec.id_solicitud}', '${p.dia}', '${p.tramo}', this)"
+            class="opacity-0 group-hover:opacity-100 p-1 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-all"
+            title="Eliminar este tramo">
+            <iconify-icon icon="mdi:close-circle-outline" class="text-lg"></iconify-icon>
+          </button>
+        </div>`;
+    }).join('');
+    tramosListHTML = `
+      <div>
+        <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Tramos reservados</p>
+        <div class="divide-y divide-gray-100">${tramosItems}</div>
+      </div>`;
+  } else {
+    // Solo un tramo: mostrar como antes sin botón de eliminar
+    const diasFormateados = paresDiaTramo.map(p => diasNombres[p.dia] || p.dia).join(', ');
+    const tramosFormateados = [...new Set(paresDiaTramo.map(p => getNombreTramo(p.tramo)))].join(', ');
+    tramosListHTML = `
+      <p><span class="font-medium text-gray-700">Días:</span> ${escaparHTML(diasFormateados)}</p>
+      <p><span class="font-medium text-gray-700">Tramos:</span> ${escaparHTML(tramosFormateados)}</p>`;
   }
 
   // Obtener nombre del recurso
@@ -1961,8 +1993,7 @@ function abrirModalDetalleRecurrencia(rec) {
             <p><span class="font-medium text-gray-700">Usuario:</span> ${escaparHTML(rec.nombre_usuario)}</p>
             <p><span class="font-medium text-gray-700">Email:</span> ${escaparHTML(rec.email_usuario)}</p>
             ${rec.area_usuario ? `<p><span class="font-medium text-gray-700">Área:</span> ${escaparHTML(rec.area_usuario)}</p>` : ''}
-            <p><span class="font-medium text-gray-700">Días:</span> ${escaparHTML(diasFormateados)}</p>
-            <p><span class="font-medium text-gray-700">Tramos:</span> ${escaparHTML(tramosFormateados)}</p>
+            ${tramosListHTML}
             <p><span class="font-medium text-gray-700">Período:</span> ${fechaInicio} → ${fechaFin}</p>
           </div>
 
@@ -2009,6 +2040,52 @@ function abrirModalDetalleRecurrencia(rec) {
 function cerrarModalDetalleRecurrencia() {
   const modal = document.getElementById('modalDetalleRecurrencia');
   if (modal) modal.remove();
+}
+
+/**
+ * Confirma y elimina un tramo individual de una recurrencia
+ */
+function confirmarEliminarTramoRecurrencia(idSolicitud, diaLetra, idTramo, btnEl) {
+  const diasNombres = { 'L': 'Lunes', 'M': 'Martes', 'X': 'Miércoles', 'J': 'Jueves', 'V': 'Viernes', 'S': 'Sábado', 'D': 'Domingo' };
+  const getNombreTramo = (id) => {
+    const t = AdminState.tramos?.find(t => t.id_tramo === id);
+    return t?.Nombre_Tramo || t?.nombre_tramo || id;
+  };
+  const diaNombre = diasNombres[diaLetra] || diaLetra;
+  const tramoNombre = getNombreTramo(idTramo);
+
+  mostrarConfirmacion(
+    'Eliminar tramo',
+    `¿Eliminar el tramo ${diaNombre} — ${tramoNombre} de esta recurrencia? Se eliminarán las reservas futuras de ese tramo.`,
+    () => eliminarTramoRecurrencia(idSolicitud, diaLetra, idTramo)
+  );
+}
+
+async function eliminarTramoRecurrencia(idSolicitud, diaLetra, idTramo) {
+  try {
+    const result = await new Promise((resolve, reject) => {
+      google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler(reject)
+        .eliminarTramoDeRecurrencia(idSolicitud, diaLetra, idTramo);
+    });
+
+    if (result && result.success) {
+      showToast('success', result.message);
+      cerrarModalDetalleRecurrencia();
+      // Recargar la matriz de disponibilidad
+      if (DispState.recursoId) {
+        cargarMatrizDisponibilidad(DispState.recursoId);
+      }
+      // Recargar la lista de recurrentes
+      cargarSolicitudesRecurrentes();
+    } else {
+      showToast('error', result?.error || 'Error al eliminar tramo');
+    }
+  } catch (error) {
+    console.error('Error eliminando tramo:', error);
+    showToast('error', 'Error: ' + (error.message || String(error)));
+  }
 }
 
 async function guardarMotivoRecurrencia(idSolicitud) {

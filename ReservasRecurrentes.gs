@@ -996,6 +996,137 @@ function cancelarGrupoRecurrente(idSolicitud) {
 }
 
 /**
+ * Elimina un tramo específico de una recurrencia aprobada
+ * Si era el último tramo, cancela la recurrencia completa
+ * @param {string} idSolicitud - ID de la solicitud recurrente
+ * @param {string} diaLetra - Letra del día (L, M, X, J, V, S, D)
+ * @param {string} idTramo - ID del tramo a eliminar
+ */
+function eliminarTramoDeRecurrencia(idSolicitud, diaLetra, idTramo) {
+  try {
+    Logger.log(`🔧 Eliminando tramo ${diaLetra}:${idTramo} de recurrencia ${idSolicitud}`);
+
+    const adminEmail = Session.getActiveUser().getEmail();
+    if (!checkIfAdmin(adminEmail)) {
+      throw new Error('No tienes permisos para esta acción');
+    }
+
+    // 1. Buscar la solicitud
+    const sheet = getOrCreateSheetSolicitudesRecurrentes();
+    const data = sheet.getDataRange().getValues();
+
+    let filaIndex = -1;
+    let solicitud = null;
+
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][COLS_SOLICITUDES.ID_SOLICITUD]) === String(idSolicitud)) {
+        filaIndex = i + 1;
+        solicitud = {
+          dias_semana: String(data[i][COLS_SOLICITUDES.DIAS_SEMANA] || ''),
+          estado: String(data[i][COLS_SOLICITUDES.ESTADO] || '')
+        };
+        break;
+      }
+    }
+
+    if (!solicitud) throw new Error('Solicitud no encontrada');
+    if (solicitud.estado !== 'Aprobada') throw new Error('Solo se pueden modificar solicitudes aprobadas');
+
+    // 2. Parsear dias_semana y eliminar el par día:tramo
+    const diasStr = solicitud.dias_semana;
+    let items = [];
+
+    if (diasStr.includes(':')) {
+      items = diasStr.split(',').map(s => s.trim()).filter(s => s);
+    } else {
+      // Formato antiguo: convertir a formato nuevo para poder eliminar
+      items = diasStr.split(',').map(d => {
+        const dd = d.trim().toUpperCase();
+        return dd ? `${dd}:${idTramo}` : '';
+      }).filter(s => s);
+    }
+
+    const target = `${diaLetra.toUpperCase()}:${idTramo}`;
+    const itemsNuevos = items.filter(item => item.toUpperCase() !== target.toUpperCase());
+
+    if (itemsNuevos.length === items.length) {
+      throw new Error(`El tramo ${diaLetra}:${idTramo} no existe en esta recurrencia`);
+    }
+
+    // 3. Eliminar reservas futuras de ese día+tramo específico
+    const mapaDiasNum = { 'L': 1, 'M': 2, 'X': 3, 'J': 4, 'V': 5, 'S': 6, 'D': 0 };
+    const diaSemanaNum = mapaDiasNum[diaLetra.toUpperCase()];
+
+    const ss = getDB();
+    const sheetReservas = ss.getSheetByName(SHEETS.RESERVAS);
+    const headers = sheetReservas.getRange(1, 1, 1, sheetReservas.getLastColumn()).getValues()[0];
+    const colIdSolicitud = headers.findIndex(h => h.toString().toLowerCase().includes('id_solicitud_recurrente'));
+    const colIdTramo = headers.findIndex(h => h.toString().toLowerCase() === 'id_tramo');
+    const colEstado = headers.findIndex(h => h.toString().toLowerCase() === 'estado');
+    const colFecha = headers.findIndex(h => h.toString().toLowerCase() === 'fecha');
+
+    const dataReservas = sheetReservas.getDataRange().getValues();
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const filasAEliminar = [];
+    for (let i = dataReservas.length - 1; i >= 1; i--) {
+      const idSolReserva = String(dataReservas[i][colIdSolicitud] || '');
+      const tramoReserva = String(dataReservas[i][colIdTramo] || '').trim();
+      const estadoReserva = String(dataReservas[i][colEstado] || '').toLowerCase().trim();
+      const fechaReserva = new Date(dataReservas[i][colFecha]);
+
+      if (idSolReserva === String(idSolicitud) &&
+          tramoReserva === String(idTramo) &&
+          estadoReserva === 'confirmada' &&
+          fechaReserva >= hoy &&
+          fechaReserva.getDay() === diaSemanaNum) {
+        filasAEliminar.push(i + 1);
+      }
+    }
+
+    for (const fila of filasAEliminar) {
+      sheetReservas.deleteRow(fila);
+    }
+
+    Logger.log(`✅ Eliminadas ${filasAEliminar.length} reservas de ${diaLetra}:${idTramo}`);
+
+    // 4. Actualizar o cancelar la recurrencia
+    let recurrenciaCancelada = false;
+
+    if (itemsNuevos.length === 0) {
+      // No quedan tramos: cancelar la recurrencia completa
+      sheet.getRange(filaIndex, COLS_SOLICITUDES.ESTADO + 1).setValue('Cancelada');
+      sheet.getRange(filaIndex, COLS_SOLICITUDES.ADMIN_RESOLUTOR + 1).setValue(adminEmail);
+      sheet.getRange(filaIndex, COLS_SOLICITUDES.FECHA_RESOLUCION + 1).setValue(new Date());
+      sheet.getRange(filaIndex, COLS_SOLICITUDES.NOTAS_ADMIN + 1).setValue('Cancelada al eliminar último tramo');
+      recurrenciaCancelada = true;
+      Logger.log('🚫 Recurrencia cancelada: no quedan tramos');
+    } else {
+      // Actualizar dias_semana con los items restantes
+      sheet.getRange(filaIndex, COLS_SOLICITUDES.DIAS_SEMANA + 1).setValue(itemsNuevos.join(','));
+      Logger.log(`📝 dias_semana actualizado: ${itemsNuevos.join(',')}`);
+    }
+
+    if (typeof purgarCache === 'function') purgarCache();
+
+    return {
+      success: true,
+      message: recurrenciaCancelada
+        ? 'Último tramo eliminado. Recurrencia cancelada.'
+        : `Tramo eliminado. Quedan ${itemsNuevos.length} tramo(s).`,
+      reservasEliminadas: filasAEliminar.length,
+      recurrenciaCancelada: recurrenciaCancelada,
+      diasSemanaActualizado: itemsNuevos.join(',')
+    };
+
+  } catch (error) {
+    Logger.log('❌ Error en eliminarTramoDeRecurrencia: ' + error.message);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
  * Obtiene las reservas de un grupo recurrente
  * @param {string} idSolicitud - ID de la solicitud recurrente
  */
