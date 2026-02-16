@@ -372,6 +372,18 @@ function aprobarSolicitudRecurrente(idSolicitud, notasAdmin) {
       throw new Error(resultado.error || 'Error al generar reservas');
     }
 
+    if (resultado.reservasCreadas === 0) {
+      const saltadas = resultado.fechasSaltadas || [];
+      Logger.log('⚠️ 0 reservas generadas. Fechas saltadas: ' + JSON.stringify(saltadas));
+      throw new Error(
+        'No se pudo generar ninguna reserva. ' +
+        (saltadas.length > 0
+          ? `${saltadas.length} fecha(s) ya estaban ocupadas (posiblemente por reservas previas sin cancelar correctamente). ` +
+            'Revisa la hoja Reservas y elimina filas huérfanas de recurrencias anteriores.'
+          : 'Verifica que el rango de fechas incluya días futuros con los tramos seleccionados.')
+      );
+    }
+
     // Actualizar estado de la solicitud
     sheet.getRange(filaIndex, COLS_SOLICITUDES.ESTADO + 1).setValue('Aprobada');
     sheet.getRange(filaIndex, COLS_SOLICITUDES.FECHA_RESOLUCION + 1).setValue(new Date());
@@ -794,7 +806,7 @@ function generarReservasDesdeRecurrente(solicitud) {
     const headersReservas = sheetReservas.getRange(1, 1, 1, sheetReservas.getLastColumn()).getValues()[0];
     const headerMap = {};
     headersReservas.forEach((h, i) => {
-      headerMap[h.toString().toLowerCase().replace(/ /g, '_')] = i;
+      headerMap[h.toString().trim().toLowerCase()] = i;
     });
 
     let reservasCreadas = 0;
