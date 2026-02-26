@@ -6,6 +6,10 @@
 
 Sistema de gestió de reserves de recursos educatius per a l'aula ATECA (Aula de Tecnologia Aplicada).
 
+## ⚠️ Estat del projecte
+
+Aquest projecte està en procés de modificació i en fase de proves per aconseguir que la interfície sigui multi-idioma (ES/CA).
+
 ## 📋 Sobre aquest projecte
 
 Aquest projecte és un **fork adaptat** del sistema original de reserves creat per [**@maestroseb**](https://github.com/maestroseb/reservasrecursosysalas). El projecte original proporciona una solució completa per a la gestió de reserves de recursos i sales en centres educatius.
