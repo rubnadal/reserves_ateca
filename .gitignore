@@ -1,0 +1,16 @@
+# Apps Script / clasp
+.clasp.json
+.claspignore
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
