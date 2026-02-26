@@ -239,7 +239,10 @@ function onInitialDataSuccess(data) {
   globalState.misReservasActivas = data.misReservasActivas || [];
   globalState.misRecurrencias = data.misRecurrencias || {};
 
-  
+  const idiomaUi = (data.configuracion && data.configuracion.idioma_ui) ? String(data.configuracion.idioma_ui).toLowerCase() : 'ca';
+  window.APP_LANG = idiomaUi;
+  if (typeof applyI18n === 'function') applyI18n();
+
   console.log(`📊 Datos cargados: ${globalState.recursos.length} recursos, ${globalState.tramos.length} tramos, ${globalState.reservas.length} reservas activas, ${globalState.cursos.length} cursos.`);
   console.log(`👥 Usuarios en mapa: ${Object.keys(globalState.usuariosMap).length}`);
   
@@ -2141,6 +2144,7 @@ function ocultarErrorRecurrente() {
   }
 }
 
+
 /* =========================================================
    SISTEMA DE INCIDENCIAS - FRONTEND USUARIO
    ========================================================= */
@@ -2230,7 +2234,7 @@ function poblarSelectorRecursos() {
   // Limpiar opciones anteriores
   select.innerHTML = '<option value="">-- Selecciona un recurso --</option>';
 
-  // Agrupar por tipo (igual que en renderRecursos)
+  // Agrupar por tipo (igual que in renderRecursos)
   const salas = globalState.recursos.filter(r => (r.tipo || '').toLowerCase() === 'sala');
   const dispositivos = globalState.recursos.filter(r => (r.tipo || '').toLowerCase() !== 'sala');
 
@@ -2406,13 +2410,12 @@ function enviarReporteIncidencia() {
     <iconify-icon icon="mdi:loading" class="animate-spin text-xl"></iconify-icon>
     <span>Enviando...</span>
   `;
-  
+
   google.script.run
     .withSuccessHandler(function(response) {
-      // ✅ RESTAURAR BOTÓN
       btnEnviar.disabled = false;
       btnEnviar.innerHTML = textoOriginal;
-      
+
       if (response.success) {
         showToast('success', 'Incidencia reportada correctamente');
         cerrarModalReportarIncidencia();
@@ -2426,10 +2429,8 @@ function enviarReporteIncidencia() {
       }
     })
     .withFailureHandler(function(error) {
-      // ✅ RESTAURAR BOTÓN EN CASO DE ERROR
       btnEnviar.disabled = false;
       btnEnviar.innerHTML = textoOriginal;
-      
       mostrarErrorIncidencia('Error de conexión: ' + error.message);
     })
     .reportarIncidencia(datos);
@@ -2442,13 +2443,13 @@ function mostrarErrorIncidencia(mensaje) {
   const errorDiv = document.getElementById('incidenciaError');
   const errorTexto = document.getElementById('incidenciaErrorTexto');
   
-  if (!errorDiv || !errorTexto) return;
-  
-  errorTexto.textContent = mensaje;
-  errorDiv.classList.remove('hidden');
-  
-  // Scroll suave hasta el error
-  errorDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  if (errorDiv && errorTexto) {
+    errorTexto.textContent = mensaje;
+    errorDiv.classList.remove('hidden');
+
+    // Scroll suave hasta el error
+    errorDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
 }
 
 /**
@@ -2977,7 +2978,7 @@ function crearTarjetaIncidencia(inc) {
                     </div>
                     <div class="text-left">
                        <span class="block">${recursoEnMantenimiento ? 'En Mantenimiento' : 'Recurso Activo'}</span>
-                       <span class="block text-[10px] font-normal opacity-75">${recursoEnMantenimiento ? 'Haz clic para activar' : 'Clic para bloquear'}</span>
+                       <span class="block text-[10px] font-normal opacity-75 mb-0.5">${recursoEnMantenimiento ? 'Haz clic para activar' : 'Clic para bloquear'}</span>
                     </div>
                   </div>
 
@@ -3125,17 +3126,15 @@ function ejecutarCambioEstado(idIncidencia, nuevoEstado, notaCierre) {
           // Actualizar en incidenciasActuales
           const index = incidenciasActuales.findIndex(i => i.ID_Incidencia === idIncidencia);
           if(index !== -1) {
-             incidenciasActuales[index].Estado = nuevoEstado;
-             if(notaCierre) incidenciasActuales[index].Notas_Admin = notaCierre;
+            incidenciasActuales[index].Estado = nuevoEstado;
+            if(notaCierre) incidenciasActuales[index].Notas_Admin = notaCierre;
           }
           
           // ✅ También actualizar en todasLasIncidencias
           const indexTodas = todasLasIncidencias.findIndex(i => i.ID_Incidencia === idIncidencia);
-          if(indexTodas !== -1) {
-             todasLasIncidencias[indexTodas].Estado = nuevoEstado;
-             if(notaCierre) todasLasIncidencias[indexTodas].Notas_Admin = notaCierre;
-          }
-          
+          if(indexTodas !== -1) todasLasIncidencias[indexTodas].Estado = nuevoEstado;
+          if(notaCierre) todasLasIncidencias[indexTodas].Notas_Admin = notaCierre;
+
           renderIncidencias();
        } else {
           alert('Error: ' + res.error);

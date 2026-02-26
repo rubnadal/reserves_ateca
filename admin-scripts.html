@@ -3698,10 +3698,11 @@ function renderConfiguracion() {
   setCfgVal('cfg_horas_cancelacion',   configMap['horas_cancelacion'] || '2');
   setCfgVal('cfg_email_admin',         configMap['email_admin'] || '');
   setCfgVal('cfg_nombre_centro',       configMap['nombre_centro'] || 'Sistema de Reservas');
-  setCfgVal('cfg_url_logo',            configMap['url_logo'] || '');
-  setCfgVal('cfg_max_tramos_simultaneos', configMap['max_tramos_simultaneos'] || '1');
-  
-  setCfgCheck('cfg_permitir_multitramo',  configMap['permitir_multitramo']);
+    setCfgVal('cfg_url_logo',            configMap['url_logo'] || '');
+    setCfgVal('cfg_max_tramos_simultaneos', configMap['max_tramos_simultaneos'] || '1');
+    setCfgVal('cfg_idioma_ui',           configMap['idioma_ui'] || 'ca');
+
+    setCfgCheck('cfg_permitir_multitramo',  configMap['permitir_multitramo']);
   setCfgCheck('cfg_exigir_motivo',        configMap['exigir_motivo']);
   setCfgCheck('cfg_modo_mantenimiento',   configMap['modo_mantenimiento']);
   setCfgCheck('cfg_admin_recibir_copia_reservas', configMap['admin_recibir_copia_reservas']);
@@ -3711,13 +3712,14 @@ function renderConfiguracion() {
 function attachConfigListeners() {
   if (window.configListenersAttached) return;
 
-  const ids = [
+    const ids = [
     'cfg_dias_vista_maximo', 'cfg_minutos_antelacion', 'cfg_limite_reservas',
     'cfg_horas_cancelacion', 'cfg_email_admin', 'cfg_nombre_centro',
     'cfg_url_logo', 'cfg_max_tramos_simultaneos', 'cfg_permitir_multitramo',
-    'cfg_exigir_motivo', 'cfg_modo_mantenimiento', 'cfg_admin_recibir_copia_reservas'
-  ];
-  
+    'cfg_exigir_motivo', 'cfg_modo_mantenimiento', 'cfg_admin_recibir_copia_reservas',
+    'cfg_idioma_ui'
+    ];
+
   ids.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -3750,7 +3752,7 @@ function checkConfigChanges() {
 }
 
 function construirConfigDesdeInputs() {
-  return [
+    return [
     { clave: 'dias_vista_maximo',  valor: getCfgVal('cfg_dias_vista_maximo') },
     { clave: 'minutos_antelacion', valor: getCfgVal('cfg_minutos_antelacion') },
     { clave: 'limite_reservas',    valor: getCfgVal('cfg_limite_reservas') },
@@ -3762,8 +3764,9 @@ function construirConfigDesdeInputs() {
     { clave: 'permitir_multitramo',    valor: getCfgCheck('cfg_permitir_multitramo') },
     { clave: 'exigir_motivo',      valor: getCfgCheck('cfg_exigir_motivo') },
     { clave: 'modo_mantenimiento', valor: getCfgCheck('cfg_modo_mantenimiento') },
-    { clave: 'admin_recibir_copia_reservas', valor: getCfgCheck('cfg_admin_recibir_copia_reservas') }
-  ];
+    { clave: 'admin_recibir_copia_reservas', valor: getCfgCheck('cfg_admin_recibir_copia_reservas') },
+    { clave: 'idioma_ui',          valor: getCfgVal('cfg_idioma_ui') || 'ca' }
+    ];
 }
 
 // --- VALIDACIÓN ---
@@ -3871,6 +3874,12 @@ function finalizarGuardadoConfiguracion(newConfig) {
         ConfigState.configOriginal = JSON.parse(JSON.stringify(newConfig));
         ConfigState.cambiosPendientes = false;
 
+        const idiomaUi = newConfig.find(c => c.clave === 'idioma_ui');
+        if (idiomaUi && idiomaUi.valor) {
+          window.APP_LANG = String(idiomaUi.valor).toLowerCase();
+          if (typeof applyI18n === 'function') applyI18n();
+        }
+
         SaveBarManager.hide();
       } else {
         showToast('error', res.error);
@@ -3902,6 +3911,7 @@ function descartarCambiosConfiguracion() {
       setCfgVal('cfg_nombre_centro',       configMap['nombre_centro']);
       setCfgVal('cfg_url_logo',            configMap['url_logo']);
       setCfgVal('cfg_max_tramos_simultaneos', configMap['max_tramos_simultaneos']);
+      setCfgVal('cfg_idioma_ui',            configMap['idioma_ui'] || 'ca');
 
       setCfgCheck('cfg_permitir_multitramo',  configMap['permitir_multitramo']);
       setCfgCheck('cfg_exigir_motivo',        configMap['exigir_motivo']);
@@ -4354,6 +4364,15 @@ function loadAdminData(isSilent = false) {
       AdminState.reservas = data.reservas || [];
       AdminState.config = data.config || [];
       AdminState.modoVisualizacion = data.modoVisualizacion || 'botones'; // ✅ AÑADIDO
+
+      const idiomaUi = (AdminState.config || []).find(c => c.clave === 'idioma_ui');
+      if (idiomaUi && idiomaUi.valor) {
+        window.APP_LANG = String(idiomaUi.valor).toLowerCase();
+        if (typeof applyI18n === 'function') {
+          const adminRoot = document.getElementById('tab-admin');
+          applyI18n(adminRoot || document);
+        }
+      }
 
       // --- 2. COPIAS DE SEGURIDAD ---
       AdminState.recursosOriginales = JSON.parse(JSON.stringify(AdminState.recursos));

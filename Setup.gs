@@ -128,6 +128,7 @@ function crearDatosEjemploInterno(ss, currentUrl, adminEmail) {
     ['modo_mantenimiento', 'FALSE', 'Bloquear nuevas reservas (Pánico)'],
     ['permitir_multitramo', 'FALSE', 'Permitir seleccionar varios tramos a la vez'],
     ['max_tramos_simultaneos', 1, 'Cuántos tramos seguidos se pueden coger de golpe'],
+    ['idioma_ui', 'ca', 'Idioma global de la interfaz'],
     ['nombre_centro', 'Sistema de Reservas', 'Nombre del centro'],
     ['url_logo', '', 'URL del logo del centro'],
     ['url_webapp', currentUrl, 'URL automática de la aplicación']

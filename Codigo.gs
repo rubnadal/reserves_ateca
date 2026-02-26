@@ -284,23 +284,33 @@ function checkUserAuthorization(emailUser) {
     if (data.length < 2) return { isAuthorized: false, isAdmin: false }; // Hoja vacía
 
     const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const normalizeToken = (value) => String(value || '')
+      .toLowerCase()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[\s_]+/g, '');
+
+    const headerIndex = {};
+    headers.forEach((h, i) => { headerIndex[normalizeToken(h)] = i; });
 
     // 1. BUSCAR COLUMNA EMAIL (Flexible)
     // Buscamos 'email', 'email_usuario', 'correo', etc.
-    let colEmail = headers.indexOf('email_usuario');
-    if (colEmail === -1) colEmail = headers.indexOf('email'); // <--- AQUÍ ESTABA EL FALLO
-    if (colEmail === -1) colEmail = headers.indexOf('correo');
+    let colEmail = headerIndex['emailusuario'];
+    if (colEmail === undefined) colEmail = headerIndex['email'];
+    if (colEmail === undefined) colEmail = headerIndex['correo'];
 
     // 2. BUSCAR COLUMNA ADMIN (Flexible)
-    let colAdmin = headers.indexOf('admin');
-    if (colAdmin === -1) colAdmin = headers.indexOf('administrador');
-    if (colAdmin === -1) colAdmin = headers.indexOf('rol'); // Por si acaso
+    let colAdmin = headerIndex['admin'];
+    if (colAdmin === undefined) colAdmin = headerIndex['administrador'];
+    if (colAdmin === undefined) colAdmin = headerIndex['rol']; // Por si acaso
 
     // 3. BUSCAR COLUMNA ACTIVO (Flexible)
-    let colActivo = headers.indexOf('activo');
+    let colActivo = headerIndex['activo'];
+    if (colActivo === undefined) colActivo = headerIndex['habilitado'];
 
     // Si no encontramos la columna Email, no podemos validar nada
-    if (colEmail === -1) {
+    if (colEmail === undefined) {
       console.error("No se encuentra la columna Email en Usuarios");
       return { isAuthorized: false, isAdmin: false, error: "Columna Email no encontrada" };
     }
@@ -317,23 +327,28 @@ function checkUserAuthorization(emailUser) {
         // ¡TE ENCONTRÉ!
 
         // Verificar si estás activo (si no existe columna Activo, asumimos que sí)
-        const isActive = colActivo === -1 ? true : (String(row[colActivo]).toLowerCase() === 'true' || String(row[colActivo]).toLowerCase() === 'si' || row[colActivo] === true);
+        const activoRaw = colActivo === undefined ? true : row[colActivo];
+        const activoNorm = normalizeToken(activoRaw);
+        const isActive = colActivo === undefined ? true : (activoRaw === true || activoRaw === 1 || activoNorm === 'true' || activoNorm === 'si' || activoNorm === 'yes' || activoNorm === '1');
 
         if (!isActive) {
           return { isAuthorized: false, isAdmin: false, error: "Usuario inactivo" };
         }
 
         // Verificar si eres Admin
-        // Aceptamos: TRUE, true, "Si", "Yes", "Admin"
+        // Aceptamos: TRUE, true, "Si", "Sí", "Yes", "Admin"
         let isAdmin = false;
-        if (colAdmin !== -1) {
-          const valAdmin = String(row[colAdmin]).toLowerCase();
-          isAdmin = (valAdmin === 'true' || valAdmin === 'si' || valAdmin === 'yes' || valAdmin === 'admin');
+        if (colAdmin !== undefined) {
+          const valAdminRaw = row[colAdmin];
+          const valAdmin = normalizeToken(valAdminRaw);
+          isAdmin = (valAdminRaw === true || valAdminRaw === 1 || valAdmin === 'true' || valAdmin === 'si' || valAdmin === 'yes' || valAdmin === 'admin' || valAdmin === '1');
         }
 
         // Recuperar nombre (opcional)
-        const colNombre = headers.indexOf('nombre') > -1 ? headers.indexOf('nombre') : headers.indexOf('nombre_completo');
-        const userName = colNombre > -1 ? row[colNombre] : userEmail;
+        const colNombre = headerIndex['nombre'] !== undefined
+          ? headerIndex['nombre']
+          : headerIndex['nombrecompleto'];
+        const userName = colNombre !== undefined ? row[colNombre] : userEmail;
 
         return {
           isAuthorized: true,

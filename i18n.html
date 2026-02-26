@@ -1,0 +1,124 @@
+<script>
+  // Minimal i18n helper for UI (ES/CA only)
+  (function initI18n() {
+    const I18N = {
+      ca: {
+        header: {
+          greeting: 'Hola',
+          incidencias: 'Incidències',
+          myReservations: 'Les meves reserves',
+          admin: 'Admin',
+          back: 'Tornar'
+        },
+        sections: {
+          rooms: 'Sales i espais',
+          devices: 'Dispositius i carros'
+        },
+        booking: {
+          reservingIn: 'Reservant a',
+          loading: 'Carregant...',
+          selectedDate: 'Data seleccionada',
+          calculating: 'Calculant...',
+          monthYearFallback: 'Mes Any',
+          availableSlots: 'Horaris disponibles',
+          requestRecurring: 'Sol·licitar ús recurrent',
+          requestRecurringTitle: 'Sol·licitar aquest recurs de forma recurrent'
+        },
+        adminConfig: {
+          title: 'Configuració del sistema',
+          description: 'Defineix les regles globals d\'us.',
+          languageTitle: 'Idioma de la interfície',
+          languageHelp: 'Idioma global per a tota la UI.'
+        },
+        common: {
+          languageCatalan: 'Català',
+          languageSpanish: 'Castellà'
+        }
+      },
+      es: {
+        header: {
+          greeting: 'Hola',
+          incidencias: 'Incidencias',
+          myReservations: 'Mis Reservas',
+          admin: 'Admin',
+          back: 'Volver'
+        },
+        sections: {
+          rooms: 'Salas y Espacios',
+          devices: 'Dispositivos y Carritos'
+        },
+        booking: {
+          reservingIn: 'Reservando en',
+          loading: 'Cargando...',
+          selectedDate: 'Fecha seleccionada',
+          calculating: 'Calculando...',
+          monthYearFallback: 'Mes Año',
+          availableSlots: 'Horarios Disponibles',
+          requestRecurring: 'Solicitar uso recurrente',
+          requestRecurringTitle: 'Solicitar este recurso de forma recurrente'
+        },
+        adminConfig: {
+          title: 'Configuración del Sistema',
+          description: 'Define las reglas globales de uso.',
+          languageTitle: 'Idioma de la interfaz',
+          languageHelp: 'Idioma global para toda la UI.'
+        },
+        common: {
+          languageCatalan: 'Catalán',
+          languageSpanish: 'Castellano'
+        }
+      }
+    };
+
+    const supportedLangs = ['es', 'ca'];
+    const defaultLang = 'ca';
+    const browserLang = (navigator.language || '').toLowerCase().startsWith('ca') ? 'ca' : 'es';
+    const resolveLang = () => {
+      const candidate = supportedLangs.includes(window.APP_LANG)
+        ? window.APP_LANG
+        : (window.APP_LANG || browserLang || defaultLang);
+      return supportedLangs.includes(candidate) ? candidate : defaultLang;
+    };
+
+    window.APP_LANG_RESOLVED = resolveLang();
+    window.t = function t(key) {
+      const parts = key.split('.');
+      let node = I18N[resolveLang()];
+      for (const part of parts) {
+        node = node && node[part];
+      }
+      return node || key;
+    };
+
+    window.applyI18n = function applyI18n(root) {
+      window.APP_LANG_RESOLVED = resolveLang();
+      const scope = root || document;
+      scope.querySelectorAll('[data-i18n]').forEach((el) => {
+        const key = el.getAttribute('data-i18n');
+        const value = window.t(key);
+        if (value && value !== key) {
+          el.textContent = value;
+        }
+      });
+
+      scope.querySelectorAll('[data-i18n-attr]').forEach((el) => {
+        const raw = el.getAttribute('data-i18n-attr');
+        const pairs = raw.split(',').map((pair) => pair.trim()).filter(Boolean);
+        pairs.forEach((pair) => {
+          const parts = pair.split(':').map((p) => p.trim());
+          const attr = parts[0];
+          const key = parts[1];
+          if (!attr || !key) return;
+          const value = window.t(key);
+          if (value && value !== key) {
+            el.setAttribute(attr, value);
+          }
+        });
+      });
+
+      if (document && document.documentElement) {
+        document.documentElement.lang = window.APP_LANG_RESOLVED;
+      }
+    };
+  })();
+</script>

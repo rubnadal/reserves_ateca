@@ -156,8 +156,8 @@ function getAdminData() {
     }
 
     // 7. CONFIGURACIÓN (NUEVO BLOQUE ⚙️)
-    // Buscamos la hoja por nombre 'CONFIG' (o usa SHEETS.CONFIG si la definiste en constantes)
-    const sheetConfig = ss.getSheetByName('CONFIG'); 
+    const sheetConfigName = (typeof SHEETS !== 'undefined' && SHEETS.CONFIG) ? SHEETS.CONFIG : 'Config';
+    const sheetConfig = ss.getSheetByName(sheetConfigName);
     let configData = [];
     
     if (sheetConfig && sheetConfig.getLastRow() > 1) {
@@ -1592,11 +1592,12 @@ function saveBatchConfig(configList) {
     if (!isUserAdmin()) throw new Error("Permiso denegado");
     
     const ss = getDB();
-    let sheet = ss.getSheetByName('CONFIG');
-    
+    const sheetConfigName = (typeof SHEETS !== 'undefined' && SHEETS.CONFIG) ? SHEETS.CONFIG : 'Config';
+    let sheet = ss.getSheetByName(sheetConfigName);
+
     // Si no existe, la crea
     if (!sheet) {
-      sheet = ss.insertSheet('CONFIG');
+      sheet = ss.insertSheet(sheetConfigName);
       sheet.appendRow(['CLAVE', 'VALOR', 'DESCRIPCION']); // Cabeceras
     }
 
@@ -1922,3 +1923,4 @@ function getSolicitudesPendientesGlobal() {
 /* ============================================
    FIN DEL ARCHIVO AdminFunctions.gs
    ============================================ */
+

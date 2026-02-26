@@ -399,7 +399,7 @@
             <span id="totalUsuariosCount">0</span> usuarios
           </div>
 
-          <button onclick="agregarNuevoUsuario()" class="flex-1 sm:flex-none bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-600/20 transform active:scale-95 whitespace-nowrap font-medium">
+          <button onclick="agregarNuevoUsuario()" class="flex-1 sm:flex-none bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-600/20 transform active:scale-95 whitespace-nowrap">
       <iconify-icon icon="mdi:plus" width="20"></iconify-icon>
       <span>Nuevo</span>
     </button>
@@ -466,9 +466,9 @@
       <div>
         <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
           <iconify-icon icon="mdi:cog-box" class="text-blue-600"></iconify-icon>
-          Configuración del Sistema
+          <span data-i18n="adminConfig.title">Configuración del Sistema</span>
         </h2>
-        <p class="text-gray-500 text-sm mt-1">Define las reglas globales de uso.</p>
+        <p class="text-gray-500 text-sm mt-1" data-i18n="adminConfig.description">Define las reglas globales de uso.</p>
       </div>
     </div>
 
@@ -642,6 +642,28 @@
             </div>
           </div>
 
+        </div>
+      </div>
+
+      <!-- Nueva tarjeta: Selección de idioma de la interfaz -->
+      <div
+        class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-md transition-shadow">
+        <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+          <iconify-icon icon="mdi:translate" class="text-8xl text-indigo-500"></iconify-icon>
+        </div>
+
+        <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2 border-b border-gray-100 pb-2">
+          <iconify-icon icon="mdi:alphabetical" class="text-indigo-500"></iconify-icon>
+          <span data-i18n="adminConfig.languageTitle">Idioma de la interfaz</span>
+        </h3>
+
+        <div class="space-y-2 relative z-10">
+          <label class="block text-sm font-bold text-gray-700 mb-1" data-i18n="adminConfig.languageTitle">Idioma de la interfaz</label>
+          <select id="cfg_idioma_ui" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 outline-none text-sm">
+            <option value="ca" data-i18n="common.languageCatalan">Català</option>
+            <option value="es" data-i18n="common.languageSpanish">Castellano</option>
+          </select>
+          <p class="text-xs text-gray-400 mt-1" data-i18n="adminConfig.languageHelp">Idioma global para toda la UI.</p>
         </div>
       </div>
 

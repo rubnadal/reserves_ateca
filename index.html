@@ -1,5 +1,5 @@
 <!DOCTYPE html> 
-<html lang="es">
+<html lang="ca">
 
 <head>
   <base target="_top">
@@ -15,6 +15,9 @@
 
   <!-- Estilos Modulares y del Panel Admin -->
   <?!= include('styles'); ?>
+
+  <!-- i18n UI helpers (ES/CA) -->
+  <?!= include('i18n'); ?>
 
 </head>
 
@@ -51,7 +54,7 @@
               <div id="headerSubtitle" class="flex items-center gap-2 mt-0.5 transition-all">
                 <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
                 <p class="text-xs text-gray-500">
-                  Hola, <span class="font-semibold text-gray-700"><?= userNameForHtml ?></span>
+                  <span data-i18n="header.greeting">Hola</span>, <span class="font-semibold text-gray-700"><?= userNameForHtml ?></span>
                 </p>
               </div>
             </div>
@@ -65,7 +68,7 @@
               class="relative h-10 px-3 min-[480px]:px-4 flex items-center gap-2 bg-orange-50 text-orange-600 hover:bg-orange-100 border border-orange-200 hover:border-orange-300 rounded-lg transition-all duration-200 shadow-sm active:scale-95"
               onclick="abrirPanelIncidenciasGlobal()">
               <iconify-icon icon="mdi:alert-circle-outline" class="text-xl min-[480px]:text-lg"></iconify-icon>
-              <span class="text-sm font-bold whitespace-nowrap hidden min-[480px]:inline">Incidencias</span>
+              <span class="text-sm font-bold whitespace-nowrap hidden min-[480px]:inline" data-i18n="header.incidencias">Incidencias</span>
               <span id="badgeIncidenciasGlobal"
                 class="hidden absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold shadow-sm border-2 border-white">
               </span>
@@ -75,7 +78,7 @@
             <button id="myReservationsButton"
           class="h-10 px-3 min-[480px]:px-4 flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 hover:text-blue-600 border border-gray-200 hover:border-blue-300 rounded-lg transition-all duration-200 shadow-sm active:scale-95">
           <iconify-icon icon="mdi:clipboard-list-outline" class="text-xl min-[480px]:text-lg"></iconify-icon>
-          <span class="text-sm font-bold whitespace-nowrap hidden min-[480px]:inline">Mis Reservas</span>
+          <span class="text-sm font-bold whitespace-nowrap hidden min-[480px]:inline" data-i18n="header.myReservations">Mis Reservas</span>
         </button>
 
             <!-- Botones Admin -->
@@ -83,13 +86,13 @@
               <button id="btnIrAdmin"
             class="h-10 px-3 min-[480px]:px-4 flex items-center gap-2 bg-gray-900 hover:bg-black text-white border border-transparent rounded-lg transition-all duration-200 shadow-md active:scale-95 group">
             <iconify-icon icon="mdi:cog-outline" class="text-xl min-[480px]:text-lg animate-[spin_10s_linear_infinite] group-hover:animate-none"></iconify-icon>
-            <span class="text-sm font-bold whitespace-nowrap hidden min-[480px]:inline">Admin</span>
+            <span class="text-sm font-bold whitespace-nowrap hidden min-[480px]:inline" data-i18n="header.admin">Admin</span>
           </button>
 
               <button id="btnVolverApp"
             class="hidden h-10 px-3 min-[480px]:px-4 flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white border border-transparent rounded-lg transition-all duration-200 shadow-md active:scale-95">
             <iconify-icon icon="mdi:arrow-left" class="text-xl min-[480px]:text-lg"></iconify-icon>
-            <span class="text-sm font-bold whitespace-nowrap hidden min-[480px]:inline">Volver</span>
+            <span class="text-sm font-bold whitespace-nowrap hidden min-[480px]:inline" data-i18n="header.back">Volver</span>
           </button>
             </div>
 
@@ -111,7 +114,7 @@
             <span class="bg-blue-100 text-blue-600 p-2 rounded-lg shadow-sm leading-none">
           <iconify-icon icon="mdi:door-open" class="text-2xl"></iconify-icon>
         </span>
-            Salas y Espacios
+            <span data-i18n="sections.rooms">Salas y Espacios</span>
           </h2>
           <div id="salasContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           </div>
@@ -122,7 +125,7 @@
             <span class="bg-emerald-100 text-emerald-600 p-2 rounded-lg shadow-sm leading-none">
           <iconify-icon icon="mdi:laptop" class="text-2xl"></iconify-icon>
         </span>
-            Dispositivos y Carritos
+            <span data-i18n="sections.devices">Dispositivos y Carritos</span>
           </h2>
           <div id="dispositivosContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           </div>
@@ -156,9 +159,9 @@
                 <div id="recursoIconHeader" class="text-3xl text-gray-700 shrink-0 hidden sm:block leading-none"></div>
 
                 <div class="flex flex-col min-w-0 w-full">
-                  <span class="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-0.5 sm:mb-1">Reservando en</span>
+                  <span class="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-0.5 sm:mb-1" data-i18n="booking.reservingIn">Reservando en</span>
                   <h2 id="tramosTitle"
-                    class="text-lg sm:text-2xl font-bold text-gray-900 leading-tight truncate w-full">
+                    class="text-lg sm:text-2xl font-bold text-gray-900 leading-tight truncate w-full" data-i18n="booking.loading">
                     Cargando...
                   </h2>
                 </div>
@@ -169,11 +172,11 @@
 
               <div class="flex items-center gap-2 text-blue-600 mb-0.5">
                 <iconify-icon icon="mdi:calendar-month" class="text-lg sm:text-2xl"></iconify-icon>
-                <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest sm:hidden">Fecha seleccionada</span>
-                <span class="text-[10px] font-bold uppercase tracking-widest hidden sm:inline">Fecha seleccionada</span>
+                <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest sm:hidden" data-i18n="booking.selectedDate">Fecha seleccionada</span>
+                <span class="text-[10px] font-bold uppercase tracking-widest hidden sm:inline" data-i18n="booking.selectedDate">Fecha seleccionada</span>
               </div>
 
-              <span id="selectedDateDisplay" class="font-bold text-blue-900 text-base sm:text-xl leading-none capitalize">
+              <span id="selectedDateDisplay" class="font-bold text-blue-900 text-base sm:text-xl leading-none capitalize" data-i18n="booking.calculating">
                 Calculando...
               </span>
 
@@ -188,7 +191,7 @@
               <button id="prevMonth" class="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-lg text-gray-500 transition-colors">
           <iconify-icon icon="mdi:chevron-left" class="text-2xl"></iconify-icon>
         </button>
-              <span id="monthYear" class="font-bold text-gray-800 capitalize text-base sm:text-lg">Mes Año</span>
+              <span id="monthYear" class="font-bold text-gray-800 capitalize text-base sm:text-lg" data-i18n="booking.monthYearFallback">Mes Año</span>
               <button id="nextMonth" class="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-lg text-gray-500 transition-colors">
           <iconify-icon icon="mdi:chevron-right" class="text-2xl"></iconify-icon>
         </button>
@@ -200,7 +203,7 @@
 
               <div class="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100 shrink-0">
                 <iconify-icon icon="mdi:clock-outline" class="text-gray-400 text-lg"></iconify-icon>
-                <h3 class="font-bold text-gray-700 text-sm">Horarios Disponibles</h3>
+                <h3 class="font-bold text-gray-700 text-sm" data-i18n="booking.availableSlots">Horarios Disponibles</h3>
               </div>
 
               <div id="tramosContainer"
@@ -212,9 +215,10 @@
             <!-- Botón Uso Recurrente (fuera del marco blanco) -->
             <button onclick="abrirModalSolicitudRecurrente()"
               class="w-full px-4 py-2.5 text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-xl transition-colors flex items-center justify-center gap-2"
+              data-i18n-attr="title:booking.requestRecurringTitle"
               title="Solicitar este recurso de forma recurrente">
               <iconify-icon icon="mdi:calendar-sync" class="text-lg"></iconify-icon>
-              <span>Solicitar uso recurrente</span>
+              <span data-i18n="booking.requestRecurring">Solicitar uso recurrente</span>
             </button>
 
           </div>
@@ -249,12 +253,12 @@
             <button onclick="abrirModalNuevaIncidencia()"
                 class="group flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm transition-all active:scale-95">
               <iconify-icon icon="mdi:plus" class="text-lg"></iconify-icon>
-              <span class="font-semibold text-sm">Nueva Incidencia</span>
+              <span class="font-semibold text-sm">Nova Incidència</span>
             </button>
             <button onclick="volverDesdeIncidencias()"
                 class="group flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 hover:text-blue-600 hover:border-blue-300 rounded-xl shadow-sm transition-all active:scale-95">
               <iconify-icon icon="mdi:arrow-left" class="text-lg group-hover:-translate-x-1 transition-transform"></iconify-icon>
-              <span class="font-semibold text-sm">Volver</span>
+              <span class="font-semibold text-sm">Tornar</span>
             </button>
           </div>
         </div>
@@ -1095,7 +1099,8 @@
 
   // 3. EVENTO PRINCIPAL: DOMContentLoaded
   document.addEventListener('DOMContentLoaded', function() {
-    
+    if (typeof applyI18n === 'function') applyI18n();
+
     // --- A. INICIALIZACIÓN DE LA APP (Cargar tarjetas, etc.) ---
     if (typeof initializeVariables === 'function') initializeVariables();
     if (typeof setupEventListeners === 'function') setupEventListeners();
