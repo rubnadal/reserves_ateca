@@ -80,13 +80,6 @@ Aquest fork ha estat adaptat específicament per gestionar les reserves d'espais
 └── appsscript.json           # Configuració del projecte
 ```
 
-## Instal·lació (resum)
-
-1. Crea un Google Sheet i obre l'editor d'Apps Script.
-2. Copia els fitxers `.gs` i `.html` al projecte.
-3. Desplega com a Web App i copia l'URL.
-4. Executa l'assistent d'instal·lació des de la Web App.
-
 ## Ús
 
 **Usuaris**
@@ -100,7 +93,7 @@ Aquest fork ha estat adaptat específicament per gestionar les reserves d'espais
 ## Crèdits i autoria
 
 **Projecte original**
-- Autor: [Sebastián (maestroseb)](https://github.com/maestroseb)
+- Autor: [Sebastián Giraldo(maestroseb)](https://github.com/maestroseb)
 - Repositori: [reservasrecursosysalas](https://github.com/maestroseb/reservasrecursosysalas)
 
 **Aquest fork**
