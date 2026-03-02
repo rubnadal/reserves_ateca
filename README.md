@@ -14,15 +14,15 @@ Aquest projecte està en procés de modificació i en fase de proves per aconseg
 
 | Data | Canvi | Estat | Observacions |
 |------|-------|-------|--------------|
-| 2026-03-02 | Internacionalització UI: pantalla principal | ❌ | Pendent de validació i desplegament. |
-| 2026-03-02 | Internacionalització UI: Admin > Reserves | ❌ | Pendent de validació i desplegament. |
-| 2026-03-02 | Internacionalització UI: Admin > Recursos | ❌ | Pendent de validació i desplegament. |
-| 2026-03-02 | Internacionalització UI: Admin > Trams | ❌ | Pendent de validació i desplegament. |
-| 2026-03-02 | Internacionalització UI: Admin > Disponibilitat | ❌ | Pendent de validació i desplegament. |
-| 2026-03-02 | Internacionalització UI: Admin > Cursos | ❌ | Pendent de validació i desplegament. |
-| 2026-03-02 | Internacionalització UI: Admin > Usuaris | ❌ | Pendent de validació i desplegament. |
-| 2026-03-02 | Internacionalització UI: Admin > Configuració del sistema | ❌ | Pendent de validació i desplegament. |
-| 2026-03-02 | Diccionari i18n ES/CA i helpers UI | ❌ | Pendent de validació i desplegament. |
+| 2026-03-02 | Internacionalització UI: pantalla principal | ✅ | Apujat i verificat. |
+| 2026-03-02 | Internacionalització UI: Admin > Reserves | ✅ | Apujat i verificat. |
+| 2026-03-02 | Internacionalització UI: Admin > Recursos | ✅ | Apujat i verificat. |
+| 2026-03-02 | Internacionalització UI: Admin > Trams | ✅ | Apujat i verificat. |
+| 2026-03-02 | Internacionalització UI: Admin > Disponibilitat | ✅ | Apujat i verificat. |
+| 2026-03-02 | Internacionalització UI: Admin > Cursos | ✅ | Apujat i verificat. |
+| 2026-03-02 | Internacionalització UI: Admin > Usuaris | ✅ | Apujat i verificat. |
+| 2026-03-02 | Internacionalització UI: Admin > Configuració del sistema | ✅ | Apujat i verificat. |
+| 2026-03-02 | Diccionari i18n ES/CA i helpers UI | ✅ | Apujat i verificat. |
 
 > Aquesta taula s'actualitzarà quan ho indiquis. Si vols afegir o modificar entrades, especifica la data i el canvi.
 
