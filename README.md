@@ -12,17 +12,17 @@ Aquest projecte està en procés de modificació i en fase de proves per aconseg
 
 ## Control de canvis
 
-| Data | Canvi | Estat | Observacions |
-|------|-------|-------|--------------|
-| 2026-03-02 | Internacionalització UI: pantalla principal | ✅ | Apujat i verificat. |
-| 2026-03-02 | Internacionalització UI: Admin > Reserves | ✅ | Apujat i verificat. |
-| 2026-03-02 | Internacionalització UI: Admin > Recursos | ✅ | Apujat i verificat. |
-| 2026-03-02 | Internacionalització UI: Admin > Trams | ✅ | Apujat i verificat. |
-| 2026-03-02 | Internacionalització UI: Admin > Disponibilitat | ✅ | Apujat i verificat. |
-| 2026-03-02 | Internacionalització UI: Admin > Cursos | ✅ | Apujat i verificat. |
-| 2026-03-02 | Internacionalització UI: Admin > Usuaris | ✅ | Apujat i verificat. |
-| 2026-03-02 | Internacionalització UI: Admin > Configuració del sistema | ✅ | Apujat i verificat. |
-| 2026-03-02 | Diccionari i18n ES/CA i helpers UI | ✅ | Apujat i verificat. |
+| Data       | Canvi                                                     | Estat  | Observacions        |
+|------------|-----------------------------------------------------------|--------|---------------------|
+| 2026-03-02 | Internacionalització UI: pantalla principal               | ✅      | Apujat i verificat. |
+| 2026-03-02 | Internacionalització UI: Admin > Reserves                 | ✅      | Apujat i verificat. |
+| 2026-03-02 | Internacionalització UI: Admin > Recursos                 | ✅      | Apujat i verificat. |
+| 2026-03-02 | Internacionalització UI: Admin > Trams                    | ✅      | Apujat i verificat. |
+| 2026-03-02 | Internacionalització UI: Admin > Disponibilitat           | ✅      | Apujat i verificat. |
+| 2026-03-02 | Internacionalització UI: Admin > Cursos                   | ✅      | Apujat i verificat. |
+| 2026-03-02 | Internacionalització UI: Admin > Usuaris                  | ✅      | Apujat i verificat. |
+| 2026-03-02 | Internacionalització UI: Admin > Configuració del sistema | ✅      | Apujat i verificat. |
+| 2026-03-02 | Diccionari i18n ES/CA i helpers UI                        | ✅      | Apujat i verificat. |
 
 > Aquesta taula s'actualitzarà quan ho indiquis. Si vols afegir o modificar entrades, especifica la data i el canvi.
 
