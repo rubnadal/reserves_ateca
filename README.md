@@ -21,13 +21,13 @@ Aquest fork ha estat adaptat específicament per gestionar les reserves d'espais
 ## ✨ Característiques principals
 
 - 📅 **Gestió de reserves** per franges horàries
-- 🏫 **Multi-recurs**: Sales, carros de portàtils, equips informàtics
+- 🏫 **Multirecurs**: Sales, carros de portàtils, equips informàtics
 - 👥 **Control d'accés** amb sistema d'autorització
 - 🔁 **Reserves recurrents** setmanals amb aprovació administrativa
 - 🚨 **Sistema d'incidències** per reportar problemes
 - 👨‍💼 **Panel d'administració** complet
 - 📧 **Notificacions per email** automàtiques
-- 📱 **Disseny responsive** (mòbil, tauleta, escriptori)
+- 📱 **Disseny adaptatiu** (mòbil, tauleta, escriptori)
 - ⚡ **Sistema de caché** per optimitzar rendiment
 - 🎨 **Interfície moderna** amb Tailwind CSS
 
