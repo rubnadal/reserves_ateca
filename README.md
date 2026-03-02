@@ -24,7 +24,6 @@ Aquest projecte està en procés de modificació i en fase de proves per aconseg
 | 2026-03-02 | Internacionalització UI: Admin > Configuració del sistema | ✅      | Apujat i verificat. |
 | 2026-03-02 | Diccionari i18n ES/CA i helpers UI                        | ✅      | Apujat i verificat. |
 
-> Aquesta taula s'actualitzarà quan ho indiquis. Si vols afegir o modificar entrades, especifica la data i el canvi.
 
 ## Sobre aquest projecte
 
