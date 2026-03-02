@@ -484,28 +484,28 @@
 
         <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2 border-b border-gray-100 pb-2">
           <iconify-icon icon="mdi:id-card" class="text-indigo-500"></iconify-icon>
-          Identidad del Centro
+          <span data-i18n="adminConfig.identityTitle">Identidad del Centro</span>
         </h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
           <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">Nombre del Centro</label>
+            <label class="block text-sm font-bold text-gray-700 mb-1" data-i18n="adminConfig.identityNameLabel">Nombre del Centro</label>
             <div class="relative">
               <iconify-icon icon="mdi:format-title" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
               </iconify-icon>
-              <input type="text" id="cfg_nombre_centro" placeholder="Ej: IES Tecnológico Futuro" class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 outline-none font-bold text-gray-800">
+              <input type="text" id="cfg_nombre_centro" placeholder="Ej: IES Tecnológico Futuro" data-i18n-attr="placeholder:adminConfig.identityNamePlaceholder" class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 outline-none font-bold text-gray-800">
             </div>
-            <p class="text-xs text-gray-400 mt-1">Aparecerá en la cabecera y en los correos.</p>
+            <p class="text-xs text-gray-400 mt-1" data-i18n="adminConfig.identityNameHelp">Aparecerá en la cabecera y en los correos.</p>
           </div>
 
           <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">URL del Logo (Opcional)</label>
+            <label class="block text-sm font-bold text-gray-700 mb-1" data-i18n="adminConfig.identityLogoLabel">URL del Logo (Opcional)</label>
             <div class="relative">
               <iconify-icon icon="mdi:image-link" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
               </iconify-icon>
-              <input type="text" id="cfg_url_logo" placeholder="https://miweb.com/logo.png o URL de Google Drive" class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 outline-none text-sm">
+              <input type="text" id="cfg_url_logo" placeholder="https://miweb.com/logo.png o URL de Google Drive" data-i18n-attr="placeholder:adminConfig.identityLogoPlaceholder" class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 outline-none text-sm">
             </div>
-            <p class="text-xs text-gray-400 mt-1">URL directa (.png, .jpg) o enlace de Google Drive. Si usas Drive, los permisos se ajustarán automáticamente.</p>
+            <p class="text-xs text-gray-400 mt-1" data-i18n="adminConfig.identityLogoHelp">URL directa (.png, .jpg) o enlace de Google Drive. Si usas Drive, los permisos se ajustarán automáticamente.</p>
           </div>
         </div>
       </div>
@@ -518,23 +518,23 @@
 
         <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2 border-b border-gray-100 pb-2">
           <iconify-icon icon="mdi:timer-sand" class="text-orange-500"></iconify-icon>
-          Tiempos y Plazos
+          <span data-i18n="adminConfig.timingTitle">Tiempos y Plazos</span>
         </h3>
 
         <div class="space-y-6 relative z-10">
           <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">📅 Horizonte (Días vista)</label>
+            <label class="block text-sm font-bold text-gray-700 mb-1" data-i18n="adminConfig.horizonLabel">📅 Horizonte (Días vista)</label>
             <div class="flex items-center gap-3">
               <input type="number" id="cfg_dias_vista_maximo" min="1" class="w-24 bg-gray-50 border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500 p-2 border font-mono font-bold text-center">
-              <span class="text-xs text-gray-500 leading-tight">¿Hasta cuan lejos en el futuro pueden reservar?</span>
+              <span class="text-xs text-gray-500 leading-tight" data-i18n="adminConfig.horizonHelp">¿Hasta cuan lejos en el futuro pueden reservar?</span>
             </div>
           </div>
 
           <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">⚡ Antelación Mínima (Minutos)</label>
+            <label class="block text-sm font-bold text-gray-700 mb-1" data-i18n="adminConfig.advanceLabel">⚡ Antelación Mínima (Minutos)</label>
             <div class="flex items-center gap-3">
               <input type="number" id="cfg_minutos_antelacion" min="0" class="w-24 bg-gray-50 border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500 p-2 border font-mono font-bold text-center">
-              <span class="text-xs text-gray-500 leading-tight">Mínimo tiempo antes de la hora para reservar.</span>
+              <span class="text-xs text-gray-500 leading-tight" data-i18n="adminConfig.advanceHelp">Mínimo tiempo antes de la hora para reservar.</span>
             </div>
           </div>
         </div>
@@ -548,31 +548,31 @@
 
         <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2 border-b border-gray-100 pb-2">
           <iconify-icon icon="mdi:gavel" class="text-green-600"></iconify-icon>
-          Límites y Abusos
+          <span data-i18n="adminConfig.limitsTitle">Límites y Abusos</span>
         </h3>
 
         <div class="space-y-6 relative z-10">
           <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">🔢 Máx. Reservas Activas</label>
+            <label class="block text-sm font-bold text-gray-700 mb-1" data-i18n="adminConfig.maxReservationsLabel">🔢 Máx. Reservas Activas</label>
             <div class="flex items-center gap-3">
               <input type="number" id="cfg_limite_reservas" min="0" class="w-24 bg-gray-50 border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 p-2 border font-mono font-bold text-center">
-              <span class="text-xs text-gray-500 leading-tight">Total de reservas vivas simultáneas por usuario.</span>
+              <span class="text-xs text-gray-500 leading-tight" data-i18n="adminConfig.maxReservationsHelp">Total de reservas vivas simultáneas por usuario.</span>
             </div>
           </div>
 
           <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">🧱 Máx. Tramos por Reserva</label>
+            <label class="block text-sm font-bold text-gray-700 mb-1" data-i18n="adminConfig.maxSlotsLabel">🧱 Máx. Tramos por Reserva</label>
             <div class="flex items-center gap-3">
               <input type="number" id="cfg_max_tramos_simultaneos" min="1" value="1" class="w-24 bg-gray-50 border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 p-2 border font-mono font-bold text-center">
-              <span class="text-xs text-gray-500 leading-tight">Si activas multitramo, ¿cuántos seguidos pueden coger?</span>
+              <span class="text-xs text-gray-500 leading-tight" data-i18n="adminConfig.maxSlotsHelp">Si activas multitramo, ¿cuántos seguidos pueden coger?</span>
             </div>
           </div>
 
           <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">🚫 Tope Cancelación (Horas)</label>
+            <label class="block text-sm font-bold text-gray-700 mb-1" data-i18n="adminConfig.cancelLimitLabel">🚫 Tope Cancelación (Horas)</label>
             <div class="flex items-center gap-3">
               <input type="number" id="cfg_horas_cancelacion" min="0" class="w-24 bg-gray-50 border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 p-2 border font-mono font-bold text-center">
-              <span class="text-xs text-gray-500 leading-tight">Antelación mínima para poder cancelar.</span>
+              <span class="text-xs text-gray-500 leading-tight" data-i18n="adminConfig.cancelLimitHelp">Antelación mínima para poder cancelar.</span>
             </div>
           </div>
         </div>
@@ -582,7 +582,7 @@
 
         <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2 border-b border-gray-100 pb-2">
           <iconify-icon icon="mdi:tune" class="text-blue-600"></iconify-icon>
-          Ajustes Generales
+          <span data-i18n="adminConfig.generalTitle">Ajustes Generales</span>
         </h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
@@ -590,8 +590,8 @@
           <div class="space-y-4">
             <div class="flex items-center justify-between p-4 bg-purple-50 rounded-xl border border-purple-100">
               <div>
-                <div class="font-bold text-purple-900 text-sm">🧩 Permitir Multitramo</div>
-                <div class="text-xs text-purple-700/70">Seleccionar varios tramos juntos.</div>
+                <div class="font-bold text-purple-900 text-sm" data-i18n="adminConfig.allowMultiTitle">🧩 Permitir Multitramo</div>
+                <div class="text-xs text-purple-700/70" data-i18n="adminConfig.allowMultiHelp">Seleccionar varios tramos juntos.</div>
               </div>
               <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="cfg_permitir_multitramo" class="sr-only peer">
@@ -601,8 +601,8 @@
 
             <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
               <div>
-                <div class="font-bold text-gray-800 text-sm">📝 Exigir Motivo</div>
-                <div class="text-xs text-gray-500">Obligatorio rellenar "para qué".</div>
+                <div class="font-bold text-gray-800 text-sm" data-i18n="adminConfig.requireReasonTitle">📝 Exigir Motivo</div>
+                <div class="text-xs text-gray-500" data-i18n="adminConfig.requireReasonHelp">Obligatorio rellenar "para qué".</div>
               </div>
               <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="cfg_exigir_motivo" class="sr-only peer">
@@ -612,8 +612,8 @@
 
             <div class="flex items-center justify-between p-4 bg-red-50 rounded-xl border border-red-100">
               <div>
-                <div class="font-bold text-red-800 text-sm">🚧 Modo Mantenimiento</div>
-                <div class="text-xs text-red-600/70">Nadie podrá reservar.</div>
+                <div class="font-bold text-red-800 text-sm" data-i18n="adminConfig.maintenanceTitle">🚧 Modo Mantenimiento</div>
+                <div class="text-xs text-red-600/70" data-i18n="adminConfig.maintenanceHelp">Nadie podrá reservar.</div>
               </div>
               <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="cfg_modo_mantenimiento" class="sr-only peer">
@@ -623,19 +623,19 @@
           </div>
 
           <div class="flex flex-col justify-center">
-            <label class="block text-sm font-bold text-gray-700 mb-2">📧 Email del Administrador</label>
+            <label class="block text-sm font-bold text-gray-700 mb-2" data-i18n="adminConfig.adminEmailLabel">📧 Email del Administrador</label>
             <div class="relative">
               <iconify-icon icon="mdi:email-check-outline"
                 class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></iconify-icon>
-              <input type="email" id="cfg_email_admin" placeholder="direccion@colegio.com" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all">
+              <input type="email" id="cfg_email_admin" placeholder="direccion@colegio.com" data-i18n-attr="placeholder:adminConfig.adminEmailPlaceholder" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all">
             </div>
-            <p class="text-xs text-gray-400 mt-2">Recibirá avisos de solicitudes de recurrencias e incidencias.</p>
+            <p class="text-xs text-gray-400 mt-2" data-i18n="adminConfig.adminEmailHelp">Recibirá avisos de solicitudes de recurrencias e incidencias.</p>
 
             <!-- Toggle copia oculta debajo del email -->
             <div class="flex items-center justify-between gap-3 mt-4 pt-3 border-t border-gray-100">
               <div>
-                <span class="text-sm text-gray-700 font-medium">Recibir copia de reservas</span>
-                <p class="text-xs text-gray-400">BCC de cada confirmación de reserva</p>
+                <span class="text-sm text-gray-700 font-medium" data-i18n="adminConfig.bccTitle">Recibir copia de reservas</span>
+                <p class="text-xs text-gray-400" data-i18n="adminConfig.bccHelp">BCC de cada confirmación de reserva</p>
               </div>
               <label class="relative inline-flex items-center cursor-pointer shrink-0">
                 <input type="checkbox" id="cfg_admin_recibir_copia_reservas" class="sr-only peer">
