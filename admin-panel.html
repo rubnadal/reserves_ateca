@@ -111,13 +111,13 @@
         <div>
           <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
             <iconify-icon icon="mdi:clock-time-four-outline" class="text-blue-600"></iconify-icon>
-            Gestión de Tramos Horarios
+            <span data-i18n="admin.tramos.title">Gestión de Tramos Horarios</span>
           </h2>
-          <p class="text-sm text-gray-500 mt-1">Define los bloques de tiempo para reservas</p>
+          <p class="text-sm text-gray-500 mt-1" data-i18n="admin.tramos.subtitle">Define los bloques de tiempo para reservas</p>
         </div>
         <button onclick="agregarNuevoTramo()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl shadow-lg shadow-blue-600/20 transition-all transform active:scale-95 flex items-center justify-center gap-2 font-medium">
     <iconify-icon icon="mdi:plus" class="text-xl"></iconify-icon>
-    <span>Nuevo Tramo</span>
+    <span data-i18n="admin.tramos.newSlot">Nuevo Tramo</span>
   </button>
       </div>
 
@@ -127,11 +127,11 @@
             <thead class="bg-gray-50">
               <tr>
                 <th class="w-16 px-4 py-3 text-center"></th>
-                <th class="w-32 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-auto">Nombre</th>
-                <th class="w-32 px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Inicio</th>
-                <th class="w-32 px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Fin</th>
-                <th class="w-16 px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                <th class="w-32 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase" data-i18n="admin.tramos.thId">ID</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-auto" data-i18n="admin.tramos.thName">Nombre</th>
+                <th class="w-32 px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase" data-i18n="admin.tramos.thStart">Inicio</th>
+                <th class="w-32 px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase" data-i18n="admin.tramos.thEnd">Fin</th>
+                <th class="w-16 px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase" data-i18n="admin.tramos.thActions">Acciones</th>
               </tr>
             </thead>
             <tbody id="tablaTramosBody" class="bg-white divide-y divide-gray-200">
@@ -140,7 +140,7 @@
         </div>
       </div>
 
-      <p class="text-xs text-center text-gray-400 mt-4">
+      <p class="text-xs text-center text-gray-400 mt-4" data-i18n="admin.tramos.orderHint">
         Los tramos se mostrarán en el calendario en este orden exacto.
       </p>
 
