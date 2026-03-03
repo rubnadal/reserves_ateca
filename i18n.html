@@ -25,15 +25,15 @@
           requestRecurringTitle: 'Sol·licitar aquest recurs de forma recurrent'
         },
         incidencias: {
-          title: 'Gestio d\'incidencies',
+          title: 'Gestió d\'incidències',
           loadingCount: 'Carregant dades...',
-          new: 'Nova incidencia',
+          new: 'Nova incidència',
           back: 'Tornar',
           filters: {
             all: 'Totes',
             active: 'Actives',
             pending: 'Pendents',
-            inProgress: 'En proces',
+            inProgress: 'En procés',
             resolved: 'Resoltes'
           },
           searchPlaceholder: 'Cerca recurs, sala...',
@@ -45,7 +45,54 @@
             user: 'Usuari',
             date: 'Data'
           },
-          loadingList: 'Carregant incidencies...'
+          loadingList: 'Carregant incidències...',
+          modalReport: {
+            title: 'Reportar incidència',
+            resourceLabel: 'Recurs',
+            resourcePlaceholder: '-- Selecciona un recurs --',
+            resourceHelp: 'Selecciona el recurs sobre el qual vols reportar la incidència',
+            categoryLabel: 'Categoria',
+            categoryOptions: {
+              breakdown: '🔧 Avaria',
+              cleaning: '🧹 Neteja',
+              maintenance: '⚙️ Manteniment',
+              other: '📋 Altres'
+            },
+            priorityLabel: 'Prioritat',
+            priorityOptions: {
+              low: '🟢 Baixa - Pot esperar',
+              medium: '🟡 Mitjana - Atendre aviat',
+              high: '🟠 Alta - Urgent',
+              critical: '🔴 Crítica - Immediata'
+            },
+            descriptionLabel: 'Descripció del problema',
+            descriptionPlaceholder: 'Descriu què ha passat amb el recurs...',
+            descriptionHelp: 'Sigues específic per ajudar a resoldre el problema més ràpidament',
+            cancel: 'Cancel·lar',
+            send: 'Enviar informe'
+          },
+          modalConfirm: {
+            title: 'Confirmar acció',
+            cancel: 'Cancel·lar',
+            accept: 'Acceptar'
+          },
+          modalResolve: {
+            title: 'Resoldre incidència',
+            emailNotice: 'S\'enviarà un email a l\'usuari notificant la resolució.',
+            noteLabel: 'Nota de resolució',
+            optional: '(opcional)',
+            placeholder: 'Ex: S\'ha reparat l\'equip i està llest per utilitzar...',
+            cancel: 'Cancel·lar',
+            confirm: 'Marcar resolta'
+          },
+          modalNote: {
+            title: 'Nota administrativa',
+            label: 'Escriu una nota per a l\'usuari:',
+            placeholder: 'Descriu la solució o informació rellevant...',
+            helper: 'Aquesta nota serà visible per a l\'usuari que va reportar la incidència.',
+            cancel: 'Cancel·lar',
+            save: 'Guardar'
+          }
         },
         adminConfig: {
           title: 'Configuració del sistema',
@@ -229,7 +276,54 @@
             user: 'Usuario',
             date: 'Fecha'
           },
-          loadingList: 'Cargando incidencias...'
+          loadingList: 'Cargando incidencias...',
+          modalReport: {
+            title: 'Reportar incidencia',
+            resourceLabel: 'Recurso',
+            resourcePlaceholder: '-- Selecciona un recurso --',
+            resourceHelp: 'Selecciona el recurso sobre el que quieres reportar la incidencia',
+            categoryLabel: 'Categoría',
+            categoryOptions: {
+              breakdown: '🔧 Avería',
+              cleaning: '🧹 Limpieza',
+              maintenance: '⚙️ Mantenimiento',
+              other: '📋 Otro'
+            },
+            priorityLabel: 'Prioridad',
+            priorityOptions: {
+              low: '🟢 Baja - Puede esperar',
+              medium: '🟡 Media - Atender pronto',
+              high: '🟠 Alta - Urgente',
+              critical: '🔴 Crítica - Inmediata'
+            },
+            descriptionLabel: 'Descripción del problema',
+            descriptionPlaceholder: 'Describe qué ha pasado con el recurso...',
+            descriptionHelp: 'Sé específico para ayudar a resolver el problema más rápido',
+            cancel: 'Cancelar',
+            send: 'Enviar reporte'
+          },
+          modalConfirm: {
+            title: 'Confirmar acción',
+            cancel: 'Cancelar',
+            accept: 'Aceptar'
+          },
+          modalResolve: {
+            title: 'Resolver incidencia',
+            emailNotice: 'Se enviará un email al usuario notificando la resolución.',
+            noteLabel: 'Nota de resolución',
+            optional: '(opcional)',
+            placeholder: 'Ej: Se ha reparado el equipo y está listo para usar...',
+            cancel: 'Cancelar',
+            confirm: 'Marcar resuelta'
+          },
+          modalNote: {
+            title: 'Nota administrativa',
+            label: 'Escribe una nota para el usuario:',
+            placeholder: 'Describe la solución o información relevante...',
+            helper: 'Esta nota será visible para el usuario que reportó la incidencia.',
+            cancel: 'Cancelar',
+            save: 'Guardar'
+          }
         },
         adminConfig: {
           title: 'Configuración del Sistema',

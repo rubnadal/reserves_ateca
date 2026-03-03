@@ -10,10 +10,10 @@
   <!-- Iconify CDN -->
   <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
 
-  <!-- Tailwind CSS (el original es https://cdn.tailwindcss.com pero ahora mismo Andared lo bloquea y lo he desviado a una copia que he hecho en Github Pages-->
+  <!-- Tailwind CSS (el original es https://cdn.tailwindcss.com pero ahora mismo Andared lo bloquea i lo he desviado a una copia que he fet en Github Pages-->
   <script src="https://maestroseb.github.io/recursos/tailwind.js"></script>
 
-  <!-- Estilos Modulares y del Panel Admin -->
+  <!-- Estilos Modulares i del Panell Admin -->
   <?!= include('styles'); ?>
 
   <!-- i18n UI helpers (ES/CA) -->
@@ -31,12 +31,12 @@
   <!-- Contenedor Principal -->
   <div id="appContainer" class="max-w-7xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
 
-    <!-- Header con Tabs -->
+    <!-- Header amb Tabs -->
     <div class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm bg-white/95 backdrop-blur-sm">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center py-3">
 
-          <!-- Logo + Nombre (usa clases adaptativas) -->
+          <!-- Logo + Nom (usa classes adaptatives) -->
           <div id="headerBranding" class="flex items-center gap-4">
             <? if (logoUrl) { ?>
             <img id="headerLogo" src="<?= logoUrl ?>" alt="Logo" class="h-10 w-auto object-contain transition-all">
@@ -60,28 +60,28 @@
             </div>
           </div>
 
-          <!-- Botones (usa clases adaptativas) -->
+          <!-- Botons (usa classes adaptatives) -->
           <div class="flex items-center gap-2 sm:gap-3">
 
-            <!-- Botón Incidencias (visible para todos) -->
+            <!-- Botó Incidències (visible per a tots) -->
             <button id="btnIncidenciasGlobal"
               class="relative h-10 px-3 min-[480px]:px-4 flex items-center gap-2 bg-orange-50 text-orange-600 hover:bg-orange-100 border border-orange-200 hover:border-orange-300 rounded-lg transition-all duration-200 shadow-sm active:scale-95"
               onclick="abrirPanelIncidenciasGlobal()">
               <iconify-icon icon="mdi:alert-circle-outline" class="text-xl min-[480px]:text-lg"></iconify-icon>
-              <span class="text-sm font-bold whitespace-nowrap hidden min-[480px]:inline" data-i18n="header.incidencias">Incidencias</span>
+              <span class="text-sm font-bold whitespace-nowrap hidden min-[480px]:inline" data-i18n="header.incidencias">Incidències</span>
               <span id="badgeIncidenciasGlobal"
                 class="hidden absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold shadow-sm border-2 border-white">
               </span>
             </button>
 
-            <!-- Botón Mis Reservas -->
+            <!-- Botó Les Meves Reserves -->
             <button id="myReservationsButton"
           class="h-10 px-3 min-[480px]:px-4 flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 hover:text-blue-600 border border-gray-200 hover:border-blue-300 rounded-lg transition-all duration-200 shadow-sm active:scale-95">
           <iconify-icon icon="mdi:clipboard-list-outline" class="text-xl min-[480px]:text-lg"></iconify-icon>
-          <span class="text-sm font-bold whitespace-nowrap hidden min-[480px]:inline" data-i18n="header.myReservations">Mis Reservas</span>
+          <span class="text-sm font-bold whitespace-nowrap hidden min-[480px]:inline" data-i18n="header.myReservations">Les Meves Reserves</span>
         </button>
 
-            <!-- Botones Admin -->
+            <!-- Botons Admin -->
             <div id="adminButtonsContainer" class="hidden">
               <button id="btnIrAdmin"
             class="h-10 px-3 min-[480px]:px-4 flex items-center gap-2 bg-gray-900 hover:bg-black text-white border border-transparent rounded-lg transition-all duration-200 shadow-md active:scale-95 group">
@@ -92,7 +92,7 @@
               <button id="btnVolverApp"
             class="hidden h-10 px-3 min-[480px]:px-4 flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white border border-transparent rounded-lg transition-all duration-200 shadow-md active:scale-95">
             <iconify-icon icon="mdi:arrow-left" class="text-xl min-[480px]:text-lg"></iconify-icon>
-            <span class="text-sm font-bold whitespace-nowrap hidden min-[480px]:inline" data-i18n="header.back">Volver</span>
+            <span class="text-sm font-bold whitespace-nowrap hidden min-[480px]:inline" data-i18n="header.back">Tornar</span>
           </button>
             </div>
 
@@ -102,7 +102,7 @@
     </div>
 
     <!-- ========================================
-         TAB 1: RESERVAS (Código Original)
+         TAB 1: RESERVES (Codi Original)
          ======================================== -->
     <div id="tab-reservas" class="tab-content active bg-gray-50">
 
@@ -114,7 +114,7 @@
             <span class="bg-blue-100 text-blue-600 p-2 rounded-lg shadow-sm leading-none">
           <iconify-icon icon="mdi:door-open" class="text-2xl"></iconify-icon>
         </span>
-            <span data-i18n="sections.rooms">Salas y Espacios</span>
+            <span data-i18n="sections.rooms">Sales i Espais</span>
           </h2>
           <div id="salasContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           </div>
@@ -125,7 +125,7 @@
             <span class="bg-emerald-100 text-emerald-600 p-2 rounded-lg shadow-sm leading-none">
           <iconify-icon icon="mdi:laptop" class="text-2xl"></iconify-icon>
         </span>
-            <span data-i18n="sections.devices">Dispositivos y Carritos</span>
+            <span data-i18n="sections.devices">Dispositius i Carretons</span>
           </h2>
           <div id="dispositivosContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           </div>
@@ -159,7 +159,7 @@
                 <div id="recursoIconHeader" class="text-3xl text-gray-700 shrink-0 hidden sm:block leading-none"></div>
 
                 <div class="flex flex-col min-w-0 w-full">
-                  <span class="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-0.5 sm:mb-1" data-i18n="booking.reservingIn">Reservando en</span>
+                  <span class="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-0.5 sm:mb-1" data-i18n="booking.reservingIn">Reservant a</span>
                   <h2 id="tramosTitle"
                     class="text-lg sm:text-2xl font-bold text-gray-900 leading-tight truncate w-full" data-i18n="booking.loading">
                     Cargando...
@@ -172,12 +172,12 @@
 
               <div class="flex items-center gap-2 text-blue-600 mb-0.5">
                 <iconify-icon icon="mdi:calendar-month" class="text-lg sm:text-2xl"></iconify-icon>
-                <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest sm:hidden" data-i18n="booking.selectedDate">Fecha seleccionada</span>
-                <span class="text-[10px] font-bold uppercase tracking-widest hidden sm:inline" data-i18n="booking.selectedDate">Fecha seleccionada</span>
+                <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest sm:hidden" data-i18n="booking.selectedDate">Data seleccionada</span>
+                <span class="text-[10px] font-bold uppercase tracking-widest hidden sm:inline" data-i18n="booking.selectedDate">Data seleccionada</span>
               </div>
 
               <span id="selectedDateDisplay" class="font-bold text-blue-900 text-base sm:text-xl leading-none capitalize" data-i18n="booking.calculating">
-                Calculando...
+                Calculant...
               </span>
 
             </div>
@@ -191,7 +191,7 @@
               <button id="prevMonth" class="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-lg text-gray-500 transition-colors">
           <iconify-icon icon="mdi:chevron-left" class="text-2xl"></iconify-icon>
         </button>
-              <span id="monthYear" class="font-bold text-gray-800 capitalize text-base sm:text-lg" data-i18n="booking.monthYearFallback">Mes Año</span>
+              <span id="monthYear" class="font-bold text-gray-800 capitalize text-base sm:text-lg" data-i18n="booking.monthYearFallback">Mes Any</span>
               <button id="nextMonth" class="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-lg text-gray-500 transition-colors">
           <iconify-icon icon="mdi:chevron-right" class="text-2xl"></iconify-icon>
         </button>
@@ -203,7 +203,7 @@
 
               <div class="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100 shrink-0">
                 <iconify-icon icon="mdi:clock-outline" class="text-gray-400 text-lg"></iconify-icon>
-                <h3 class="font-bold text-gray-700 text-sm" data-i18n="booking.availableSlots">Horarios Disponibles</h3>
+                <h3 class="font-bold text-gray-700 text-sm" data-i18n="booking.availableSlots">Horaris Disponibles</h3>
               </div>
 
               <div id="tramosContainer"
@@ -212,13 +212,13 @@
 
             </div>
 
-            <!-- Botón Uso Recurrente (fuera del marco blanco) -->
+            <!-- Botó Ús Recurrente (fora del marc blanc) -->
             <button onclick="abrirModalSolicitudRecurrente()"
               class="w-full px-4 py-2.5 text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-xl transition-colors flex items-center justify-center gap-2"
               data-i18n-attr="title:booking.requestRecurringTitle"
-              title="Solicitar este recurso de forma recurrente">
+              title="Solicitar aquest recurs de forma recurrent">
               <iconify-icon icon="mdi:calendar-sync" class="text-lg"></iconify-icon>
-              <span data-i18n="booking.requestRecurring">Solicitar uso recurrente</span>
+              <span data-i18n="booking.requestRecurring">Solicitar ús recurrent</span>
             </button>
 
           </div>
@@ -228,13 +228,13 @@
     </div>
 
     <!-- ============================================
-     SECCIÓN: VER INCIDENCIAS
+     SECCIÓ: VEURE INCIDÈNCIES
      ============================================ -->
     <div id="seccionIncidencias" class="view-section hidden opacity-0 bg-gray-50">
 
       <div class="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-6">
 
-        <!-- Header con título y botón volver -->
+        <!-- Header amb títol i botó tornar -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
 
           <div>
@@ -242,10 +242,10 @@
               <div class="p-2 bg-orange-100 rounded-lg text-orange-600">
                 <iconify-icon icon="mdi:alert-circle-outline" class="text-2xl"></iconify-icon>
               </div>
-              <span data-i18n="incidencias.title">Gestión de Incidencias</span>
+              <span data-i18n="incidencias.title">Gestió d'Incidències</span>
             </h2>
             <p class="text-sm text-gray-500 mt-1 ml-1">
-              <span id="contadorIncidencias" data-i18n="incidencias.loadingCount">Cargando datos...</span>
+              <span id="contadorIncidencias" data-i18n="incidencias.loadingCount">Cargando dades...</span>
             </p>
           </div>
 
@@ -263,10 +263,10 @@
           </div>
         </div>
 
-        <!-- Filtros y buscador -->
+        <!-- Filtres i cercador -->
         <div class="flex flex-col lg:flex-row gap-4">
 
-          <!-- Tabs de filtros -->
+          <!-- Tabs de filtres -->
           <div class="flex-1 overflow-x-auto scrollbar-hide">
             <div
               class="bg-gray-100/80 backdrop-blur-md p-1.5 rounded-xl border border-gray-200/50 flex gap-1 min-w-max">
@@ -274,67 +274,67 @@
               <button onclick="cambiarFiltroIncidencia('todas', this)"
                   class="filter-tab active flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all bg-white text-gray-800 shadow-sm ring-1 ring-black/5 cursor-default">
             <iconify-icon icon="mdi:clipboard-list-outline"></iconify-icon>
-            <span data-i18n="incidencias.filters.all">Todas</span>
+            <span data-i18n="incidencias.filters.all">Totes</span>
           </button>
 
               <button onclick="cambiarFiltroIncidencia('activas', this)"
                   class="filter-tab flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-white/50 transition-all cursor-pointer">
             <iconify-icon icon="mdi:alert-circle-outline"></iconify-icon>
-            <span data-i18n="incidencias.filters.active">Activas</span>
+            <span data-i18n="incidencias.filters.active">Actives</span>
           </button>
 
               <button onclick="cambiarFiltroIncidencia('pendiente', this)"
                   class="filter-tab flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 transition-all cursor-pointer">
             <iconify-icon icon="mdi:clock-alert-outline"></iconify-icon>
-            <span data-i18n="incidencias.filters.pending">Pendientes</span>
+            <span data-i18n="incidencias.filters.pending">Pendents</span>
           </button>
 
               <button onclick="cambiarFiltroIncidencia('en-proceso', this)"
                   class="filter-tab flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-yellow-600 hover:bg-yellow-50 transition-all cursor-pointer">
             <iconify-icon icon="mdi:progress-wrench"></iconify-icon>
-            <span data-i18n="incidencias.filters.inProgress">En Proceso</span>
+            <span data-i18n="incidencias.filters.inProgress">En Procés</span>
           </button>
 
               <button onclick="cambiarFiltroIncidencia('resuelta', this)"
                   class="filter-tab flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-green-600 hover:bg-green-50 transition-all cursor-pointer">
             <iconify-icon icon="mdi:check-circle-outline"></iconify-icon>
-            <span data-i18n="incidencias.filters.resolved">Resueltas</span>
+            <span data-i18n="incidencias.filters.resolved">Resoltes</span>
           </button>
 
             </div>
           </div>
 
-          <!-- Buscador -->
+          <!-- Cercador -->
           <div class="relative w-full lg:w-72 shrink-0">
             <iconify-icon icon="mdi:magnify" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">
             </iconify-icon>
             <input type="text"
                id="buscadorIncidencias"
-               placeholder="Buscar recurso, sala..."
+               placeholder="Buscar recurs, sala..."
                data-i18n-attr="placeholder:incidencias.searchPlaceholder"
                oninput="filtrarIncidencias()"
                class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all shadow-sm placeholder:text-gray-400">
           </div>
         </div>
 
-        <!-- Lista de incidencias -->
+        <!-- Llista d'incidències -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
 
-          <!-- Header de tabla (solo desktop) -->
+          <!-- Header de taula (només desktop) -->
           <div class="hidden sm:grid grid-cols-12 gap-4 px-6 py-3 bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
             <div class="col-span-1" data-i18n="incidencias.table.id">ID</div>
-            <div class="col-span-3" data-i18n="incidencias.table.resource">Recurso</div>
-            <div class="col-span-2" data-i18n="incidencias.table.status">Estado</div>
-            <div class="col-span-2" data-i18n="incidencias.table.priority">Prioridad</div>
-            <div class="col-span-2" data-i18n="incidencias.table.user">Usuario</div>
-            <div class="col-span-2 text-right" data-i18n="incidencias.table.date">Fecha</div>
+            <div class="col-span-3" data-i18n="incidencias.table.resource">Recurs</div>
+            <div class="col-span-2" data-i18n="incidencias.table.status">Estat</div>
+            <div class="col-span-2" data-i18n="incidencias.table.priority">Prioritat</div>
+            <div class="col-span-2" data-i18n="incidencias.table.user">Usuari</div>
+            <div class="col-span-2 text-right" data-i18n="incidencias.table.date">Data</div>
           </div>
 
-          <!-- Contenido dinámico -->
+          <!-- Contingut dinàmic -->
           <div id="listaIncidencias" class="divide-y divide-gray-100">
             <div class="flex flex-col items-center justify-center py-20 text-gray-400">
               <iconify-icon icon="mdi:loading" class="text-4xl animate-spin mb-3 text-orange-500"></iconify-icon>
-              <p class="text-sm font-medium" data-i18n="incidencias.loadingList">Cargando incidencias...</p>
+              <p class="text-sm font-medium" data-i18n="incidencias.loadingList">Cargando incidències...</p>
             </div>
           </div>
 
@@ -343,12 +343,12 @@
       </div>
     </div>
 
-    <!-- Tab: Panel Admin (MODULAR) -->
+    <!-- Tab: Panell Admin (MODULAR) -->
     <?!= include('admin-panel'); ?>
 
   </div>
 
-  <!-- MODAL: Confirmación de Reserva -->
+  <!-- MODAL: Confirmació de Reserva -->
   <dialog id="confirmationModal"
     class="p-0 border-none w-[calc(100%-2rem)] max-w-lg shadow-2xl rounded-2xl bg-white backdrop:bg-gray-900/40 backdrop:backdrop-blur-sm open:animate-in open:fade-in open:zoom-in-95 open:duration-200 max-h-[90vh] overflow-y-auto overscroll-contain open:flex open:flex-col">
 
@@ -364,12 +364,12 @@
         </div>
 
         <div class="flex-1 min-w-0">
-          <h4 id="modalResourceName" class="font-bold text-gray-900 truncate text-lg leading-tight mb-1">Nombre Recurso
+          <h4 id="modalResourceName" class="font-bold text-gray-900 truncate text-lg leading-tight mb-1">Nom Recurs
           </h4>
           <div class="flex flex-col gap-1 text-sm text-gray-500">
             <div class="flex items-center gap-1.5">
               <iconify-icon icon="mdi:calendar-today" class="text-gray-400"></iconify-icon>
-              <span id="modalDateString" class="font-medium capitalize">Fecha</span>
+              <span id="modalDateString" class="font-medium capitalize">Data</span>
             </div>
             <div class="flex items-center gap-1.5">
               <iconify-icon icon="mdi:clock-time-four-outline" class="text-gray-400"></iconify-icon>
@@ -384,19 +384,19 @@
 
       <div>
         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-              ¿Para qué grupo es? <span class="text-red-500">*</span>
+              ¿Per a quin grup és? <span class="text-red-500">*</span>
             </label>
         <div id="cursoSelectorContainer">
         </div>
         <p id="cursoError"
           class="hidden flex items-center gap-1 text-xs text-red-500 mt-2 font-medium bg-red-50 p-2 rounded-lg">
-          <iconify-icon icon="mdi:alert-circle"></iconify-icon> Debes seleccionar un curso
+          <iconify-icon icon="mdi:alert-circle"></iconify-icon> Has de seleccionar un curs
         </p>
       </div>
 
       <div id="cantidadContainer" class="hidden animate-fade-in">
         <label class="flex justify-between items-center text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-              <span>Cantidad necesaria</span>
+              <span>Quantitat necessària</span>
               <span class="text-xs font-normal bg-green-50 text-green-700 px-2 py-0.5 rounded-full border border-green-100">
                   Disponibles: <b id="maxCantidad">1</b>
               </span>
@@ -425,14 +425,14 @@
 
           <button type="button" id="selectAllBtn"
           class="px-4 py-2.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-xl hover:bg-blue-100 text-sm font-bold transition-colors shadow-sm flex-1 whitespace-nowrap">
-          Coger todos
+          Agafar tots
           </button>
         </div>
       </div>
 
       <div>
         <label for="notasInput" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-              Notas adicionales (Opcional)
+              Notes addicionals (Opcional)
             </label>
         <div class="relative">
           <div class="absolute top-3 left-3 text-gray-400">
@@ -440,26 +440,26 @@
           </div>
           <textarea id="notasInput" rows="1"
                           class="block w-full pl-10 pr-3 py-2.5 rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-gray-50 focus:bg-white transition-colors resize-none"
-                          placeholder="Ej: Necesito un proyector..."></textarea>
+                          placeholder="Ej: Necessito un projector..."></textarea>
         </div>
       </div>
     </div>
 
     <div class="bg-gray-50 px-6 py-4 flex items-center justify-between gap-3 border-t border-gray-100 rounded-b-2xl">
 
-      <!-- Izquierda: Botón Reportar (icono solo en móvil, con texto en desktop) -->
+      <!-- Esquerra: Botó Reportar (icona només en mòbil, amb text en escriptori) -->
       <button onclick="abrirModalReportarIncidenciaDesdeReserva()"
           class="px-3 sm:px-4 py-2.5 text-orange-600 font-semibold hover:bg-orange-50 rounded-xl transition-colors text-sm flex items-center gap-2 border border-orange-200"
-          title="Reportar problema con este recurso">
+          title="Reportar problema amb aquest recurs">
     <iconify-icon icon="mdi:alert-circle-outline" class="text-lg"></iconify-icon>
     <span class="hidden sm:inline">Reportar</span>
   </button>
 
-      <!-- Derecha: Botones Cancelar y Confirmar -->
+      <!-- Dreta: Botons Cancel·lar i Confirmar -->
       <div class="flex gap-3">
         <button id="cancelModalButton"
             class="px-5 py-2.5 text-gray-600 font-semibold hover:bg-gray-200 rounded-xl transition-colors text-sm">
-      Cancelar
+      Cancel·lar
     </button>
         <button id="confirmModalButton"
             class="px-6 py-2.5 bg-gray-900 text-white font-bold rounded-xl hover:bg-black shadow-lg shadow-gray-900/20 active:scale-95 transition-all text-sm flex items-center gap-2">
@@ -482,7 +482,7 @@
           <div class="bg-blue-50 p-2 rounded-lg text-blue-600 leading-none">
             <iconify-icon icon="mdi:calendar-check-outline" class="text-xl"></iconify-icon>
           </div>
-          <h3 class="text-xl font-bold text-gray-800">Mis Reservas</h3>
+          <h3 class="text-xl font-bold text-gray-800">Les Meves Reserves</h3>
         </div>
 
         <button id="closeMyReservationsButton"
@@ -495,21 +495,21 @@
 
         <div id="myReservationsSpinner" class="hidden flex flex-col items-center justify-center py-12">
           <iconify-icon icon="mdi:loading" class="text-4xl text-blue-500 animate-spin mb-3"></iconify-icon>
-          <p class="text-sm font-medium text-gray-400">Consultando agenda...</p>
+          <p class="text-sm font-medium text-gray-400">Consultant agenda...</p>
         </div>
 
         <div id="myReservationsError"
           class="hidden p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl text-sm font-medium flex items-center gap-2 mb-4">
           <iconify-icon icon="mdi:alert-circle" class="text-lg shrink-0"></iconify-icon>
-          <span id="myReservationsErrorText">Error desconocido</span>
+          <span id="myReservationsErrorText">Error desconegut</span>
         </div>
 
         <div id="myReservationsEmpty" class="hidden flex flex-col items-center justify-center py-10 text-center">
           <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
             <iconify-icon icon="mdi:calendar-blank-outline" class="text-3xl text-gray-400"></iconify-icon>
           </div>
-          <h4 class="text-gray-900 font-bold mb-1">Sin reservas activas</h4>
-          <p class="text-gray-500 text-sm max-w-[200px]">No tienes reservas futuras programadas en este momento.</p>
+          <h4 class="text-gray-900 font-bold mb-1">Sense reserves actives</h4>
+          <p class="text-gray-500 text-sm max-w-[200px]">No tens reserves futures programades en aquest moment.</p>
         </div>
 
         <div id="myReservationsList" class="flex flex-col gap-3">
@@ -519,13 +519,13 @@
       <div class="px-5 py-3 bg-white border-t border-gray-100 text-center">
         <p class="text-xs text-gray-400 flex items-center justify-center gap-1">
           <iconify-icon icon="mdi:history" class="text-gray-300"></iconify-icon>
-          Solo se muestran reservas futuras o del día actual.
+          Només es mostren reserves futures o del dia actual.
         </p>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: Confirmación de Cancelación -->
+  <!-- MODAL: Confirmació de Cancel·lació -->
   <div id="modalConfirmacionCancelacion"
     class="fixed inset-0 bg-gray-900/60 z-[200] hidden flex items-center justify-center backdrop-blur-sm transition-all duration-300">
     <div
@@ -537,20 +537,20 @@
           <iconify-icon icon="mdi:alert-circle-outline" class="text-red-500 text-3xl"></iconify-icon>
         </div>
 
-        <h3 class="text-xl font-bold text-gray-900 mb-2">¿Cancelar reserva?</h3>
-        <p class="text-sm text-gray-500 mb-6 leading-relaxed">
-          Esta acción no se puede deshacer. La reserva quedará disponible para otros usuarios.
+        <h3 class="text-xl font-bold text-gray-900 mb-2" data-i18n="modalCancel.title">¿Cancel·lar reserva?</h3>
+        <p class="text-sm text-gray-500 mb-6 leading-relaxed" data-i18n="modalCancel.message">
+          Aquesta acció no es pot desfer. La reserva quedarà disponible per a altres usuaris.
         </p>
 
         <div class="flex gap-3 justify-center">
           <button onclick="cerrarConfirmacionCancelacion()"
-                class="flex-1 px-4 py-2.5 bg-white border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-semibold text-sm transition-colors active:scale-95">
-          No, volver
+                class="flex-1 px-4 py-2.5 bg-white border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-semibold text-sm transition-colors active:scale-95" data-i18n="modalCancel.no">
+          No, tornar
         </button>
           <button id="btnConfirmarCancelacion"
                 onclick="confirmarCancelacionReserva()"
-                class="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 font-semibold text-sm shadow-lg shadow-red-600/20 transition-all transform hover:scale-[1.02] active:scale-95">
-          Sí, cancelar
+                class="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 font-semibold text-sm shadow-lg shadow-red-600/20 transition-all transform hover:scale-[1.02] active:scale-95" data-i18n="modalCancel.yes">
+          Sí, cancel·lar
         </button>
         </div>
       </div>
@@ -558,7 +558,7 @@
     </div>
   </div>
 
-  <!-- MODAL: Confirmación de Cancelación de Grupo Recurrente -->
+  <!-- MODAL: Confirmació de Cancel·lació de Grup Recurrent -->
   <div id="modalConfirmacionCancelacionGrupo"
     class="fixed inset-0 bg-gray-900/60 z-[200] hidden flex items-center justify-center backdrop-blur-sm transition-all duration-300">
     <div
@@ -570,19 +570,19 @@
           <iconify-icon icon="mdi:calendar-remove" class="text-purple-600 text-3xl"></iconify-icon>
         </div>
 
-        <h3 class="text-xl font-bold text-gray-900 mb-2">¿Cancelar todas las reservas?</h3>
-        <p class="text-sm text-gray-500 mb-6 leading-relaxed">
-          Esto cancelará <strong>TODAS</strong> las reservas futuras de este grupo recurrente. Esta acción no se puede deshacer.
+        <h3 class="text-xl font-bold text-gray-900 mb-2" data-i18n="modalCancelGroup.title">¿Cancel·lar totes les reserves?</h3>
+        <p class="text-sm text-gray-500 mb-6 leading-relaxed" data-i18n="modalCancelGroup.message">
+          Això cancel·larà <strong>TOTES</strong> les reserves futures d'aquest grup recurrent. Aquesta acció no es pot desfer.
         </p>
 
         <div class="flex gap-3 justify-center">
           <button onclick="cerrarConfirmacionCancelacionGrupo()"
-                class="flex-1 px-4 py-2.5 bg-white border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-semibold text-sm transition-colors active:scale-95">
-          No, mantener
+                class="flex-1 px-4 py-2.5 bg-white border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-semibold text-sm transition-colors active:scale-95" data-i18n="modalCancelGroup.no">
+          No, mantenir
         </button>
           <button onclick="confirmarCancelacionGrupo()"
-                class="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 font-semibold text-sm shadow-lg shadow-red-600/20 transition-all transform hover:scale-[1.02] active:scale-95">
-          Sí, cancelar todas
+                class="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 font-semibold text-sm shadow-lg shadow-red-600/20 transition-all transform hover:scale-[1.02] active:scale-95" data-i18n="modalCancelGroup.yes">
+          Sí, cancel·lar totes
         </button>
         </div>
       </div>
@@ -610,7 +610,7 @@
               <iconify-icon icon="mdi:cube-outline" class="text-2xl"></iconify-icon>
             </div>
             <div>
-              <h3 class="text-lg font-bold text-gray-800">Reportar Incidencia</h3>
+              <h3 class="text-lg font-bold text-gray-800" data-i18n="incidencias.modalReport.title">Reportar Incidencia</h3>
               <p id="modalIncidenciaNombreRecurso" class="text-sm text-gray-500"></p>
             </div>
           </div>
@@ -627,28 +627,28 @@
           <div id="selectorRecursoIncidencia" class="hidden">
             <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
               <iconify-icon icon="mdi:cube-outline"></iconify-icon>
-              Recurso *
+              <span data-i18n="incidencias.modalReport.resourceLabel">Recurso</span> *
             </label>
             <select id="incidenciaRecursoSelect"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
                 onchange="actualizarHeaderModalIncidencia(this)">
-              <option value="">-- Selecciona un recurso --</option>
+              <option value="" data-i18n="incidencias.modalReport.resourcePlaceholder">-- Selecciona un recurs --</option>
             </select>
-            <p class="text-xs text-gray-400 mt-1">Selecciona el recurso sobre el que quieres reportar la incidencia</p>
+            <p class="text-xs text-gray-400 mt-1" data-i18n="incidencias.modalReport.resourceHelp">Selecciona el recurso sobre el que quieres reportar la incidencia</p>
           </div>
 
           <!-- Categoría -->
           <div>
             <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
             <iconify-icon icon="mdi:tag-outline"></iconify-icon>
-            Categoría
+            <span data-i18n="incidencias.modalReport.categoryLabel">Categoría</span>
           </label>
             <select id="incidenciaCategoria"
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none">
-            <option value="Avería">🔧 Avería</option>
-            <option value="Limpieza">🧹 Limpieza</option>
-            <option value="Mantenimiento">⚙️ Mantenimiento</option>
-            <option value="Otro">📋 Otro</option>
+            <option value="Avería" data-i18n="incidencias.modalReport.categoryOptions.breakdown">🔧 Avería</option>
+            <option value="Limpieza" data-i18n="incidencias.modalReport.categoryOptions.cleaning">🧹 Limpieza</option>
+            <option value="Mantenimiento" data-i18n="incidencias.modalReport.categoryOptions.maintenance">⚙️ Mantenimiento</option>
+            <option value="Otro" data-i18n="incidencias.modalReport.categoryOptions.other">📋 Otro</option>
           </select>
           </div>
 
@@ -656,14 +656,14 @@
           <div>
             <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
             <iconify-icon icon="mdi:flag-outline"></iconify-icon>
-            Prioridad
+            <span data-i18n="incidencias.modalReport.priorityLabel">Prioridad</span>
           </label>
             <select id="incidenciaPrioridad"
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none">
-            <option value="Baja">🟢 Baja - Puede esperar</option>
-            <option value="Media" selected>🟡 Media - Atender pronto</option>
-            <option value="Alta">🟠 Alta - Urgente</option>
-            <option value="Crítica">🔴 Crítica - Inmediato</option>
+            <option value="Baja" data-i18n="incidencias.modalReport.priorityOptions.low">🟢 Baixa - Pot esperar</option>
+            <option value="Media" selected data-i18n="incidencias.modalReport.priorityOptions.medium">🟡 Mitjana - Atendre aviat</option>
+            <option value="Alta" data-i18n="incidencias.modalReport.priorityOptions.high">🟠 Alta - Urgent</option>
+            <option value="Crítica" data-i18n="incidencias.modalReport.priorityOptions.critical">🔴 Crítica - Immediata</option>
           </select>
           </div>
 
@@ -671,11 +671,12 @@
           <div>
             <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
             <iconify-icon icon="mdi:message-text-outline"></iconify-icon>
-            Descripción del problema *
+            <span data-i18n="incidencias.modalReport.descriptionLabel">Descripció del problema</span> *
           </label>
             <textarea id="incidenciaDescripcion"
                     rows="4"
-                    placeholder="Describe qué ha pasado con el recurso..."
+                    placeholder="Describe què ha passat amb el recurs..."
+                    data-i18n-attr="placeholder:incidencias.modalReport.descriptionPlaceholder"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none resize-none"></textarea>
             <!-- ✅ Mensaje de error inline -->
             <div id="incidenciaError"
@@ -692,7 +693,7 @@
                 </button>
               </div>
             </div>
-            <p class="text-xs text-gray-400 mt-1">Sé específico para ayudar a resolver el problema más rápido</p>
+            <p class="text-xs text-gray-400 mt-1" data-i18n="incidencias.modalReport.descriptionHelp">Sé específic per ajudar a resoldre el problema més ràpidament</p>
           </div>
 
         </div>
@@ -700,13 +701,13 @@
         <!-- Footer -->
         <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex gap-3 rounded-b-xl">
           <button onclick="cerrarModalReportarIncidencia()"
-                class="flex-1 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
-          Cancelar
+                class="flex-1 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" data-i18n="incidencias.modalReport.cancel">
+          Cancel·lar
         </button>
           <button id="btnEnviarIncidencia" onclick="enviarReporteIncidencia()"
                 class="flex-[2] px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium flex items-center justify-center gap-2">
           <iconify-icon icon="mdi:send"></iconify-icon>
-          <span>Enviar Reporte</span>
+          <span data-i18n="incidencias.modalReport.send">Enviar Reporte</span>
         </button>
         </div>
 
@@ -715,166 +716,7 @@
   </div>
 
   <!-- ============================================
-     MODAL: SOLICITAR RESERVA RECURRENTE
-     ============================================ -->
-  <div id="modalSolicitudRecurrente" class="fixed inset-0 z-[10000] hidden">
-    <!-- Overlay -->
-    <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm" onclick="cerrarModalSolicitudRecurrente()"></div>
-
-    <!-- Panel -->
-    <div class="fixed inset-0 z-10 flex items-center justify-center p-4">
-      <div onclick="event.stopPropagation()"
-        class="relative bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto overflow-x-hidden">
-
-        <!-- Header -->
-        <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-xl z-10">
-          <div class="flex items-center gap-3">
-            <div class="p-2 rounded-lg bg-blue-50 text-blue-600 leading-none">
-              <iconify-icon icon="mdi:calendar-sync" class="text-2xl"></iconify-icon>
-            </div>
-            <div>
-              <h3 class="text-lg font-bold text-gray-800">Solicitar Uso Recurrente</h3>
-              <p id="modalRecurrenteNombreRecurso" class="text-sm text-gray-500"></p>
-            </div>
-          </div>
-          <button onclick="cerrarModalSolicitudRecurrente()"
-            class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <iconify-icon icon="mdi:close" class="text-xl text-gray-400"></iconify-icon>
-          </button>
-        </div>
-
-        <!-- Body -->
-        <div class="p-6 space-y-5">
-
-          <!-- Info -->
-          <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 text-sm text-blue-800">
-            <div class="flex items-start gap-2">
-              <iconify-icon icon="mdi:information" class="text-lg mt-0.5 shrink-0"></iconify-icon>
-              <p>Haz clic en las celdas del calendario para seleccionar los tramos que necesitas cada día. Tu solicitud será revisada por el administrador.</p>
-            </div>
-          </div>
-
-          <!-- Calendario semanal interactivo -->
-          <div>
-            <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
-              <iconify-icon icon="mdi:calendar-week"></iconify-icon>
-              Selecciona los tramos *
-            </label>
-            <div class="relative bg-white rounded-lg border border-gray-200 overflow-hidden">
-              <!-- Spinner overlay mientras carga conflictos -->
-              <div id="spinnerConflictosUsuario" class="absolute inset-0 bg-white/80 z-10 flex items-center justify-center hidden">
-                <div class="flex flex-col items-center gap-2">
-                  <iconify-icon icon="mdi:loading" class="text-2xl text-blue-500 animate-spin"></iconify-icon>
-                  <span class="text-xs text-gray-500">Cargando disponibilidad...</span>
-                </div>
-              </div>
-              <div class="overflow-x-auto">
-                <table class="min-w-full">
-                  <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-medium">
-                    <tr>
-                      <th class="px-3 py-2 text-left w-28 border-r border-gray-200">Tramo</th>
-                      <th class="px-2 py-2 text-center min-w-[70px]">Lun</th>
-                      <th class="px-2 py-2 text-center min-w-[70px]">Mar</th>
-                      <th class="px-2 py-2 text-center min-w-[70px]">Mié</th>
-                      <th class="px-2 py-2 text-center min-w-[70px]">Jue</th>
-                      <th class="px-2 py-2 text-center min-w-[70px]">Vie</th>
-                    </tr>
-                  </thead>
-                  <tbody id="cuerpoMatrizRecurrente" class="bg-white divide-y divide-gray-100">
-                    <!-- Se genera dinámicamente -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <!-- Contador de selección -->
-            <div id="contadorSeleccionRecurrente" class="mt-2 text-center text-sm text-gray-500">
-              0 tramos seleccionados
-            </div>
-
-            <!-- Leyenda de colores -->
-            <div class="mt-3 flex flex-wrap justify-center gap-3 text-[10px] text-gray-500">
-              <span class="flex items-center gap-1">
-                <span class="w-3 h-3 rounded bg-blue-500 border border-blue-300"></span>
-                Seleccionado
-              </span>
-              <span class="flex items-center gap-1">
-                <span class="w-3 h-3 rounded bg-red-100 border border-red-200"></span>
-                Ocupado
-              </span>
-              <span class="flex items-center gap-1">
-                <span class="w-3 h-3 rounded bg-gray-200 border border-gray-300"></span>
-                No disponible
-              </span>
-            </div>
-          </div>
-
-          <!-- Hasta cuándo -->
-          <div>
-            <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <iconify-icon icon="mdi:calendar-end"></iconify-icon>
-              Hasta cuándo *
-            </label>
-            <div class="flex flex-col gap-3">
-              <div class="flex gap-3 flex-wrap">
-                <label class="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-all">
-                  <input type="radio" name="tipoFechaFin" value="finCurso" checked class="accent-blue-600">
-                  <span class="text-sm font-medium">Fin de curso</span>
-                </label>
-                <label class="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-all">
-                  <input type="radio" name="tipoFechaFin" value="fecha" class="accent-blue-600">
-                  <span class="text-sm font-medium">Fecha concreta</span>
-                </label>
-              </div>
-              <div id="fechaFinContainer" class="hidden">
-                <input type="date" id="recurrenteFechaFin"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm">
-              </div>
-            </div>
-          </div>
-
-          <!-- Motivo -->
-          <div>
-            <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <iconify-icon icon="mdi:message-text-outline"></iconify-icon>
-              Motivo de la solicitud *
-            </label>
-            <textarea id="recurrenteMotivo"
-              rows="3"
-              placeholder="Explica brevemente por qué necesitas este recurso de forma recurrente..."
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"></textarea>
-            <p class="text-xs text-gray-400 mt-1">Mínimo 10 caracteres. Esto ayudará al administrador a evaluar tu solicitud.</p>
-          </div>
-
-          <!-- Mensaje de error -->
-          <div id="recurrenteError" class="hidden p-3 bg-red-50 border border-red-200 rounded-lg">
-            <div class="flex items-start gap-2">
-              <iconify-icon icon="mdi:alert-circle" class="text-red-600 text-lg mt-0.5 shrink-0"></iconify-icon>
-              <p id="recurrenteErrorTexto" class="text-sm text-red-800 font-medium"></p>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Footer -->
-        <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex gap-3 rounded-b-xl">
-          <button onclick="cerrarModalSolicitudRecurrente()"
-            class="flex-1 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
-            Cancelar
-          </button>
-          <button id="btnEnviarSolicitudRecurrente" onclick="enviarSolicitudRecurrente()"
-            class="flex-[2] px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2">
-            <iconify-icon icon="mdi:send"></iconify-icon>
-            <span>Enviar Solicitud</span>
-          </button>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-
-  <!-- ============================================
-     MODAL: CONFIRMACIÓN GENÉRICA
+     MODAL: CONFIRMACIÓ GENÈRICA
      ============================================ -->
   <div id="modalConfirmacionIncidencia"
     class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-900/40 backdrop-blur-sm p-4 transition-opacity duration-300">
@@ -888,7 +730,7 @@
           <div id="modalConfirmIconContainer" class="p-2.5 rounded-xl leading-none">
             <iconify-icon id="modalConfirmIcon" icon="mdi:help-circle" class="text-2xl"></iconify-icon>
           </div>
-          <h3 id="modalConfirmTitulo" class="text-lg font-bold text-gray-800">Confirmar acción</h3>
+          <h3 id="modalConfirmTitulo" class="text-lg font-bold text-gray-800" data-i18n="incidencias.modalConfirm.title">Confirmar acción</h3>
         </div>
         <button onclick="cerrarModalConfirmacion()"
                 class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-50 text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
@@ -915,12 +757,12 @@
       <!-- Footer -->
       <div class="flex gap-3 p-5 border-t border-gray-100 bg-white">
         <button onclick="cerrarModalConfirmacion()"
-                class="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors">
-          Cancelar
+                class="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors" data-i18n="incidencias.modalConfirm.cancel">
+          Cancel·lar
         </button>
         <button id="modalConfirmBtnAceptar" onclick="ejecutarAccionConfirmacion()"
-                class="flex-1 px-4 py-2.5 font-semibold rounded-xl transition-colors">
-          Aceptar
+                class="flex-1 px-4 py-2.5 font-semibold rounded-xl transition-colors" data-i18n="incidencias.modalConfirm.accept">
+          Acceptar
         </button>
       </div>
     </div>
@@ -943,7 +785,7 @@
             <iconify-icon icon="mdi:check-circle-outline" class="text-2xl"></iconify-icon>
           </div>
           <div>
-            <h3 class="text-lg font-bold text-gray-800">Resolver Incidencia</h3>
+            <h3 class="text-lg font-bold text-gray-800" data-i18n="incidencias.modalResolve.title">Resolver Incidencia</h3>
             <p id="modalResolverSubtitulo" class="text-xs text-gray-500"></p>
           </div>
         </div>
@@ -956,31 +798,32 @@
       <!-- Contenido -->
       <div class="p-5 bg-gray-50/50">
         <div class="p-3 bg-green-50 border border-green-100 rounded-xl mb-4">
-          <p class="text-sm text-green-700 flex items-center gap-2">
+          <p class="text-sm text-green-700 flex items-center gap-2" data-i18n="incidencias.modalResolve.emailNotice">
             <iconify-icon icon="mdi:email-fast-outline" class="text-lg"></iconify-icon>
             Se enviará un email al usuario notificando la resolución.
           </p>
         </div>
 
         <label class="block text-sm font-medium text-gray-700 mb-2">
-          Nota de resolución <span class="text-gray-400 font-normal">(opcional)</span>:
+          <span data-i18n="incidencias.modalResolve.noteLabel">Nota de resolución</span> <span class="text-gray-400 font-normal" data-i18n="incidencias.modalResolve.optional">(opcional)</span>:
         </label>
         <textarea id="modalResolverTexto"
                   rows="3"
                   placeholder="Ej: Se ha reparado el equipo y está listo para usar..."
+                  data-i18n-attr="placeholder:incidencias.modalResolve.placeholder"
                   class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none resize-none transition-all"></textarea>
       </div>
 
       <!-- Footer -->
       <div class="flex gap-3 p-5 border-t border-gray-100 bg-white">
         <button onclick="cerrarModalResolver()"
-                class="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors">
-          Cancelar
+                class="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors" data-i18n="incidencias.modalResolve.cancel">
+          Cancel·lar
         </button>
         <button id="modalResolverBtnConfirmar" onclick="confirmarResolucion()"
                 class="flex-1 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
           <iconify-icon icon="mdi:check-all"></iconify-icon>
-          Marcar Resuelta
+          <span data-i18n="incidencias.modalResolve.confirm">Marcar Resuelta</span>
         </button>
       </div>
     </div>
@@ -1003,7 +846,7 @@
             <iconify-icon icon="mdi:comment-edit-outline" class="text-2xl"></iconify-icon>
           </div>
           <div>
-            <h3 class="text-lg font-bold text-gray-800">Nota Administrativa</h3>
+            <h3 class="text-lg font-bold text-gray-800" data-i18n="incidencias.modalNote.title">Nota Administrativa</h3>
             <p id="modalNotaIncidenciaSubtitulo" class="text-xs text-gray-500"></p>
           </div>
         </div>
@@ -1015,29 +858,30 @@
 
       <!-- Contenido -->
       <div class="p-5 bg-gray-50/50">
-        <label class="block text-sm font-medium text-gray-700 mb-2">
+        <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="incidencias.modalNote.label">
           Escribe una nota para el usuario:
         </label>
         <textarea id="modalNotaIncidenciaTexto"
                   rows="4"
                   placeholder="Describe la solución o información relevante..."
+                  data-i18n-attr="placeholder:incidencias.modalNote.placeholder"
                   class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none resize-none transition-all"></textarea>
         <p class="mt-2 text-xs text-gray-400 flex items-center gap-1">
           <iconify-icon icon="mdi:information-outline"></iconify-icon>
-          Esta nota será visible para el usuario que reportó la incidencia.
+          <span data-i18n="incidencias.modalNote.helper">Esta nota será visible para el usuario que reportó la incidencia.</span>
         </p>
       </div>
 
       <!-- Footer -->
       <div class="flex gap-3 p-5 border-t border-gray-100 bg-white">
         <button onclick="cerrarModalNotaIncidencia()"
-                class="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors">
-          Cancelar
+                class="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors" data-i18n="incidencias.modalNote.cancel">
+          Cancel·lar
         </button>
         <button id="modalNotaIncidenciaBtnGuardar" onclick="guardarNotaIncidenciaModal()"
                 class="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
           <iconify-icon icon="mdi:check"></iconify-icon>
-          Guardar
+          <span data-i18n="incidencias.modalNote.save">Guardar</span>
         </button>
       </div>
     </div>
@@ -1047,61 +891,61 @@
   <!-- JavaScript -->
   <script>
     /* ==========================================
-     SCRIPT PRINCIPAL UNIFICADO (INDEX)
+     SCRIPT PRINCIPAL UNIFICAT (INDEX)
      ========================================== */
 
-  // 1. VARIABLES GLOBALES (Inyectadas por Google Apps Script)
+  // 1. VARIABLES GLOBALES (Inyectades per Google Apps Script)
   window.USER_EMAIL = <?= userEmailForJs ?>;
   window.USER_NAME = <?= userNameForJs ?>;
   window.IS_ADMIN = <?= isAdminForJs ?> === 'true';
 
-  // 2. FUNCIÓN PARA ABRIR LA INTERFAZ ADMIN (La hacemos global para poder llamarla desde fuera si hace falta)
+  // 2. FUNCIÓ PER OBERT LA INTERFAÇ ADMIN (La fem global per poder cridar-la des de fora si cal)
   window.openAdminPanelUI = function() {
       const adminPanel = document.getElementById('tab-admin');
       const btnIrAdmin = document.getElementById('btnIrAdmin');
       const btnVolver = document.getElementById('btnVolverApp');
 
-      // Mostrar Panel
+      // Mostrar Panell
       if (adminPanel) {
          adminPanel.classList.remove('hidden');
          adminPanel.classList.add('active'); 
       }
 
-      // Cambiar botones Header
+      // Canviar botons Header
       if(btnIrAdmin) btnIrAdmin.classList.add('hidden');
       if(btnVolver) btnVolver.classList.remove('hidden');
 
-      // Abrir pestaña Reservas por defecto si no hay ninguna activa
+      // Obrir pestanya Reserves per defecte si no hi ha cap activa
       const tabReservasBtn = document.querySelector('.admin-tab-btn[data-tab="reservas"]');
       if(tabReservasBtn && !document.querySelector('.admin-tab-btn.active')) {
           tabReservasBtn.click();
       }
   };
 
-  // ✅ NUEVA: FUNCIÓN PARA CERRAR LA INTERFAZ ADMIN
+  // ✅ NOVA: FUNCIÓ PER tancar LA INTERFAÇ ADMIN
   window.closeAdminPanelUI = function() {
     const adminPanel = document.getElementById('tab-admin');
     const btnIrAdmin = document.getElementById('btnIrAdmin');
     const btnVolver = document.getElementById('btnVolverApp');
 
-    // Ocultar Panel Admin
+    // Ocultar Panell Admin
     if (adminPanel) {
         adminPanel.classList.add('hidden');
         adminPanel.classList.remove('active');
     }
 
-    // Restaurar botones Header
+    // Restaurar botons Header
     if (btnIrAdmin) btnIrAdmin.classList.remove('hidden');
     if (btnVolver) btnVolver.classList.add('hidden');
     
-    console.log('🔒 Panel Admin cerrado');
+    console.log('🔒 Panell Admin tancat');
   };
 
   // 3. EVENTO PRINCIPAL: DOMContentLoaded
   document.addEventListener('DOMContentLoaded', function() {
     if (typeof applyI18n === 'function') applyI18n();
 
-    // --- A. INICIALIZACIÓN DE LA APP (Cargar tarjetas, etc.) ---
+    // --- A. INICIALITZACIÓ DE L'APP (Cargar tarjetas, etc.) ---
     if (typeof initializeVariables === 'function') initializeVariables();
     if (typeof setupEventListeners === 'function') setupEventListeners();
     if (typeof showLoading === 'function') showLoading();
@@ -1147,41 +991,41 @@
     // 2. CLICK EN "IR AL ADMIN" (Lógica Inteligente 🧠)
     if (btnIrAdmin) {
       btnIrAdmin.addEventListener('click', function() {
-        console.log("🔧 Usuario solicita entrar a Admin...");
+        console.log("🔧 Usuari sol·licita entrar a Admin...");
 
-        // Ocultar vistas de la App
+        // Ocultar vistes de l'App
         document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
 
         if (typeof adminDataReady !== 'undefined' && adminDataReady) {
-            console.log("⚡ Datos listos. Abriendo instantáneamente.");
-            window.openAdminPanelUI(); 
+            console.log("⚡ Dades llestes. Obrint instantàniament.");
+            window.openAdminPanelUI();
         } else {
-            console.log("⏳ Datos no listos. Forzando carga con espera...");
+            console.log("⏳ Dades no llestes. Forçant càrrega amb espera...");
             if (typeof loadAdminData === 'function') {
                 loadAdminData(false); 
             } else {
-                console.warn("No se encontró loadAdminData, abriendo panel vacío.");
+                console.warn("No es va trobar loadAdminData, obrint panell buit.");
                 window.openAdminPanelUI();
             }
         }
       });
     }
 
-    // 3. AL PULSAR "VOLVER" (Salir del Admin y volver al Inicio 🏠)
+    // 3. AL PULSAR "VOLVER" (Sortir del Admin i tornar a l'Inici 🏠)
     if (btnVolver) {
       btnVolver.addEventListener('click', function() {
-        console.log("🔙 Volviendo a la App...");
+        console.log("🔙 Tornant a l'App...");
 
         // 1. Ocultar Panel Admin
         window.closeAdminPanelUI();
         
-        // 2. RESET COMPLETO: Ocultar TODAS las vistas
+        // 2. RESET COMPLETO: Ocultar TODAS les vistes
         document.querySelectorAll('.view-section').forEach(el => {
           el.classList.add('hidden');
           el.classList.add('opacity-0');
         });
         
-        // 3. Mostrar SOLO la vista principal de recursos
+        // 3. Mostrar SOLA la vista principal de recursos
         const step1Recursos = document.getElementById('step1_Recursos');
         if (step1Recursos) {
            step1Recursos.classList.remove('hidden');
@@ -1189,7 +1033,7 @@
            step1Recursos.classList.remove('opacity-0');
         }
         
-        // 4. Limpiar el estado global
+        // 4. Netejar l'estat global
         if (typeof globalState !== 'undefined') {
           globalState.recursoActual = null;
           globalState.fechaActual = null;
@@ -1197,7 +1041,7 @@
           globalState.disponibilidad = [];
         }
         
-        // 5. Cambiar botones del Header
+        // 5. Canviar botons del Header
         btnVolver.classList.add('hidden');
         btnIrAdmin.classList.remove('hidden');
         
@@ -1207,20 +1051,20 @@
           btnVerInc.classList.remove('hidden');
         }
         
-        // 6. Ocultar mensajes de error/éxito
+        // 6. Ocultar missatges d'error èxit
         if (typeof hideMessages === 'function') {
           hideMessages();
         }
 
-        // 7. Recargar datos por si hubo cambios en admin
+        // 7. Recargar dades per si hi hagué canvis en admin
         if (typeof adminHaCambiadoDatos !== 'undefined' && adminHaCambiadoDatos === true) {
-          console.log('📊 Detectados cambios guardados, recargando vista...');
-          
+          console.log('📊 Detectats canvis guardats, recarregant vista...');
+
           if (typeof window.recargarDatosApp === 'function') {
             window.recargarDatosApp();
           }
           
-          // ✅ AÑADIDO: También recargar incidencias
+          // ✅ AÑADIDO: També recarregar incidències
           if (typeof cargarIncidencias === 'function') {
             google.script.run
             .withSuccessHandler(function(response) {
@@ -1237,7 +1081,7 @@
           
           adminHaCambiadoDatos = false;
         } else {
-          console.log('✨ No hay cambios guardados, vista sin modificar');
+          console.log('✨ No hi ha canvis guardats, vista sense modificar');
         }
       });
     }
@@ -1252,4 +1096,5 @@
 </body>
 
 </html>
+
 
