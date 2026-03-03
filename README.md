@@ -8,21 +8,24 @@ Sistema de gestió de reserves de recursos educatius per a l'aula ATECA (Aula de
 
 ## Estat del projecte
 
-Aquest projecte està en procés de modificació i en fase de proves per aconseguir que la interfície sigui multi-idioma (ES/CA).
+Aquest projecte està en procés de modificació i en fase de proves per aconseguir que la interfície sigui multiidioma (ES/CA).
 
 ## Control de canvis
 
-| Data       | Canvi                                                     | Estat  | Observacions        |
-|------------|-----------------------------------------------------------|--------|---------------------|
-| 2026-03-02 | Internacionalització UI: pantalla principal               | ✅      | Apujat i verificat. |
-| 2026-03-02 | Internacionalització UI: Admin > Reserves                 | ✅      | Apujat i verificat. |
-| 2026-03-02 | Internacionalització UI: Admin > Recursos                 | ✅      | Apujat i verificat. |
-| 2026-03-02 | Internacionalització UI: Admin > Trams                    | ✅      | Apujat i verificat. |
-| 2026-03-02 | Internacionalització UI: Admin > Disponibilitat           | ✅      | Apujat i verificat. |
-| 2026-03-02 | Internacionalització UI: Admin > Cursos                   | ✅      | Apujat i verificat. |
-| 2026-03-02 | Internacionalització UI: Admin > Usuaris                  | ✅      | Apujat i verificat. |
-| 2026-03-02 | Internacionalització UI: Admin > Configuració del sistema | ✅      | Apujat i verificat. |
-| 2026-03-02 | Diccionari i18n ES/CA i helpers UI                        | ✅      | Apujat i verificat. |
+| Canvi                                                     | Estat |
+|-----------------------------------------------------------|-------|
+| Internacionalització UI: pantalla principal               | ✅     |
+| Internacionalització UI: Admin > Recursos                 | ✅     | 
+| Internacionalització UI: Admin > Reserves                 | ✅     | 
+| Internacionalització UI: Admin > Trams                    | ✅     | 
+| Internacionalització UI: Admin > Disponibilitat           | ✅     | 
+| Internacionalització UI: Admin > Cursos                   | ✅     | 
+| Internacionalització UI: Admin > Usuaris                  | ✅     | 
+| Internacionalització UI: Admin > Configuració del sistema | ✅     | 
+| Diccionari i18n ES/CA i helpers UI                        | ✅     |
+| Internacionalització UI: gestió d'incidències             | ❌     |
+| Internacionalització UI: emergent Reserves                | ❌     |
+| Internacionalització UI: missatges Toast                  | ❌     |
 
 
 ## Sobre aquest projecte
@@ -31,7 +34,8 @@ Aquest projecte és un **fork adaptat** del sistema original de reserves creat p
 
 ### Adaptacions per a ATECA
 
-Aquest fork ha estat adaptat específicament per gestionar les reserves d'espais i recursos dins d'una aula ATECA d'un centre educatiu, optimitzant-lo per a les necessitats d'aquest entorn.
+Aquest fork ha estat adaptat específicament per gestionar les reserves d'espais i recursos dins de l'aula ATECA de l'[Institut Eugeni d'Ors](https://www.ies-eugeni.cat) de Vilafranca del Penedès, optimitzant-lo per a les necessitats d'aquest entorn.
+És, per tant, una solució personalitzada que manté les funcionalitats principals del projecte original, però amb modificacions específiques per a l'aula ATECA, com ara la internacionalització de la interfície i l'adaptació dels recursos i trams horaris disponibles.
 
 ## Característiques principals
 
@@ -44,6 +48,7 @@ Aquest fork ha estat adaptat específicament per gestionar les reserves d'espais
 - Notificacions per correu electrònic.
 - Disseny adaptatiu.
 - Sistema de memòria cau per optimitzar rendiment.
+- Multidioma (ES/CA) en procés de desenvolupament.
 
 ## Tecnologies utilitzades
 
