@@ -24,6 +24,18 @@
           requestRecurring: 'Sol·licitar ús recurrent',
           requestRecurringTitle: 'Sol·licitar aquest recurs de forma recurrent'
         },
+        toast: {
+          errorUnknown: 'Error desconegut. Revisa la consola.',
+          errorAvailability: 'Error de disponibilitat',
+          errorPrefix: 'Error:',
+          availabilityChanged: 'La disponibilitat ha canviat. Revisa els trams i torna-ho a provar.',
+          reservationCanceled: 'Reserva cancel·lada amb èxit.',
+          errorCancelPrefix: 'Error al cancel·lar:',
+          selectResourceFirst: 'Selecciona primer un recurs',
+          requestSent: 'Sol·licitud enviada correctament',
+          incidenceReported: 'Incidència reportada correctament',
+          resourceNotFound: 'No s\'ha trobat el recurs'
+        },
         incidencias: {
           title: 'Gestió d\'incidències',
           loadingCount: 'Carregant dades...',
@@ -96,7 +108,7 @@
         },
         adminConfig: {
           title: 'Configuració del sistema',
-          description: 'Defineix les regles globals d\'us.',
+          description: 'Defineix les regles globals d\'ús.',
           languageTitle: 'Idioma de la interfície',
           languageHelp: 'Idioma global per a tota la UI.',
           identityTitle: 'Identitat del centre',
@@ -228,6 +240,13 @@
             helpNote: 'Els canvis de nom o email no afecten el compte de Google, només com es veuen aquí.'
           }
         },
+        myReservations: {
+          title: 'Les meves reserves',
+          loading: 'Consultant agenda...',
+          emptyTitle: 'Sense reserves actives',
+          emptyMessage: 'No tens reserves futures programades en aquest moment.',
+          footer: 'Només es mostren reserves futures o del dia actual.'
+        },
         common: {
           languageCatalan: 'Català',
           languageSpanish: 'Castellà'
@@ -254,6 +273,18 @@
           availableSlots: 'Horarios Disponibles',
           requestRecurring: 'Solicitar uso recurrente',
           requestRecurringTitle: 'Solicitar este recurso de forma recurrente'
+        },
+        toast: {
+          errorUnknown: 'Error desconocido. Revisa la consola.',
+          errorAvailability: 'Error de disponibilidad',
+          errorPrefix: 'Error:',
+          availabilityChanged: 'La disponibilidad ha cambiado. Revisa los tramos y vuelve a intentarlo.',
+          reservationCanceled: 'Reserva cancelada con éxito.',
+          errorCancelPrefix: 'Error al cancelar:',
+          selectResourceFirst: 'Selecciona primero un recurso',
+          requestSent: 'Solicitud enviada correctamente',
+          incidenceReported: 'Incidencia reportada correctamente',
+          resourceNotFound: 'No se encontró el recurso'
         },
         incidencias: {
           title: 'Gestión de Incidencias',
@@ -330,7 +361,7 @@
           description: 'Define las reglas globales de uso.',
           languageTitle: 'Idioma de la interfaz',
           languageHelp: 'Idioma global para toda la UI.',
-          identityTitle: 'Identidad del centro',
+          identityTitle: 'Identidad del centre',
           identityNameLabel: 'Nombre del centro',
           identityNamePlaceholder: 'Ej: IES Tecnológico Futuro',
           identityNameHelp: 'Aparecerá en la cabecera y en los correos.',
@@ -366,7 +397,7 @@
           tabs: {
             reservas: 'Reservas',
             recursos: 'Recursos',
-            disponibilidad: 'Disponibilidad',
+            disponibilidad: 'Disponibilitat',
             usuarios: 'Usuarios',
             cursos: 'Cursos',
             tramos: 'Tramos',
@@ -374,7 +405,7 @@
           },
           reservas: {
             title: 'Historial de Reservas',
-            subtitle: 'Supervisa, filtra y gestiona les reserves del centre',
+            subtitle: 'Supervisa, filtra i gestiona les reserves del centre',
             recordsLabel: 'registros',
             searchPlaceholder: 'Buscar...',
             periodThisWeek: 'Esta semana',
@@ -393,71 +424,78 @@
           },
           recursos: {
             title: 'Gestión de Recursos',
-            subtitle: 'Define las salas, dispositivos y agrupaciones',
-            newResource: 'Nuevo Recurso',
-            thIcon: 'Icono',
+            subtitle: 'Define les sales, dispositius i agrupacions',
+            newResource: 'Nou recurs',
+            thIcon: 'Icona',
             thId: 'ID',
-            thResource: 'Recurso',
-            thTypeLocation: 'Tipo / Ubicación',
+            thResource: 'Recurs',
+            thTypeLocation: 'Tipus / Ubicació',
             thCapacity: 'Cap.',
-            thStatus: 'Estado',
-            dragHint: 'Arrastra desde el icono para reordenar. Los cambios se guardan en bloque.'
+            thStatus: 'Estat',
+            dragHint: 'Arrossega des de l\'icona per reordenar. Els canvis es guarden en bloc.'
           },
           tramos: {
-            title: 'Gestión de Tramos Horarios',
-            subtitle: 'Define los bloques de tiempo para reservas',
-            newSlot: 'Nuevo Tramo',
+            title: 'Gestió de Tramos Horarios',
+            subtitle: 'Define los bloques de tiempo para reserves',
+            newSlot: 'Nou tram',
             thId: 'ID',
-            thName: 'Nombre',
-            thStart: 'Inicio',
-            thEnd: 'Fin',
-            thActions: 'Acciones',
-            orderHint: 'Los tramos se mostrarán en el calendario en este orden exacto.'
+            thName: 'Nom',
+            thStart: 'Inici',
+            thEnd: 'Fi',
+            thActions: 'Accions',
+            orderHint: 'Els trams es mostraran al calendari en aquest ordre exacte.'
           },
           disponibilidad: {
-            title: 'Gestión de Recurso',
-            subtitle: 'Disponibilidad y reservas recurrentes.',
+            title: 'Gestió de Recurso',
+            subtitle: 'Disponibilitat i reserves recurrents.',
             history: 'Historial',
-            newRecurring: 'Nueva Recurrente',
+            newRecurring: 'Nova Recurrente',
             selectResource: 'Selecciona Recurso...',
-            pending: 'Pendientes',
-            approveAll: 'Aprobar todas',
-            loadingData: 'Cargando datos...',
+            pending: 'Pendents',
+            approveAll: 'Aprovar totes',
+            loadingData: 'Carregant dades...',
             thSlot: 'Tramo',
-            thMonday: 'Lunes',
-            thTuesday: 'Martes',
-            thWednesday: 'Miércoles',
-            thThursday: 'Jueves',
-            thFriday: 'Viernes',
-            placeholderTitle: 'Selecciona un recurso arriba',
-            placeholderSubtitle: 'Verás la disponibilidad y las reservas recurrentes.',
+            thMonday: 'Dilluns',
+            thTuesday: 'Dimarts',
+            thWednesday: 'Dimecres',
+            thThursday: 'Dijous',
+            thFriday: 'Divendres',
+            placeholderTitle: 'Selecciona un recurs a dalt',
+            placeholderSubtitle: 'Veuràs la disponibilitat i les reserves recurrents.',
             legendAvailable: 'Disponible',
-            legendBlocked: 'Bloqueado',
-            legendRecurring: 'Recurrencia',
-            legendEdit: 'Clic para editar'
+            legendBlocked: 'Bloquejat',
+            legendRecurring: 'Recurrència',
+            legendEdit: 'Clic per editar'
           },
           cursos: {
-            title: 'Gestión de Cursos',
-            subtitle: 'Administra los grupos académicos',
-            viewButtons: 'Botones',
-            viewList: 'Lista',
-            newCourse: 'Nuevo Curso',
-            searchPlaceholder: 'Buscar curso...',
+            title: 'Gestió de Cursos',
+            subtitle: 'Administra els grups acadèmics',
+            viewButtons: 'Botons',
+            viewList: 'Llista',
+            newCourse: 'Nou curs',
+            searchPlaceholder: 'Cerca curs...',
             thStage: 'Etapa',
-            thCourseGroup: 'Curso / Grupo',
-            thActions: 'Acciones'
+            thCourseGroup: 'Curs / Grup',
+            thActions: 'Accions'
           },
           usuarios: {
-            title: 'Gestión de Usuarios',
-            subtitle: 'Administra accesos y permisos',
+            title: 'Gestió de Usuarios',
+            subtitle: 'Administra accesos i permisos',
             totalLabel: 'usuarios',
-            newUser: 'Nuevo',
-            searchPlaceholder: 'Buscar por nombre o email...',
-            thUserData: 'Datos Usuario (Editable)',
+            newUser: 'Nou',
+            searchPlaceholder: 'Cerca per nom o email...',
+            thUserData: 'Dades Usuari (Editable)',
             thAdmin: 'Admin',
-            thAccess: 'Acceso',
-            helpNote: 'Los cambios de nombre o email no afectan a la cuenta de Google, solo a cómo se ven aquí.'
+            thAccess: 'Accés',
+            helpNote: 'Els canvis de nom o email no afecten el compte de Google, només com es veuen aquí.'
           }
+        },
+        myReservations: {
+          title: 'Mis reservas',
+          loading: 'Consultando agenda...',
+          emptyTitle: 'Sin reservas activas',
+          emptyMessage: 'No tienes reservas futuras programadas en este momento.',
+          footer: 'Solo se muestran reservas futuras o del día actual.'
         },
         common: {
           languageCatalan: 'Català',

@@ -199,6 +199,95 @@ function initializeVariables() {
   adminPanelButton = $("adminPanelButton");
 }
 
+function setupEventListeners() {
+  if (calendarGrid) {
+    calendarGrid.addEventListener('click', (event) => {
+      const dayButton = event.target.closest('button[data-day]');
+      if (!dayButton || dayButton.disabled) return;
+      handleDayClick(dayButton.dataset.day);
+    });
+  }
+
+  if (tramosContainer) {
+    tramosContainer.addEventListener('click', (event) => {
+      const tramoButton = event.target.closest('button.tramo-btn');
+      if (!tramoButton || tramoButton.disabled) return;
+      handleTramoClick(tramoButton);
+    });
+  }
+
+  if (backButton) {
+    backButton.addEventListener('click', () => {
+      switchView(step2, step1);
+      globalState.recursoActual = null;
+    });
+  }
+
+  if (prevMonthBtn) {
+    prevMonthBtn.addEventListener('click', () => {
+      if (!globalState.fechaActual) return;
+      const nuevaFecha = new Date(globalState.fechaActual);
+      nuevaFecha.setMonth(nuevaFecha.getMonth() - 1);
+      globalState.fechaActual = nuevaFecha;
+      renderCalendar(nuevaFecha.getFullYear(), nuevaFecha.getMonth());
+      updateSelectedDateDisplay();
+      loadTramos();
+    });
+  }
+
+  if (nextMonthBtn) {
+    nextMonthBtn.addEventListener('click', () => {
+      if (!globalState.fechaActual) return;
+      const nuevaFecha = new Date(globalState.fechaActual);
+      nuevaFecha.setMonth(nuevaFecha.getMonth() + 1);
+      globalState.fechaActual = nuevaFecha;
+      renderCalendar(nuevaFecha.getFullYear(), nuevaFecha.getMonth());
+      updateSelectedDateDisplay();
+      loadTramos();
+    });
+  }
+
+  if (cancelModalButton) {
+    cancelModalButton.addEventListener('click', () => {
+      cerrarModalConfirmacionReserva();
+    });
+  }
+
+  if (confirmModalButton) {
+    confirmModalButton.addEventListener('click', () => {
+      handleConfirmReservation();
+    });
+  }
+
+  if (myReservationsButton) {
+    myReservationsButton.addEventListener('click', () => {
+      openMyReservationsModal();
+    });
+  }
+
+  if (closeMyReservationsButton) {
+    closeMyReservationsButton.addEventListener('click', () => {
+      if (myReservationsModal) {
+        myReservationsModal.classList.add('hidden');
+        myReservationsModal.classList.remove('flex');
+      }
+      document.body.style.overflow = '';
+    });
+  }
+}
+
+function cerrarModalConfirmacionReserva() {
+  const dialog = document.getElementById('confirmationModal');
+  if (dialog) {
+    if (dialog.close) {
+      dialog.close();
+    } else {
+      dialog.classList.add('hidden');
+    }
+  }
+  document.body.style.overflow = '';
+}
+
 /* === UI Y MENSAJES === */
 
 function showLoading() { 
@@ -263,7 +352,7 @@ function onInitialDataSuccess(data) {
 
 function onFailure(error) {
   console.error("❌ Error al llamar a Apps Script:", error.message || error);
-  showError(error.message || "Error desconocido. Revisa la consola.");
+  showError(error.message || window.t('toast.errorUnknown'));
   hideLoading();
 }
 
@@ -378,7 +467,7 @@ function handleRecursoClick(recursoBtn) {
   if (globalState.recursoActual) {
     
     // --- LÓGICA DE FECHA INICIAL (ANTES DE NADA) ---
-    // Calculamos "Hoy" o "Mañana" aquí mismo para pintar la cabecera YA.
+    // Calculamos "Hoy" o "Mañana" para pintar la cabecera YA.
     const ahora = new Date();
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
@@ -425,13 +514,13 @@ function handleRecursoClick(recursoBtn) {
           loadTramos();
           
         } else {
-          showToast('error', result.error || 'Error disponibilidad');
+          showToast('error', result.error || window.t('toast.errorAvailability'));
         }
       })
       .withFailureHandler((error) => {
         globalState.isLoadingDisponibilidad = false;
         hideLoading();
-        showToast('error', 'Error: ' + error.message);
+        showToast('error', window.t('toast.errorPrefix') + ' ' + error.message);
       })
       .cargarDisponibilidadRecurso(recursoId);
   }
@@ -1300,7 +1389,7 @@ function refreshDisponibilidadAndReloadTramos() {
       if (result.success) {
         globalState.disponibilidad = result.disponibilidad;
         loadTramos();
-        showError("La disponibilidad ha cambiado. Por favor, revisa los tramos y vuelve a intentarlo.");
+        showError(window.t('toast.availabilityChanged'));
       } else {
         onFailure(result);
       }
@@ -1672,7 +1761,7 @@ function onCancelReservationSuccess(response) {
     }
     
     // ✅ MOSTRAR SOLO ÉXITO (sin hideMessages antes)
-    showSuccess("Reserva cancelada con éxito.");
+    showSuccess(window.t('toast.reservationCanceled'));
     setTimeout(hideMessages, 2500);
   } else {
     onCancelReservationFailure({ message: response.message });
@@ -1691,7 +1780,7 @@ function onCancelReservationFailure(error) {
   }
 
   // Mostrar error
-  showError('Error al cancelar: ' + (error.message || error));
+  showError(window.t('toast.errorCancelPrefix') + ' ' + (error.message || error));
   setTimeout(hideMessages, 3000);
 
   reservaIdPendienteCancelacion = null;
@@ -1802,7 +1891,7 @@ function abrirModalSolicitudRecurrente() {
   console.log('🔄 Abriendo modal de solicitud recurrente');
 
   if (!globalState.recursoActual) {
-    showToast('warning', 'Selecciona primero un recurso');
+    showToast('warning', window.t('toast.selectResourceFirst'));
     return;
   }
 
@@ -2108,7 +2197,7 @@ function enviarSolicitudRecurrente() {
       btnEnviar.innerHTML = textoOriginal;
 
       if (response.success) {
-        showToast('success', response.message || 'Solicitud enviada correctamente');
+        showToast('success', response.message || window.t('toast.requestSent'));
         cerrarModalSolicitudRecurrente();
       } else {
         mostrarErrorRecurrente(response.error || 'Error al enviar la solicitud');
@@ -2407,7 +2496,7 @@ function enviarReporteIncidencia() {
   
   btnEnviar.disabled = true;
   btnEnviar.innerHTML = `
-    <iconify-icon icon="mdi:loading" class="animate-spin text-xl"></iconify-icon>
+    <iconify-icon icon="mdi:loading" class="animate-spin"></iconify-icon>
     <span>Enviando...</span>
   `;
 
@@ -2417,7 +2506,7 @@ function enviarReporteIncidencia() {
       btnEnviar.innerHTML = textoOriginal;
 
       if (response.success) {
-        showToast('success', 'Incidencia reportada correctamente');
+        showToast('success', window.t('toast.incidenceReported'));
         cerrarModalReportarIncidencia();
         
         // Opcional: Recargar lista de incidencias si está visible
@@ -2469,7 +2558,7 @@ function ocultarErrorIncidencia() {
 function abrirModalReportarIncidenciaDesdeReserva() {
   // Obtener recurso actual
   if (!globalState || !globalState.recursoActual) {
-    showToast('warning', 'Selecciona primero un recurso');
+    showToast('warning', window.t('toast.selectResourceFirst'));
     return;
   }
   
@@ -2484,7 +2573,7 @@ function abrirModalReportarIncidenciaDesdeReserva() {
     );
     
     if (!recurso) {
-      showToast('error', 'No se encontró el recurso');
+      showToast('error', window.t('toast.resourceNotFound'));
       return;
     }
   }
@@ -3099,7 +3188,7 @@ function ejecutarToggleMantenimiento(idRecurso, nuevoEstadoRecurso) {
         }
 
         showToast('success', `Recurso ${nuevoEstadoRecurso === 'Mantenimiento' ? 'bloqueado' : 'activado'} correctamente`);
-        
+
       } else {
         showToast('error', 'Error: ' + (res.error || 'Desconocido'));
         renderIncidencias();
@@ -3184,7 +3273,7 @@ function confirmarResolucion() {
   btn.disabled = true;
   btn.innerHTML = '<iconify-icon icon="mdi:loading" class="animate-spin"></iconify-icon> Procesando...';
   
-  ejecutarCambioEstado(incidenciaIdActual, 'Resuelta', nota || null);
+  ejecutarCambioEstado(incidenciaIdActual, 'Resuelta', nota);
   cerrarModalResolver();
   
   // Restaurar botón (por si se vuelve a abrir)
@@ -3570,97 +3659,6 @@ function hayIncidenciasPendientes() {
   return todasLasIncidencias.some(i => 
     i.Estado === 'Pendiente' || i.Estado === 'En proceso'
   );
-}
-
-
-/* =========================================================
-   EVENT LISTENERS
-   ========================================================= */
-
-function setupEventListeners() {
-  if (step1) step1.addEventListener('click', (e) => {
-    const recursoBtn = e.target.closest('.recurso-btn');
-    if (recursoBtn) handleRecursoClick(recursoBtn);
-  });
-  
-  if (calendarGrid) calendarGrid.addEventListener('click', (e) => {
-    const dayBtn = e.target.closest('button[data-day]');
-    if (dayBtn && !dayBtn.disabled) {
-      handleDayClick(dayBtn.dataset.day);
-    }
-  });
-  
-  if (tramosContainer) tramosContainer.addEventListener('click', (e) => {
-    const tramoBtn = e.target.closest('.tramo-btn');
-    if (tramoBtn && !tramoBtn.disabled) handleTramoClick(tramoBtn);
-  });
-  
-  if (myReservationsList) myReservationsList.addEventListener('click', (e) => {
-    const cancelBtn = e.target.closest('.cancel-btn-inline');
-    if (cancelBtn && !cancelBtn.disabled) handleCancelReservation(cancelBtn);
-  });
-  
-  if (backButton) backButton.addEventListener('click', () => {
-    switchView(step2, step1);
-    globalState.recursoActual = null;
-    globalState.disponibilidad = [];
-    hideMessages();
-  });
-  
-  if (prevMonthBtn) prevMonthBtn.addEventListener('click', () => {
-    globalState.fechaActual.setMonth(globalState.fechaActual.getMonth() - 1);
-    renderCalendar(globalState.fechaActual.getFullYear(), globalState.fechaActual.getMonth());
-    debounceCalendarNavigation(() => loadTramos());
-  });
-  
-  if (nextMonthBtn) nextMonthBtn.addEventListener('click', () => {
-    globalState.fechaActual.setMonth(globalState.fechaActual.getMonth() + 1);
-    renderCalendar(globalState.fechaActual.getFullYear(), globalState.fechaActual.getMonth());
-    debounceCalendarNavigation(() => loadTramos());
-  });
-  
-  // Cerrar modal de confirmación y DESBLOQUEAR scroll
-  if (cancelModalButton) {
-    cancelModalButton.addEventListener('click', () => {
-      modal.close();
-      document.body.style.overflow = ''; // ← DESBLOQUEAR
-    });
-  }
-  if (confirmModalButton) confirmModalButton.addEventListener('click', handleConfirmReservation);
-  if (myReservationsButton) myReservationsButton.addEventListener('click', openMyReservationsModal);
-  if (closeMyReservationsButton) {
-  closeMyReservationsButton.addEventListener('click', () => {
-    const modal = document.getElementById('myReservationsModal');
-    modal.classList.add('hidden');
-    document.body.style.overflow = ''; // ← DESBLOQUEAR
-    });
-  }
-  // Opcional: Cerrar al hacer clic fuera (en el fondo oscuro)
-  document.getElementById('myReservationsModal').addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) { // Solo si clickas en el fondo, no en la tarjeta
-     e.currentTarget.classList.add('hidden');
-     e.currentTarget.classList.remove('flex');
-     document.body.style.overflow = ''; // ← DESBLOQUEAR SCROLL
-    }
-  });
-
-  // Cerrar modales al hacer clic fuera
-  if (modal) {
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.close();
-        document.body.style.overflow = ''; // ← DESBLOQUEAR SCROLL
-      }
-    });
-  }
-  
-  // Botón de panel admin
-  if (adminPanelButton) {
-    adminPanelButton.addEventListener('click', () => {
-      const url = ScriptApp.getService().getUrl() + '?page=admin';
-      window.open(url, '_blank');
-    });
-  }
 }
 
 </script>
