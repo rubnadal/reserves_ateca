@@ -353,7 +353,7 @@
     class="p-0 border-none w-[calc(100%-2rem)] max-w-lg shadow-2xl rounded-2xl bg-white backdrop:bg-gray-900/40 backdrop:backdrop-blur-sm open:animate-in open:fade-in open:zoom-in-95 open:duration-200 max-h-[90vh] overflow-y-auto overscroll-contain open:flex open:flex-col">
 
     <div class="bg-gray-50 border-b border-gray-100 p-6">
-      <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+      <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2" data-i18n="modalReservation.title">
         <iconify-icon icon="mdi:calendar-check" class="text-blue-600"></iconify-icon>
         Confirmar Reserva
       </h3>
@@ -383,22 +383,22 @@
     <div class="p-6 space-y-6">
 
       <div>
-        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2" data-i18n="modalReservation.courseLabel">
               ¿Per a quin grup és? <span class="text-red-500">*</span>
             </label>
         <div id="cursoSelectorContainer">
         </div>
         <p id="cursoError"
-          class="hidden flex items-center gap-1 text-xs text-red-500 mt-2 font-medium bg-red-50 p-2 rounded-lg">
+          class="hidden flex items-center gap-1 text-xs text-red-500 mt-2 font-medium bg-red-50 p-2 rounded-lg" data-i18n="modalReservation.courseError">
           <iconify-icon icon="mdi:alert-circle"></iconify-icon> Has de seleccionar un curs
         </p>
       </div>
 
       <div id="cantidadContainer" class="hidden animate-fade-in">
         <label class="flex justify-between items-center text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-              <span>Quantitat necessària</span>
+              <span data-i18n="modalReservation.quantityLabel">Quantitat necessària</span>
               <span class="text-xs font-normal bg-green-50 text-green-700 px-2 py-0.5 rounded-full border border-green-100">
-                  Disponibles: <b id="maxCantidad">1</b>
+                  <span data-i18n="modalReservation.availableLabel">Disponibles</span>: <b id="maxCantidad">1</b>
               </span>
             </label>
 
@@ -424,14 +424,14 @@
           </div>
 
           <button type="button" id="selectAllBtn"
-          class="px-4 py-2.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-xl hover:bg-blue-100 text-sm font-bold transition-colors shadow-sm flex-1 whitespace-nowrap">
+          class="px-4 py-2.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-xl hover:bg-blue-100 text-sm font-bold transition-colors shadow-sm flex-1 whitespace-nowrap" data-i18n="modalReservation.selectAll">
           Agafar tots
           </button>
         </div>
       </div>
 
       <div>
-        <label for="notasInput" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+        <label for="notasInput" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2" data-i18n="modalReservation.notesLabel">
               Notes addicionals (Opcional)
             </label>
         <div class="relative">
@@ -440,7 +440,7 @@
           </div>
           <textarea id="notasInput" rows="1"
                           class="block w-full pl-10 pr-3 py-2.5 rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-gray-50 focus:bg-white transition-colors resize-none"
-                          placeholder="Ej: Necessito un projector..."></textarea>
+                          placeholder="Ej: Necessito un projector..." data-i18n-attr="placeholder:modalReservation.notesPlaceholder"></textarea>
         </div>
       </div>
     </div>
@@ -450,20 +450,20 @@
       <!-- Esquerra: Botó Reportar (icona només en mòbil, amb text en escriptori) -->
       <button onclick="abrirModalReportarIncidenciaDesdeReserva()"
           class="px-3 sm:px-4 py-2.5 text-orange-600 font-semibold hover:bg-orange-50 rounded-xl transition-colors text-sm flex items-center gap-2 border border-orange-200"
-          title="Reportar problema amb aquest recurs">
+          title="Reportar problema amb aquest recurs" data-i18n-attr="title:modalReservation.reportTitle">
     <iconify-icon icon="mdi:alert-circle-outline" class="text-lg"></iconify-icon>
-    <span class="hidden sm:inline">Reportar</span>
+    <span class="hidden sm:inline" data-i18n="modalReservation.report">Reportar</span>
   </button>
 
       <!-- Dreta: Botons Cancel·lar i Confirmar -->
       <div class="flex gap-3">
         <button id="cancelModalButton"
-            class="px-5 py-2.5 text-gray-600 font-semibold hover:bg-gray-200 rounded-xl transition-colors text-sm">
+            class="px-5 py-2.5 text-gray-600 font-semibold hover:bg-gray-200 rounded-xl transition-colors text-sm" data-i18n="modalReservation.cancel">
       Cancel·lar
     </button>
         <button id="confirmModalButton"
             class="px-6 py-2.5 bg-gray-900 text-white font-bold rounded-xl hover:bg-black shadow-lg shadow-gray-900/20 active:scale-95 transition-all text-sm flex items-center gap-2">
-      <span>Confirmar</span>
+      <span data-i18n="modalReservation.confirm">Confirmar</span>
       <iconify-icon icon="mdi:arrow-right"></iconify-icon>
     </button>
       </div>

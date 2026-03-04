@@ -24,7 +24,7 @@ Aquest projecte està en procés de modificació i en fase de proves per aconseg
 | Internacionalització UI: Admin > Configuració del sistema | ✅     | 
 | Diccionari i18n ES/CA i helpers UI                        | ✅     |
 | Internacionalització UI: gestió d'incidències             | ✅     |
-| Internacionalització UI: emergent Reserves                | ✅     |
+| Internacionalització UI: modal Reserves                   | ✅     |
 | Internacionalització UI: missatges Toast                  | 🔄    |
 
 
