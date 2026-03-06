@@ -1094,7 +1094,7 @@ function renderCursoSelector() {
     
     // 1. Botones de Etapas (izquierda en desktop)
     html += '<div class="md:w-3/4">';
-    html += '<p class="text-xs font-bold text-gray-600 mb-1.5">Selecciona la etapa:</p>';
+    html += `<p class="text-xs font-bold text-gray-600 mb-1.5">${window.t('modalReservation.selectStageLabel')}</p>`;
     html += '<div id="etapasSelector" class="flex flex-wrap gap-1.5">';
     etapasMap.forEach((_, etapa) => {
       html += `<button type="button" class="etapa-btn px-3 py-1.5 bg-gray-50 border border-gray-200 text-gray-600 rounded-lg sm:hover:bg-gray-100 sm:hover:text-gray-800 transition-colors text-xs font-semibold shadow-sm focus:outline-none select-none active:scale-95" data-etapa="${etapa}">${etapa}</button>`;
@@ -1104,9 +1104,9 @@ function renderCursoSelector() {
     
     // 2. Select de Cursos (derecha en desktop, debajo en móvil)
     html += '<div id="cursosSelectStage" class="hidden md:w-1/2">';
-    html += '<label id="cursoLabel" class="block text-xs font-bold text-gray-600 mb-1">Selecciona el curso:</label>';
+    html += `<label id="cursoLabel" class="block text-xs font-bold text-gray-600 mb-1">${window.t('modalReservation.selectCourseLabel')}</label>`;
     html += '<select id="cursoSelect" class="block w-full px-3 py-1.5 text-sm border-gray-300 rounded-lg bg-white border focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm">';
-    html += '<option value="">-- Elige un curso --</option>';
+    html += `<option value="">${window.t('modalReservation.selectCoursePlaceholder')}</option>`;
     html += '</select>';
     html += '</div>';
     
@@ -1150,11 +1150,11 @@ function renderCursoSelector() {
           
           // Actualizar label con nombre de etapa
           if (cursoLabel) {
-            cursoLabel.textContent = `Cursos de ${etapa}:`;
+            cursoLabel.textContent = window.t('modalReservation.coursesOfPrefix') + ' ' + etapa + ':';
           }
           
           // Llenar select con cursos de esta etapa
-          let optionsHtml = '<option value="">-- Elige un curso --</option>';
+          let optionsHtml = `<option value="">${window.t('modalReservation.selectCoursePlaceholder')}</option>`;
           cursosDeEtapa.forEach(curso => {
             const fullCurso = `${etapa} - ${curso}`;
             optionsHtml += `<option value="${fullCurso}">${curso}</option>`;
@@ -1169,9 +1169,9 @@ function renderCursoSelector() {
         } else {
           // Desactivar: ocultar select
           cursosSelectStage.classList.add('hidden');
-          cursoSelect.innerHTML = '<option value="">-- Elige un curso --</option>';
+          cursoSelect.innerHTML = `<option value="">${window.t('modalReservation.selectCoursePlaceholder')}</option>`;
           if (cursoLabel) {
-            cursoLabel.textContent = 'Selecciona el curso:';
+            cursoLabel.textContent = window.t('modalReservation.selectCourseLabel');
           }
         }
       });
@@ -1201,7 +1201,7 @@ function renderCursoSelector() {
     
     // 2. Área de Cursos (Botones)
     html += '<div id="cursosStage" class="hidden">';
-    html += '<p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Clase:</p>';
+    html += `<p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">${window.t('modalReservation.classLabel')}</p>`;
     html += '<div id="cursosButtons" class="grid grid-cols-5 gap-1.5"></div>';
     html += '</div>';
     
@@ -3227,10 +3227,8 @@ function ejecutarCambioEstado(idIncidencia, nuevoEstado, notaCierre) {
           
           // ✅ También actualizar en todasLasIncidencias
           const indexTodas = todasLasIncidencias.findIndex(i => i.ID_Incidencia === idIncidencia);
-          if(indexTodas !== -1) {
-            todasLasIncidencias[indexTodas].Estado = nuevoEstado;
-            if(notaCierre) todasLasIncidencias[indexTodas].Notas_Admin = notaCierre;
-          }
+          if(indexTodas !== -1) todasLasIncidencias[indexTodas].Estado = nuevoEstado;
+          if(notaCierre) todasLasIncidencias[indexTodas].Notas_Admin = notaCierre;
 
           renderIncidencias();
        } else {
