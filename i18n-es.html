@@ -1,0 +1,261 @@
+<script>
+function getI18nEs() {
+  return {
+    header: {
+      greeting: 'Hola',
+      incidencias: 'Incidencias',
+      myReservations: 'Mis Reservas',
+      admin: 'Admin',
+      back: 'Volver'
+    },
+    sections: {
+      rooms: 'Salas y Espacios',
+      devices: 'Dispositivos y Carritos'
+    },
+    booking: {
+      reservingIn: 'Reservando en',
+      loading: 'Cargando...',
+      selectedDate: 'Fecha seleccionada',
+      calculating: 'Calculando...',
+      monthYearFallback: 'Mes Año',
+      availableSlots: 'Horarios Disponibles',
+      requestRecurring: 'Solicitar uso recurrente',
+      requestRecurringTitle: 'Solicitar este recurso de forma recurrente'
+    },
+    toast: {
+      errorUnknown: 'Error desconocido. Revisa la consola.',
+      errorAvailability: 'Error de disponibilidad',
+      errorPrefix: 'Error:',
+      availabilityChanged: 'La disponibilidad ha cambiado. Revisa los tramos y vuelve a intentarlo.',
+      reservationCanceled: 'Reserva cancelada con éxito.',
+      errorCancelPrefix: 'Error al cancelar:',
+      selectResourceFirst: 'Selecciona primero un recurso',
+      requestSent: 'Solicitud enviada correctamente',
+      incidenceReported: 'Incidencia reportada correctamente',
+      resourceNotFound: 'No se encontró el recurso',
+      resourceUpdating: 'Actualizando recurso...',
+      resourceBlocked: 'Recurso bloqueado correctamente',
+      resourceActivated: 'Recurso activado correctamente',
+      connectionError: 'Error de conexión:',
+      noteSaved: 'Nota guardada correctamente',
+      saveError: 'Error al guardar'
+    },
+    incidencias: {
+      title: 'Gestión de Incidencias',
+      loadingCount: 'Cargando datos...',
+      new: 'Nueva incidencia',
+      back: 'Volver',
+      filters: {
+        all: 'Todas',
+        active: 'Activas',
+        pending: 'Pendientes',
+        inProgress: 'En proceso',
+        resolved: 'Resueltas'
+      },
+      searchPlaceholder: 'Buscar recurso, sala...',
+      table: {
+        id: 'ID',
+        resource: 'Recurso',
+        status: 'Estado',
+        priority: 'Prioridad',
+        user: 'Usuario',
+        date: 'Fecha'
+      },
+      loadingList: 'Cargando incidencias...',
+      modalReport: {
+        title: 'Reportar incidencia',
+        resourceLabel: 'Recurso',
+        resourcePlaceholder: '-- Selecciona un recurso --',
+        resourceHelp: 'Selecciona el recurso sobre el que quieres reportar la incidencia',
+        categoryLabel: 'Categoría',
+        categoryOptions: {
+          breakdown: '🔧 Avería',
+          cleaning: '🧹 Limpieza',
+          maintenance: '⚙️ Mantenimiento',
+          other: '📋 Otro'
+        },
+        priorityLabel: 'Prioridad',
+        priorityOptions: {
+          low: '🟢 Baja - Puede esperar',
+          medium: '🟡 Media - Atender pronto',
+          high: '🟠 Alta - Urgente',
+          critical: '🔴 Crítica - Inmediata'
+        },
+        descriptionLabel: 'Descripción del problema',
+        descriptionPlaceholder: 'Describe qué ha pasado con el recurso...',
+        descriptionHelp: 'Sé específico para ayudar a resolver el problema más rápido',
+        cancel: 'Cancelar',
+        send: 'Enviar reporte'
+      },
+      modalConfirm: {
+        title: 'Confirmar acción',
+        cancel: 'Cancelar',
+        accept: 'Aceptar'
+      },
+      modalResolve: {
+        title: 'Resolver incidencia',
+        emailNotice: 'Se enviará un email al usuario notificando la resolución.',
+        noteLabel: 'Nota de resolución',
+        optional: '(opcional)',
+        placeholder: 'Ej: Se ha reparado el equipo y está listo para usar...',
+        cancel: 'Cancelar',
+        confirm: 'Marcar resuelta'
+      },
+      modalNote: {
+        title: 'Nota administrativa',
+        label: 'Escribe una nota para el usuario:',
+        placeholder: 'Describe la solución o información relevante...',
+        helper: 'Esta nota será visible para el usuario que reportó la incidencia.',
+        cancel: 'Cancelar',
+        save: 'Guardar',
+        saving: 'Guardando...'
+      }
+    },
+    adminConfig: {
+      title: 'Configuración del Sistema',
+      description: 'Define las reglas globales de uso.',
+      languageTitle: 'Idioma de la interfaz',
+      languageHelp: 'Idioma global para toda la UI.',
+      identityTitle: 'Identidad del centre',
+      identityNameLabel: 'Nombre del centro',
+      identityNamePlaceholder: 'Ej: IES Tecnológico Futuro',
+      identityNameHelp: 'Aparecerá en la cabecera y en los correos.',
+      identityLogoLabel: 'URL del logo (opcional)',
+      identityLogoPlaceholder: 'https://miweb.com/logo.png o URL de Google Drive',
+      identityLogoHelp: 'URL directa (.png, .jpg) o enlace de Google Drive. Si usas Drive, los permisos se ajustarán automáticamente.',
+      timingTitle: 'Tiempos y plazos',
+      horizonLabel: '📅 Horizonte (días vista)',
+      horizonHelp: '¿Hasta cuántos días en el futuro se puede reservar?',
+      advanceLabel: '⚡ Antelación mínima (minutos)',
+      advanceHelp: 'Tiempo mínimo antes de la hora para reservar.',
+      limitsTitle: 'Límites y abusos',
+      maxReservationsLabel: '🔢 Máx. reservas activas',
+      maxReservationsHelp: 'Total de reservas activas simultáneas por usuario.',
+      maxSlotsLabel: '🧱 Máx. tramos por reserva',
+      maxSlotsHelp: 'Si activas multitramos, ¿cuántos seguidos pueden coger?',
+      cancelLimitLabel: '🚫 Tope cancelación (horas)',
+      cancelLimitHelp: 'Antelació mínima per poder cancel·lar.',
+      generalTitle: 'Ajustes generales',
+      allowMultiTitle: '🧩 Permitir multitramos',
+      allowMultiHelp: 'Seleccionar varios tramos juntos.',
+      requireReasonTitle: '📝 Exigir motiu',
+      requireReasonHelp: 'Obligatorio rellenar "para qué".',
+      maintenanceTitle: '🚧 Modo mantenimiento',
+      maintenanceHelp: 'Nadie podrá reservar.',
+      adminEmailLabel: '📧 Email del administrador',
+      adminEmailPlaceholder: 'direccion@colegio.com',
+      adminEmailHelp: 'Recibirá avisos de solicitudes de recurrencias e incidencias.',
+      bccTitle: 'Recibir copia de reservas',
+      bccHelp: 'BCC de cada confirmación de reserva'
+    },
+    admin: {
+      tabs: {
+        reservas: 'Reservas',
+        recursos: 'Recursos',
+        disponibilidad: 'Disponibilitat',
+        usuarios: 'Usuarios',
+        cursos: 'Cursos',
+        tramos: 'Tramos',
+        config: 'Config'
+      },
+      reservas: {
+        title: 'Historial de Reservas',
+        subtitle: 'Supervisa, filtra i gestiona les reserves del centre',
+        recordsLabel: 'registros',
+        searchPlaceholder: 'Buscar...',
+        periodThisWeek: 'Esta semana',
+        periodNext2Weeks: 'Próx. 2 sem',
+        periodThisMonth: 'Este mes',
+        periodAll: 'Todas',
+        typeAll: 'Todas',
+        typeNormal: 'Normales',
+        typeRecurring: 'Recurrentes',
+        thDateSlot: 'Fecha / Tramo',
+        thResource: 'Recurso',
+        thUserCourse: 'Usuario / Curso',
+        thQuantity: 'Cant.',
+        thStatus: 'Estado',
+        thActions: 'Acciones'
+      },
+      recursos: {
+        title: 'Gestión de Recursos',
+        subtitle: 'Define les sales, dispositius i agrupacions',
+        newResource: 'Nou recurs',
+        thIcon: 'Icona',
+        thId: 'ID',
+        thResource: 'Recurs',
+        thTypeLocation: 'Tipus / Ubicació',
+        thCapacity: 'Cap.',
+        thStatus: 'Estat',
+        dragHint: 'Arrossega des de l\'icona per reordenar. Els canvis es guarden en bloc.'
+      },
+      tramos: {
+        title: 'Gestió de Tramos Horarios',
+        subtitle: 'Define los bloques de tiempo para reserves',
+        newSlot: 'Nou tram',
+        thId: 'ID',
+        thName: 'Nom',
+        thStart: 'Inici',
+        thEnd: 'Fi',
+        thActions: 'Accions',
+        orderHint: 'Els trams es mostraran al calendari en aquest ordre exacte.'
+      },
+      disponibilidad: {
+        title: 'Gestió de Recurso',
+        subtitle: 'Disponibilitat i reserves recurrents.',
+        history: 'Historial',
+        newRecurring: 'Nova Recurrente',
+        selectResource: 'Selecciona Recurso...',
+        pending: 'Pendents',
+        approveAll: 'Aprovar totes',
+        loadingData: 'Carregant dades...',
+        thSlot: 'Tramo',
+        thMonday: 'Dilluns',
+        thTuesday: 'Dimarts',
+        thWednesday: 'Dimecres',
+        thThursday: 'Dijous',
+        thFriday: 'Divendres',
+        placeholderTitle: 'Selecciona un recurs a dalt',
+        placeholderSubtitle: 'Veuràs la disponibilitat i les reserves recurrents.',
+        legendAvailable: 'Disponible',
+        legendBlocked: 'Bloquejat',
+        legendRecurring: 'Recurrència',
+        legendEdit: 'Clic per editar'
+      },
+      cursos: {
+        title: 'Gestió de Cursos',
+        subtitle: 'Administra els grups acadèmics',
+        viewButtons: 'Botons',
+        viewList: 'Llista',
+        newCourse: 'Nou curs',
+        searchPlaceholder: 'Cerca curs...',
+        thStage: 'Etapa',
+        thCourseGroup: 'Curs / Grup',
+        thActions: 'Accions'
+      },
+      usuarios: {
+        title: 'Gestió de Usuarios',
+        subtitle: 'Administra accesos i permisos',
+        totalLabel: 'usuarios',
+        newUser: 'Nou',
+        searchPlaceholder: 'Cerca per nom o email...',
+        thUserData: 'Dades Usuari (Editable)',
+        thAdmin: 'Admin',
+        thAccess: 'Accés',
+        helpNote: 'Els canvis de nom o email no afecten el compte de Google, només com es veuen aquí.'
+      }
+    },
+    myReservations: {
+      title: 'Mis reservas',
+      loading: 'Consultando agenda...',
+      emptyTitle: 'Sin reservas activas',
+      emptyMessage: 'No tienes reservas futuras programadas en este momento.',
+      footer: 'Solo se muestran reservas futuras o del día actual.'
+    },
+    common: {
+      languageCatalan: 'Català',
+      languageSpanish: 'Castellà'
+    }
+  };
+}
+</script>

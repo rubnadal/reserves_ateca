@@ -1,0 +1,261 @@
+<script>
+function getI18nCa() {
+  return {
+    header: {
+      greeting: 'Hola',
+      incidencias: 'Incidències',
+      myReservations: 'Les meves reserves',
+      admin: 'Admin',
+      back: 'Tornar'
+    },
+    sections: {
+      rooms: 'Sales i espais',
+      devices: 'Dispositius i carros'
+    },
+    booking: {
+      reservingIn: 'Reservant a',
+      loading: 'Carregant...',
+      selectedDate: 'Data seleccionada',
+      calculating: 'Calculant...',
+      monthYearFallback: 'Mes Any',
+      availableSlots: 'Horaris disponibles',
+      requestRecurring: 'Sol·licitar ús recurrent',
+      requestRecurringTitle: 'Sol·licitar aquest recurs de forma recurrent'
+    },
+    toast: {
+      errorUnknown: 'Error desconegut. Revisa la consola.',
+      errorAvailability: 'Error de disponibilitat',
+      errorPrefix: 'Error:',
+      availabilityChanged: 'La disponibilitat ha canviat. Revisa els trams i torna-ho a provar.',
+      reservationCanceled: 'Reserva cancel·lada amb èxit.',
+      errorCancelPrefix: 'Error al cancel·lar:',
+      selectResourceFirst: 'Selecciona primer un recurs',
+      requestSent: 'Sol·licitud enviada correctament',
+      incidenceReported: 'Incidència reportada correctament',
+      resourceNotFound: 'No s\'ha trobat el recurs',
+      resourceUpdating: 'Actualitzant recurs...',
+      resourceBlocked: 'Recurs bloquejat correctament',
+      resourceActivated: 'Recurs activat correctament',
+      connectionError: 'Error de connexió:',
+      noteSaved: 'Nota guardada correctament',
+      saveError: 'Error al guardar'
+    },
+    incidencias: {
+      title: 'Gestió d\'incidències',
+      loadingCount: 'Carregant dades...',
+      new: 'Nova incidència',
+      back: 'Tornar',
+      filters: {
+        all: 'Totes',
+        active: 'Actives',
+        pending: 'Pendents',
+        inProgress: 'En procés',
+        resolved: 'Resoltes'
+      },
+      searchPlaceholder: 'Cerca recurs, sala...',
+      table: {
+        id: 'ID',
+        resource: 'Recurs',
+        status: 'Estat',
+        priority: 'Prioritat',
+        user: 'Usuari',
+        date: 'Data'
+      },
+      loadingList: 'Carregant incidències...',
+      modalReport: {
+        title: 'Reportar incidència',
+        resourceLabel: 'Recurs',
+        resourcePlaceholder: '-- Selecciona un recurs --',
+        resourceHelp: 'Selecciona el recurs sobre el qual vols reportar la incidència',
+        categoryLabel: 'Categoria',
+        categoryOptions: {
+          breakdown: '🔧 Avaria',
+          cleaning: '🧹 Neteja',
+          maintenance: '⚙️ Manteniment',
+          other: '📋 Altres'
+        },
+        priorityLabel: 'Prioritat',
+        priorityOptions: {
+          low: '🟢 Baixa - Pot esperar',
+          medium: '🟡 Mitjana - Atendre aviat',
+          high: '🟠 Alta - Urgent',
+          critical: '🔴 Crítica - Immediata'
+        },
+        descriptionLabel: 'Descripció del problema',
+        descriptionPlaceholder: 'Descriu què ha passat amb el recurs...',
+        descriptionHelp: 'Sigues específic per ajudar a resoldre el problema més ràpidament',
+        cancel: 'Cancel·lar',
+        send: 'Enviar informe'
+      },
+      modalConfirm: {
+        title: 'Confirmar acció',
+        cancel: 'Cancel·lar',
+        accept: 'Acceptar'
+      },
+      modalResolve: {
+        title: 'Resoldre incidència',
+        emailNotice: 'S\'enviarà un email a l\'usuari notificant la resolució.',
+        noteLabel: 'Nota de resolució',
+        optional: '(opcional)',
+        placeholder: 'Ex: S\'ha reparat l\'equip i està llest per utilitzar...',
+        cancel: 'Cancel·lar',
+        confirm: 'Marcar resolta'
+      },
+      modalNote: {
+        title: 'Nota administrativa',
+        label: 'Escriu una nota per a l\'usuari:',
+        placeholder: 'Descriu la solució o informació rellevant...',
+        helper: 'Aquesta nota serà visible per a l\'usuari que va reportar la incidència.',
+        cancel: 'Cancel·lar',
+        save: 'Guardar',
+        saving: 'Guardant...'
+      }
+    },
+    adminConfig: {
+      title: 'Configuració del sistema',
+      description: 'Defineix les regles globals d\'ús.',
+      languageTitle: 'Idioma de la interfície',
+      languageHelp: 'Idioma global per a tota la UI.',
+      identityTitle: 'Identitat del centre',
+      identityNameLabel: 'Nom del centre',
+      identityNamePlaceholder: 'Ex: IES Tecnològic Futur',
+      identityNameHelp: 'Apareixerà a la capçalera i als correus.',
+      identityLogoLabel: 'URL del logo (opcional)',
+      identityLogoPlaceholder: 'https://mevaweb.com/logo.png o URL de Google Drive',
+      identityLogoHelp: 'URL directa (.png, .jpg) o enllaç de Google Drive. Si fas servir Drive, els permisos s\'ajustaran automàticament.',
+      timingTitle: 'Temps i terminis',
+      horizonLabel: '📅 Horitzó (dies vista)',
+      horizonHelp: 'Fins a quants dies en el futur es pot reservar?',
+      advanceLabel: '⚡ Antelació mínima (minuts)',
+      advanceHelp: 'Temps mínim abans de l\'hora per reservar.',
+      limitsTitle: 'Límits i abusos',
+      maxReservationsLabel: '🔢 Màx. reserves actives',
+      maxReservationsHelp: 'Total de reserves actives simultànies per usuari.',
+      maxSlotsLabel: '🧱 Màx. trams per reserva',
+      maxSlotsHelp: 'Si actives multitrams, quants seguits poden agafar?',
+      cancelLimitLabel: '🚫 Límit cancel·lació (hores)',
+      cancelLimitHelp: 'Antelació mínima per poder cancel·lar.',
+      generalTitle: 'Ajustos generals',
+      allowMultiTitle: '🧩 Permetre multitrams',
+      allowMultiHelp: 'Seleccionar diversos trams junts.',
+      requireReasonTitle: '📝 Exigir motiu',
+      requireReasonHelp: 'Obligatori omplir "per a què".',
+      maintenanceTitle: '🚧 Mode manteniment',
+      maintenanceHelp: 'Ningú podrà reservar.',
+      adminEmailLabel: '📧 Email de l\'administrador',
+      adminEmailPlaceholder: 'adreca@centre.cat',
+      adminEmailHelp: 'Rebrà avisos de sol·licituds de recurrències i incidències.',
+      bccTitle: 'Rebre còpia de reserves',
+      bccHelp: 'BCC de cada confirmació de reserva'
+    },
+    admin: {
+      tabs: {
+        reservas: 'Reserves',
+        recursos: 'Recursos',
+        disponibilidad: 'Disponibilitat',
+        usuarios: 'Usuaris',
+        cursos: 'Cursos',
+        tramos: 'Trams',
+        config: 'Config'
+      },
+      reservas: {
+        title: 'Historial de reserves',
+        subtitle: 'Supervisa, filtra i gestiona les reserves del centre',
+        recordsLabel: 'registres',
+        searchPlaceholder: 'Cerca...',
+        periodThisWeek: 'Aquesta setmana',
+        periodNext2Weeks: 'Prox. 2 setm.',
+        periodThisMonth: 'Aquest mes',
+        periodAll: 'Totes',
+        typeAll: 'Totes',
+        typeNormal: 'Normals',
+        typeRecurring: 'Recurrents',
+        thDateSlot: 'Data / Tram',
+        thResource: 'Recurs',
+        thUserCourse: 'Usuari / Curs',
+        thQuantity: 'Qt.',
+        thStatus: 'Estat',
+        thActions: 'Accions'
+      },
+      recursos: {
+        title: 'Gestió de recursos',
+        subtitle: 'Defineix sales, dispositius i agrupacions',
+        newResource: 'Nou recurs',
+        thIcon: 'Icona',
+        thId: 'ID',
+        thResource: 'Recurs',
+        thTypeLocation: 'Tipus / Ubicació',
+        thCapacity: 'Cap.',
+        thStatus: 'Estat',
+        dragHint: 'Arrossega des de la icona per reordenar. Els canvis es guarden en bloc.'
+      },
+      tramos: {
+        title: 'Gestió de trams horaris',
+        subtitle: 'Defineix els blocs de temps per a reserves',
+        newSlot: 'Nou tram',
+        thId: 'ID',
+        thName: 'Nom',
+        thStart: 'Inici',
+        thEnd: 'Fi',
+        thActions: 'Accions',
+        orderHint: 'Els trams es mostraran al calendari en aquest ordre exacte.'
+      },
+      disponibilidad: {
+        title: 'Gestió de recurs',
+        subtitle: 'Disponibilitat i reserves recurrents.',
+        history: 'Historial',
+        newRecurring: 'Nova recurrent',
+        selectResource: 'Selecciona recurs...',
+        pending: 'Pendents',
+        approveAll: 'Aprovar totes',
+        loadingData: 'Carregant dades...',
+        thSlot: 'Tram',
+        thMonday: 'Dilluns',
+        thTuesday: 'Dimarts',
+        thWednesday: 'Dimecres',
+        thThursday: 'Dijous',
+        thFriday: 'Divendres',
+        placeholderTitle: 'Selecciona un recurs a dalt',
+        placeholderSubtitle: 'Veuràs la disponibilitat i les reserves recurrents.',
+        legendAvailable: 'Disponible',
+        legendBlocked: 'Bloquejat',
+        legendRecurring: 'Recurrència',
+        legendEdit: 'Clic per editar'
+      },
+      cursos: {
+        title: 'Gestió de cursos',
+        subtitle: 'Administra els grups acadèmics',
+        viewButtons: 'Botons',
+        viewList: 'Llista',
+        newCourse: 'Nou curs',
+        searchPlaceholder: 'Cerca curs...',
+        thStage: 'Etapa',
+        thCourseGroup: 'Curs / Grup',
+        thActions: 'Accions'
+      },
+      usuarios: {
+        title: 'Gestió d\'usuaris',
+        subtitle: 'Administra accessos i permisos',
+        totalLabel: 'usuaris',
+        newUser: 'Nou',
+        searchPlaceholder: 'Cerca per nom o email...',
+        thUserData: 'Dades usuari (Editable)',
+        thAdmin: 'Admin',
+        thAccess: 'Accés',
+        helpNote: 'Els canvis de nom o email no afecten el compte de Google, només com es veuen aquí.'
+      }
+    },
+    myReservations: {
+      title: 'Les meves reserves',
+      loading: 'Consultant agenda...',
+      emptyTitle: 'Sense reserves actives',
+      emptyMessage: 'No tens reserves futures programades en aquest moment.',
+      footer: 'Només es mostren reserves futures o del dia actual.'
+    },
+    common: {
+      languageCatalan: 'Català',
+      languageSpanish: 'Castellà'
+    }
+  };
+}
+</script>
