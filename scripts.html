@@ -2217,6 +2217,7 @@ function enviarSolicitudRecurrente() {
 function mostrarErrorRecurrente(mensaje) {
   const errorDiv = document.getElementById('recurrenteError');
   const errorTexto = document.getElementById('recurrenteErrorTexto');
+
   if (errorDiv && errorTexto) {
     errorTexto.textContent = mensaje;
     errorDiv.classList.remove('hidden');
@@ -3155,7 +3156,7 @@ function toggleMantenimientoRecurso(idIncidencia, idRecurso, estaEnMantenimiento
 }
 
 function ejecutarToggleMantenimiento(idRecurso, nuevoEstadoRecurso) {
-  showToast('loading', 'Actualizando recurso...');
+  showToast('loading', window.t('toast.resourceUpdating'));
 
   google.script.run
     .withSuccessHandler((res) => {
@@ -3187,15 +3188,20 @@ function ejecutarToggleMantenimiento(idRecurso, nuevoEstadoRecurso) {
           window.recargarDatosApp();
         }
 
-        showToast('success', `Recurso ${nuevoEstadoRecurso === 'Mantenimiento' ? 'bloqueado' : 'activado'} correctamente`);
+        showToast(
+          'success',
+          nuevoEstadoRecurso === 'Mantenimiento'
+            ? window.t('toast.resourceBlocked')
+            : window.t('toast.resourceActivated')
+        );
 
       } else {
-        showToast('error', 'Error: ' + (res.error || 'Desconocido'));
+        showToast('error', window.t('toast.errorPrefix') + ' ' + (res.error || window.t('toast.errorUnknown')));
         renderIncidencias();
       }
     })
     .withFailureHandler((err) => {
-      showToast('error', 'Error de conexión: ' + err.message);
+      showToast('error', window.t('toast.connectionError') + ' ' + err.message);
     })
     .backend_toggleMantenimiento(idRecurso, nuevoEstadoRecurso);
 }
@@ -3271,15 +3277,15 @@ function confirmarResolucion() {
   // Deshabilitar botón
   const btn = document.getElementById('modalResolverBtnConfirmar');
   btn.disabled = true;
-  btn.innerHTML = '<iconify-icon icon="mdi:loading" class="animate-spin"></iconify-icon> Procesando...';
-  
+  btn.innerHTML = '<iconify-icon icon="mdi:loading" class="animate-spin"></iconify-icon> ' + window.t('incidencias.modalNote.saving');
+
   ejecutarCambioEstado(incidenciaIdActual, 'Resuelta', nota);
   cerrarModalResolver();
   
   // Restaurar botón (por si se vuelve a abrir)
   setTimeout(() => {
     btn.disabled = false;
-    btn.innerHTML = '<iconify-icon icon="mdi:check-all"></iconify-icon> Marcar Resuelta';
+    btn.innerHTML = '<iconify-icon icon="mdi:check"></iconify-icon> ' + window.t('incidencias.modalNote.save');
   }, 500);
 }
 
@@ -3507,15 +3513,15 @@ function guardarNotaIncidenciaModal() {
   // Deshabilitar botón
   const btn = document.getElementById('modalNotaIncidenciaBtnGuardar');
   btn.disabled = true;
-  btn.innerHTML = '<iconify-icon icon="mdi:loading" class="animate-spin"></iconify-icon> Guardando...';
-  
+  btn.innerHTML = '<iconify-icon icon="mdi:loading" class="animate-spin"></iconify-icon> ' + window.t('incidencias.modalNote.saving');
+
   google.script.run
     .withSuccessHandler(function(res) {
       btn.disabled = false;
-      btn.innerHTML = '<iconify-icon icon="mdi:check"></iconify-icon> Guardar';
-      
+      btn.innerHTML = '<iconify-icon icon="mdi:check"></iconify-icon> ' + window.t('incidencias.modalNote.save');
+
       if (res.exito) {
-        const index = incidenciasActuales.findIndex(i => i.ID_Incidencia === incidenciaIdActual);
+        const index = incidenciasActuales.findIndex(i => i.ID_Incidencia === incidenciaIdIncidencia);
         if (index !== -1) incidenciasActuales[index].Notas_Admin = nuevaNota;
         
         const indexTodas = todasLasIncidencias.findIndex(i => i.ID_Incidencia === incidenciaIdActual);
@@ -3523,15 +3529,15 @@ function guardarNotaIncidenciaModal() {
         
         cerrarModalNotaIncidencia();
         renderIncidencias();
-        showToast('success', 'Nota guardada correctamente');
+        showToast('success', window.t('toast.noteSaved'));
       } else {
-        showToast('error', res.error || 'Error al guardar');
+        showToast('error', res.error || window.t('toast.saveError'));
       }
     })
     .withFailureHandler(function(err) {
       btn.disabled = false;
-      btn.innerHTML = '<iconify-icon icon="mdi:check"></iconify-icon> Guardar';
-      showToast('error', 'Error de conexión');
+      btn.innerHTML = '<iconify-icon icon="mdi:check"></iconify-icon> ' + window.t('incidencias.modalNote.save');
+      showToast('error', window.t('toast.connectionError'));
     })
     .backend_actualizarIncidencia(incidenciaIdActual, 'EDITAR_NOTA', nuevaNota);
 }
