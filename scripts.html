@@ -445,7 +445,7 @@ function renderRecursos() {
   const emptyState = `
     <div class="col-span-full py-8 sm:py-12 text-center border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
         <iconify-icon icon="mdi:ghost-outline" class="text-3xl sm:text-4xl text-gray-300 mb-2"></iconify-icon>
-        <p class="text-gray-400 font-medium text-sm sm:text-base">No hay recursos activos.</p>
+        <p class="text-gray-400 font-medium text-sm sm:text-base">${window.t('recursos.noActive')}</p>
     </div>`;
 
   salasCont.innerHTML = salasHtml || emptyState;
@@ -789,7 +789,7 @@ function loadTramos() {
     let disponibles = 0;
 
     if (esPasado) {
-        mensaje = "Fecha pasada";
+        mensaje = window.t('tramos.pastDate');
         buttonClass = "bg-gray-50 border-gray-100 text-gray-400 opacity-60 cursor-not-allowed";
     } else {
         // Lógica normal para Hoy/Futuro
@@ -805,7 +805,7 @@ function loadTramos() {
         const totalReservado = reservasMap.get(tramoId) || 0;
         
         if (permitido !== 'si' && permitido !== 'yes' && permitido !== 'true') {
-          mensaje = razonBloqueo || "Bloqueado";
+          mensaje = razonBloqueo || window.t('tramos.blocked');
           buttonClass = "tramo-btn-no-permitido";
           isDisabled = true;
         } else {
@@ -829,7 +829,7 @@ function loadTramos() {
               const nombres = reservasTramo.map(r => {
                 if (!r.email_usuario) return null;
                 const email = r.email_usuario.toLowerCase();
-                if (email === miEmail) return 'Tú';
+                if (email === miEmail) return window.t('tramos.reservedByMe');
                 return globalState.usuariosMap[email] || email;
               }).filter(Boolean);
 
@@ -839,11 +839,11 @@ function loadTramos() {
             }
 
             if (disponibles <= 0) {
-              mensaje = "Completo" + nombresReservadores;
+              mensaje = window.t('tramos.full') + nombresReservadores;
               buttonClass = "tramo-btn-reservado";
               isDisabled = true;
             } else {
-              mensaje = disponibles + ' disponibles' + nombresReservadores;
+              mensaje = disponibles + ' ' + window.t('tramos.availableSuffix') + nombresReservadores;
               isDisabled = false;
               buttonClass = "tramo-btn-disponible";
               tramosCount++;
@@ -861,14 +861,16 @@ function loadTramos() {
                 const email = reserva.email_usuario.toLowerCase();
                 const miEmail = globalState.userEmail ? globalState.userEmail.toLowerCase() : '';
                 const nombre = globalState.usuariosMap[email];
-                mensaje = (email === miEmail) ? "Reservado por ti" : 'Reservado por ' + (nombre || email);
+                mensaje = (email === miEmail)
+                  ? window.t('tramos.reservedByMe')
+                  : window.t('tramos.reservedByPrefix') + ' ' + (nombre || email);
               } else {
-                mensaje = "Reservado";
+                mensaje = window.t('tramos.reserved');
               }
               buttonClass = "tramo-btn-reservado";
               isDisabled = true;
             } else {
-              mensaje = "Disponible";
+              mensaje = window.t('tramos.available');
               disponibles = 1;
               isDisabled = false;
               buttonClass = "tramo-btn-disponible";
@@ -886,7 +888,7 @@ function loadTramos() {
                  horaLimite.setHours(h, m + 10);
                  if (ahora > horaLimite) {
                     isDisabled = true;
-                    mensaje = "Ya ha pasado";
+                    mensaje = window.t('tramos.timePassed');
                     buttonClass = "tramo-btn-no-permitido";
                     tramosCount--;
                  }
@@ -908,8 +910,8 @@ function loadTramos() {
     </button>`;
   });
   
-  tramosContainer.innerHTML = tramosHtml || '<div class="col-span-full text-center text-gray-500 py-4">No hay tramos configurados.</div>';
-  
+  tramosContainer.innerHTML = tramosHtml || `<div class="col-span-full text-center text-gray-500 py-4">${window.t('tramos.noneConfigured')}</div>`;
+
   if (tramosCount <= 6) {
     tramosContainer.style.maxHeight = 'none';
     tramosContainer.style.overflowY = 'visible';
@@ -1633,7 +1635,7 @@ function renderReservaIndividual(res) {
           </div>
           <div class="flex flex-col items-end">
               <button onclick="handleCancelReservation(this)" data-id="${res.id_reserva}"
-                      class="cancel-btn-inline w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 transition-all"
+                      class="cancel-btn-inline w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all"
                       title="Cancelar reserva">
                   <iconify-icon icon="mdi:trash-can-outline" class="text-lg"></iconify-icon>
               </button>
@@ -2802,7 +2804,7 @@ function cambiarFiltroIncidencia(nuevoEstado, botonClickado) {
     btn.className = `${claseBase} ${claseInactiva}`;
   });
 
-  // Aplicamos estilo activo AL QUE SE CLICÓ
+  // Aplicar estilo activo AL QUE SE CLICÓ
   if(botonClickado) {
     botonClickado.className = `${claseBase} ${claseActiva}`;
     // Cambiamos cursor a default para indicar que ya está seleccionado
@@ -2895,7 +2897,7 @@ function renderIncidencias() {
     lista.innerHTML = `
       <div class="flex flex-col items-center justify-center py-12 text-center text-gray-400">
         <iconify-icon icon="mdi:checkbox-multiple-marked-outline" class="text-4xl mb-2 opacity-50"></iconify-icon>
-        <p>No se encontraron incidencias.</p>
+        <p>${window.t('incidencias.noIncidencesFound')}</p>
       </div>
     `;
     return;
@@ -3227,8 +3229,10 @@ function ejecutarCambioEstado(idIncidencia, nuevoEstado, notaCierre) {
           
           // ✅ También actualizar en todasLasIncidencias
           const indexTodas = todasLasIncidencias.findIndex(i => i.ID_Incidencia === idIncidencia);
-          if(indexTodas !== -1) todasLasIncidencias[indexTodas].Estado = nuevoEstado;
-          if(notaCierre) todasLasIncidencias[indexTodas].Notas_Admin = notaCierre;
+          if(indexTodas !== -1) {
+            todasLasIncidencias[indexTodas].Estado = nuevoEstado;
+            if(notaCierre) todasLasIncidencias[indexTodas].Notas_Admin = notaCierre;
+          }
 
           renderIncidencias();
        } else {
