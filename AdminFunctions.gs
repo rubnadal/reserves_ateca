@@ -1619,7 +1619,14 @@ function saveBatchConfig(configList) {
         sheet.appendRow([item.clave, item.valor, 'Auto-generado']);
       }
     });
-    
+
+    // Purga caches para que la configuración se recargue al momento.
+    const cache = CacheService.getScriptCache();
+    const configCacheKey = (typeof CACHE_KEYS !== 'undefined' && CACHE_KEYS.CONFIGURACION)
+      ? CACHE_KEYS.CONFIGURACION
+      : 'configuracion_v1';
+    cache.remove(configCacheKey);
+
     purgarCache();
     return { success: true };
     

@@ -1293,7 +1293,7 @@ function handleConfirmReservation() {
   }
   
   confirmModalButton.disabled = true;
-  confirmModalButton.textContent = "Reservando...";
+  confirmModalButton.textContent = window.t('modalReservation.submitting');
   showLoading();
   modal.close();
   
@@ -1301,9 +1301,9 @@ function handleConfirmReservation() {
   const max = parseInt(cantidadInput.max, 10);
   
   if (cantidad < 1 || cantidad > max) {
-    onFailure({ message: 'Cantidad no válida. Debe ser entre 1 y ' + max + '.'});
+    onFailure({ message: window.t('modalReservation.quantityError') + ' ' + max + '.'});
     confirmModalButton.disabled = false;
-    confirmModalButton.textContent = "Confirmar Reserva";
+    confirmModalButton.textContent = window.t('modalReservation.confirm');
     modal.showModal();
     return;
   }
@@ -1374,7 +1374,7 @@ function onReservaSuccess(response) {
   }
   
   confirmModalButton.disabled = false;
-  confirmModalButton.innerHTML = `<span>Confirmar</span> <iconify-icon icon="mdi:arrow-right"></iconify-icon>`;
+  confirmModalButton.innerHTML = `<span>${window.t('modalReservation.confirm')}</span> <iconify-icon icon="mdi:arrow-right"></iconify-icon>`;
 }
 
 function refreshDisponibilidadAndReloadTramos() {
@@ -2187,7 +2187,7 @@ function enviarSolicitudRecurrente() {
   const textoOriginal = btnEnviar.innerHTML;
   btnEnviar.disabled = true;
   btnEnviar.innerHTML = `
-    <iconify-icon icon="mdi:loading" class="animate-spin text-xl"></iconify-icon>
+    <iconify-icon icon="mdi:loading" class="animate-spin"></iconify-icon>
     <span>Enviando...</span>
   `;
 
@@ -3227,8 +3227,10 @@ function ejecutarCambioEstado(idIncidencia, nuevoEstado, notaCierre) {
           
           // ✅ También actualizar en todasLasIncidencias
           const indexTodas = todasLasIncidencias.findIndex(i => i.ID_Incidencia === idIncidencia);
-          if(indexTodas !== -1) todasLasIncidencias[indexTodas].Estado = nuevoEstado;
-          if(notaCierre) todasLasIncidencias[indexTodas].Notas_Admin = notaCierre;
+          if(indexTodas !== -1) {
+            todasLasIncidencias[indexTodas].Estado = nuevoEstado;
+            if(notaCierre) todasLasIncidencias[indexTodas].Notas_Admin = notaCierre;
+          }
 
           renderIncidencias();
        } else {
@@ -3521,7 +3523,7 @@ function guardarNotaIncidenciaModal() {
       btn.innerHTML = '<iconify-icon icon="mdi:check"></iconify-icon> ' + window.t('incidencias.modalNote.save');
 
       if (res.exito) {
-        const index = incidenciasActuales.findIndex(i => i.ID_Incidencia === incidenciaIdIncidencia);
+        const index = incidenciasActuales.findIndex(i => i.ID_Incidencia === incidenciaIdActual);
         if (index !== -1) incidenciasActuales[index].Notas_Admin = nuevaNota;
         
         const indexTodas = todasLasIncidencias.findIndex(i => i.ID_Incidencia === incidenciaIdActual);

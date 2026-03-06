@@ -1101,8 +1101,9 @@ function sendConfirmationEmail(email, userName, details) {
 
   try {
     // Verificar si el admin quiere recibir copia oculta
-    const adminEmail = getConfigValue('email_admin', '');
-    const recibirCopia = getConfigValue('admin_recibir_copia_reservas', 'FALSE');
+    const adminEmail = String(getConfigValueNoCache('email_admin', '') || '').trim();
+    const recibirCopiaRaw = getConfigValueNoCache('admin_recibir_copia_reservas', false);
+    const recibirCopiaEnabled = normalizeConfigBool(recibirCopiaRaw);
 
     const emailOptions = {
       to: email,
@@ -1111,7 +1112,7 @@ function sendConfirmationEmail(email, userName, details) {
     };
 
     // Añadir BCC solo si el admin lo tiene activado y hay email configurado
-    if (adminEmail && recibirCopia.toUpperCase() === 'TRUE') {
+    if (adminEmail && recibirCopiaEnabled) {
       emailOptions.bcc = adminEmail;
     }
 
@@ -1813,6 +1814,29 @@ function getConfiguracion() {
 function getConfigValue(clave, valorPorDefecto = null) {
   const config = getConfiguracion();
   return config[clave] !== undefined ? config[clave] : valorPorDefecto;
+}
+
+function normalizeConfigBool(value) {
+  if (value === true || value === false) return value;
+  const normalized = String(value || '').trim().toLowerCase();
+  return normalized === 'true' || normalized === 'si' || normalized === 'sí' || normalized === 'yes' || normalized === '1';
+}
+
+function getConfigValueNoCache(clave, valorPorDefecto = null) {
+  const sheet = getDB().getSheetByName(SHEETS.CONFIG);
+  if (!sheet || sheet.getLastRow() < 2) return valorPorDefecto;
+
+  const data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 2).getValues();
+  for (let i = 0; i < data.length; i++) {
+    const key = String(data[i][0] || '').trim();
+    if (key === clave) {
+      const raw = data[i][1];
+      if (raw === 'TRUE' || raw === 'FALSE') return raw === 'TRUE';
+      if (raw !== '' && !isNaN(raw)) return Number(raw);
+      return raw;
+    }
+  }
+  return valorPorDefecto;
 }
 
 /* ============================================
