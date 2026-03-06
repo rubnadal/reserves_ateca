@@ -86,6 +86,7 @@ function getI18nCa() {
         resourceLabel: 'Recurs',
         resourcePlaceholder: '-- Selecciona un recurs --',
         resourceHelp: 'Selecciona el recurs sobre el qual vols reportar la incidència',
+        selectResourceTitle: 'Selecciona un recurs',
         categoryLabel: 'Categoria',
         categoryOptions: {
           breakdown: '🔧 Avaria',
@@ -106,6 +107,15 @@ function getI18nCa() {
         cancel: 'Cancel·lar',
         send: 'Enviar informe'
       },
+      validation: {
+        selectResource: 'Si us plau, selecciona un recurs',
+        resourceParseError: 'Error en processar el recurs seleccionat',
+        describeProblem: 'Si us plau, descriu el problema',
+        descriptionMinLength: 'La descripció ha de tenir com a mínim 10 caràcters',
+        noResourceSelected: 'Error: no hi ha cap recurs seleccionat',
+        reportFailed: 'Error en reportar la incidència'
+      },
+      sending: 'Enviant...',
       modalConfirm: {
         title: 'Confirmar acció',
         cancel: 'Cancel·lar',
@@ -295,6 +305,16 @@ function getI18nCa() {
       selectCoursePlaceholder: '-- Tria un curs --',
       coursesOfPrefix: 'Cursos de',
       classLabel: 'Classe:'
+    },
+    recurring: {
+      sending: 'Enviant...',
+      reportFailed: 'Error en enviar la sol·licitud',
+      connectionErrorPrefix: 'Error de connexió:',
+      validation: {
+        selectAtLeastOneSlot: 'Selecciona almenys un tram al calendari',
+        selectEndDate: 'Selecciona una data de finalització',
+        reasonMinLength: 'El motiu ha de tenir com a mínim 10 caràcters'
+      }
     }
   };
 }

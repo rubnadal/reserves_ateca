@@ -2141,7 +2141,7 @@ function enviarSolicitudRecurrente() {
 
   // Verificar selecciones
   if (seleccionesRecurrentes.size === 0) {
-    mostrarErrorRecurrente('Selecciona al menos un tramo en el calendario');
+    mostrarErrorRecurrente(window.t('recurring.validation.selectAtLeastOneSlot'));
     return;
   }
 
@@ -2154,7 +2154,7 @@ function enviarSolicitudRecurrente() {
   } else {
     const fechaInput = document.getElementById('recurrenteFechaFin').value;
     if (!fechaInput) {
-      mostrarErrorRecurrente('Selecciona una fecha de finalización');
+      mostrarErrorRecurrente(window.t('recurring.validation.selectEndDate'));
       return;
     }
     fechaFin = new Date(fechaInput);
@@ -2163,7 +2163,7 @@ function enviarSolicitudRecurrente() {
   // Obtener motivo
   const motivo = document.getElementById('recurrenteMotivo').value.trim();
   if (!motivo || motivo.length < 10) {
-    mostrarErrorRecurrente('El motivo debe tener al menos 10 caracteres');
+    mostrarErrorRecurrente(window.t('recurring.validation.reasonMinLength'));
     return;
   }
 
@@ -2190,7 +2190,7 @@ function enviarSolicitudRecurrente() {
   btnEnviar.disabled = true;
   btnEnviar.innerHTML = `
     <iconify-icon icon="mdi:loading" class="animate-spin"></iconify-icon>
-    <span>Enviando...</span>
+    <span>${window.t('recurring.sending')}</span>
   `;
 
   google.script.run
@@ -2202,13 +2202,13 @@ function enviarSolicitudRecurrente() {
         showToast('success', response.message || window.t('toast.requestSent'));
         cerrarModalSolicitudRecurrente();
       } else {
-        mostrarErrorRecurrente(response.error || 'Error al enviar la solicitud');
+        mostrarErrorRecurrente(response.error || window.t('recurring.reportFailed'));
       }
     })
     .withFailureHandler(function(error) {
       btnEnviar.disabled = false;
       btnEnviar.innerHTML = textoOriginal;
-      mostrarErrorRecurrente('Error de conexión: ' + error.message);
+      mostrarErrorRecurrente(window.t('recurring.connectionErrorPrefix') + ' ' + error.message);
     })
     .crearSolicitudRecurrente(datos);
 }
@@ -2289,7 +2289,7 @@ function abrirModalReportarIncidencia(idRecurso, nombreRecurso, iconoRecurso) {
       modalIcono.innerHTML = `<iconify-icon icon="mdi:alert-circle-outline" class="text-2xl"></iconify-icon>`;
     }
     if (modalNombre) {
-      modalNombre.textContent = 'Selecciona un recurso';
+      modalNombre.textContent = window.t('incidencias.modalReport.selectResourceTitle');
     }
   }
 
@@ -2386,7 +2386,7 @@ function actualizarHeaderModalIncidencia(selectElement) {
       modalIcono.innerHTML = `<iconify-icon icon="mdi:alert-circle-outline" class="text-2xl"></iconify-icon>`;
     }
     if (modalNombre) {
-      modalNombre.textContent = 'Selecciona un recurso';
+      modalNombre.textContent = window.t('incidencias.modalReport.selectResourceTitle');
     }
     return;
   }
@@ -2445,7 +2445,7 @@ function enviarReporteIncidencia() {
     // Obtener recurso del selector
     const valorSeleccionado = selectRecurso.value;
     if (!valorSeleccionado) {
-      mostrarErrorIncidencia('Por favor, selecciona un recurso');
+      mostrarErrorIncidencia(window.t('incidencias.validation.selectResource'));
       selectRecurso.focus();
       return;
     }
@@ -2457,25 +2457,25 @@ function enviarReporteIncidencia() {
         icono: recursoData.icono || 'mdi:cube-outline'
       };
     } catch (e) {
-      mostrarErrorIncidencia('Error al procesar el recurso seleccionado');
+      mostrarErrorIncidencia(window.t('incidencias.validation.resourceParseError'));
       return;
     }
   }
 
   // ✅ Validación con error inline
   if (!descripcion) {
-    mostrarErrorIncidencia('Por favor, describe el problema');
+    mostrarErrorIncidencia(window.t('incidencias.validation.describeProblem'));
     document.getElementById('incidenciaDescripcion').focus();
     return;
   }
 
   if (descripcion.length < 10) {
-    mostrarErrorIncidencia('La descripción debe tener al menos 10 caracteres');
+    mostrarErrorIncidencia(window.t('incidencias.validation.descriptionMinLength'));
     return;
   }
 
   if (!incidenciaRecursoActual) {
-    mostrarErrorIncidencia('Error: No hay recurso seleccionado');
+    mostrarErrorIncidencia(window.t('incidencias.validation.noResourceSelected'));
     setTimeout(() => {
       cerrarModalReportarIncidencia();
     }, 2000);
@@ -2500,7 +2500,7 @@ function enviarReporteIncidencia() {
   btnEnviar.disabled = true;
   btnEnviar.innerHTML = `
     <iconify-icon icon="mdi:loading" class="animate-spin"></iconify-icon>
-    <span>Enviando...</span>
+    <span>${window.t('incidencias.sending')}</span>
   `;
 
   google.script.run
@@ -2517,13 +2517,13 @@ function enviarReporteIncidencia() {
           cargarIncidencias();
         }
       } else {
-        mostrarErrorIncidencia(response.error || 'Error al reportar incidencia');
+        mostrarErrorIncidencia(response.error || window.t('incidencias.validation.reportFailed'));
       }
     })
     .withFailureHandler(function(error) {
       btnEnviar.disabled = false;
       btnEnviar.innerHTML = textoOriginal;
-      mostrarErrorIncidencia('Error de conexión: ' + error.message);
+      mostrarErrorIncidencia(window.t('incidencias.connectionErrorPrefix') + ' ' + error.message);
     })
     .reportarIncidencia(datos);
 }
@@ -2596,812 +2596,23 @@ function abrirModalReportarIncidenciaDesdeReserva() {
   );
 }
 
-/* =========================================================
-   SECCIÓN: VER INCIDENCIAS (USUARIOS)
-   ========================================================= */
-
-let todasLasIncidencias = [];
-let incidenciasActuales = [];
-
-/**
- * Mostrar sección de incidencias (con verificación de recursos)
- */
-function mostrarSeccionIncidencias() {
-  console.log('📋 Abriendo sección de incidencias');
-
-  // Cerrar panel admin si está abierto
-  if (typeof window.closeAdminPanelUI === 'function') {
-    window.closeAdminPanelUI();
-  }
-  
-  // Ocultar todas las vistas
-  document.querySelectorAll('.view-section').forEach(el => {
-    el.classList.add('hidden');
-    el.classList.add('opacity-0');
-  });
-  
-  // Mostrar sección incidencias
-  const seccion = document.getElementById('seccionIncidencias');
-  if (seccion) {
-    seccion.classList.remove('hidden');
-    void seccion.offsetWidth;
-    seccion.classList.remove('opacity-0');
-  }
-  
-  // El botón de incidencias permanece visible (ya no se oculta)
-  
-  // ✅ ESPERAR A ADMINSTATE SI NO ESTÁ LISTO
-  if (typeof AdminState === 'undefined' || !AdminState.recursos || AdminState.recursos.length === 0) {
-    console.log('⏳ Esperando a que AdminState cargue...');
-    
-    const lista = document.getElementById('listaIncidencias');
-    if (lista) {
-      lista.innerHTML = `
-        <div class="text-center py-12 text-gray-400">
-          <iconify-icon icon="mdi:loading" class="text-4xl animate-spin mb-2"></iconify-icon>
-          <p>${window.t('incidencias.loadingCount')}</p>
-        </div>
-      `;
-    }
-    
-    const esperarAdminState = setInterval(() => {
-      if (typeof AdminState !== 'undefined' && AdminState.recursos && AdminState.recursos.length > 0) {
-        clearInterval(esperarAdminState);
-        console.log('✅ AdminState listo, cargando incidencias');
-        cargarOUsarIncidencias();
-      }
-    }, 200);
-    
-  } else {
-    cargarOUsarIncidencias();
-  }
+function hayIncidenciasPendientes() {
+  return todasLasIncidencias.some(i =>
+    i.Estado === 'Pendiente' || i.Estado === 'En proceso'
+  );
 }
 
-// Función auxiliar para evitar duplicación
-function cargarOUsarIncidencias() {
-  if (!todasLasIncidencias || todasLasIncidencias.length === 0) {
-    cargarIncidencias();
-  } else {
-    actualizarContadorIncidencias();
-    filtrarIncidencias();
-  }
-}
-
-/**
- * Volver desde incidencias
- */
-function volverDesdeIncidencias() {
-  console.log('🔙 Volviendo desde incidencias');
-
-  // Asegurar que el panel admin sigue cerrado
-  if (typeof window.closeAdminPanelUI === 'function') {
-    window.closeAdminPanelUI();
-  }
-  
-  // Ocultar sección incidencias
-  const seccion = document.getElementById('seccionIncidencias');
-  if (seccion) {
-    seccion.classList.add('hidden');
-    seccion.classList.add('opacity-0');
-  }
-  
-  // Mostrar vista principal
-  const step1 = document.getElementById('step1_Recursos');
-  if (step1) {
-    step1.classList.remove('hidden');
-    void step1.offsetWidth;
-    step1.classList.remove('opacity-0');
-  }
-}
-
-/**
- * Cargar incidencias desde el servidor
- */
-function cargarIncidencias() {
-  console.log('🔄 Cargando incidencias...');
-  
-  const lista = document.getElementById('listaIncidencias');
-  if (!lista) return;
-  
-  lista.innerHTML = `
-    <div class="text-center py-12 text-gray-400">
-      <iconify-icon icon="mdi:loading" class="text-4xl animate-spin mb-2"></iconify-icon>
-      <p>${window.t('incidencias.loadingList')}</p>
-    </div>
-  `;
-  
-  google.script.run
-    .withSuccessHandler(function(response) {
-      if (response && response.success) {
-        todasLasIncidencias = response.incidencias || [];
-        console.log(`✅ ${todasLasIncidencias.length} incidencias cargadas`);
-        
-        actualizarContadorIncidencias();
-        filtrarIncidencias();
-      } else {
-        lista.innerHTML = `
-          <div class="text-center py-12 text-gray-400">
-            <iconify-icon icon="mdi:information-outline" class="text-4xl mb-2"></iconify-icon>
-            <p>${window.t('incidencias.loadFailed')}</p>
-            <p class="text-xs mt-2">${response ? response.error : window.t('incidencias.invalidResponse')}</p>
-          </div>
-        `;
-      }
-    })
-    .withFailureHandler(function(error) {
-      lista.innerHTML = `
-        <div class="text-center py-12 text-red-500">
-          <iconify-icon icon="mdi:alert-circle" class="text-4xl mb-2"></iconify-icon>
-          <p>${window.t('incidencias.connectionErrorPrefix')} ${error.message}</p>
-        </div>
-      `;
-    })
-    .getIncidencias();
-}
-
-/**
- * Obtener estado actual de un recurso (busca en ambos estados)
- * @param {string} idRecurso - ID del recurso
- * @returns {string|null} - Estado del recurso o null si no se encuentra
- */
-function obtenerEstadoRecurso(idRecurso) {
-  const idBuscado = String(idRecurso).trim();
-  
-  // 1. Buscar en globalState primero (más actualizado en vista usuario)
-  if (globalState && globalState.recursos) {
-    const recurso = globalState.recursos.find(r => 
-      String(r.id_recurso).trim() === idBuscado
-    );
-    if (recurso) return recurso.estado;
-  }
-  
-  // 2. Fallback a AdminState (si existe)
-  if (typeof AdminState !== 'undefined' && AdminState.recursos) {
-    const recursoAdmin = AdminState.recursos.find(r => 
-      String(r.id_recurso).trim() === idBuscado
-    );
-    if (recursoAdmin) return recursoAdmin.estado;
-  }
-  
-  return null;
-}
-
-/**
- * Verificar si un recurso está en mantenimiento
- */
-function recursoEnMantenimiento(idRecurso) {
-  const estado = obtenerEstadoRecurso(idRecurso);
-  return estado === 'Mantenimiento';
-}
-
-/* =========================================================
-   LÓGICA DE FILTROS (TABS)
-   ========================================================= */
-
-// 1. Variable global sincronizada con tu HTML (Por defecto 'todas')
-let filtroEstadoActual = 'todas'; 
-
-/**
- * Función para cambiar el estilo visual y el filtro lógico
- */
-function cambiarFiltroIncidencia(nuevoEstado, botonClickado) {
-  // A. Actualizar variable lógica
-  filtroEstadoActual = nuevoEstado;
-
-  // B. Gestión de estilos visuales
-  const botones = document.querySelectorAll('.filter-tab');
-  
-  // Clases para cuando un botón está ACTIVO
-  const claseActiva = 'bg-white text-gray-800 shadow-sm ring-1 ring-black/5 font-semibold';
-  // Clases para cuando un botón está INACTIVO
-  const claseInactiva = 'text-gray-500 hover:text-gray-700 hover:bg-white/50 font-medium';
-  // Clases base que todos comparten siempre
-  const claseBase = 'filter-tab flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all cursor-pointer';
-
-  // Reseteamos todos los botones al estado inactivo
-  botones.forEach(btn => {
-    // Nota: Aquí normalizamos el estilo inactivo a gris para mantener la limpieza visual
-    btn.className = `${claseBase} ${claseInactiva}`;
-  });
-
-  // Aplicar estilo activo AL QUE SE CLICÓ
-  if(botonClickado) {
-    botonClickado.className = `${claseBase} ${claseActiva}`;
-    // Cambiamos cursor a default para indicar que ya está seleccionado
-    botonClickado.classList.remove('cursor-pointer');
-    botonClickado.classList.add('cursor-default');
-  }
-
-  // C. Ejecutar el filtro de datos
-  filtrarIncidencias();
-}
-
-/**
- * Función de filtrado de datos
- */
-function filtrarIncidencias() {
-  const filtroEstado = filtroEstadoActual; 
-  
-  const inputBusqueda = document.getElementById('buscadorIncidencias');
-  const busqueda = inputBusqueda ? inputBusqueda.value.toLowerCase() : '';
-  
-  incidenciasActuales = todasLasIncidencias.filter(inc => {
-    // --- 1. Lógica de Estado ---
-    let cumpleEstado = true;
-    
-    if (filtroEstado === 'todas') {
-        cumpleEstado = true;
-    } else if (filtroEstado === 'activas') {
-        cumpleEstado = inc.Estado === 'Pendiente' || inc.Estado === 'En proceso';
-    } else {
-        let estadoBuscado = '';
-        
-        if(filtroEstado === 'pendiente') estadoBuscado = 'Pendiente';
-        else if(filtroEstado === 'en-proceso') estadoBuscado = 'En proceso';
-        else if(filtroEstado === 'resuelta') estadoBuscado = 'Resuelta';
-        
-        cumpleEstado = inc.Estado === estadoBuscado;
-    }
-    
-    // --- 2. Lógica de Búsqueda ---
-    let cumpleBusqueda = true;
-    if (busqueda) {
-      const textoBusqueda = `
-        ${inc.Nombre_Recurso || ''} 
-        ${inc.Descripcion || ''} 
-        ${inc.Categoria || ''} 
-        ${inc.ID_Incidencia || ''}
-      `.toLowerCase();
-      
-      cumpleBusqueda = textoBusqueda.includes(busqueda);
-    }
-    
-    return cumpleEstado && cumpleBusqueda;
-  });
-  
-  // ✅ ORDENAR: Primero por estado (Pendiente > En proceso > Resuelta), luego por fecha (recientes primero)
-  const ordenEstado = { 'Pendiente': 0, 'En proceso': 1, 'Resuelta': 2 };
-  
-  incidenciasActuales.sort((a, b) => {
-    // 1. Por estado
-    const estadoA = ordenEstado[a.Estado] ?? 3;
-    const estadoB = ordenEstado[b.Estado] ?? 3;
-    if (estadoA !== estadoB) return estadoA - estadoB;
-    
-    // 2. Por fecha (más reciente primero)
-    const fechaA = new Date(a.Fecha_Reporte || a.Fecha || 0);
-    const fechaB = new Date(b.Fecha_Reporte || b.Fecha || 0);
-    return fechaB - fechaA;
-  });
-  
-  renderIncidencias();
-}
-
-
-/**
- * Renderizar lista de incidencias
- */
-function renderIncidencias() {
-  const lista = document.getElementById('listaIncidencias');
-  const contador = document.getElementById('contadorIncidencias');
-  
-  // 1. Limpiar y actualizar contador
-  lista.innerHTML = '';
-  if (contador) {
-    const total = incidenciasActuales.length;
-    contador.textContent = total === 1 ? '1 incidencia' : `${total} incidencias`;
-  }
-
-  // 2. Estado Vacío
-  if (incidenciasActuales.length === 0) {
-    lista.innerHTML = `
-      <div class="flex flex-col items-center justify-center py-12 text-center text-gray-400">
-        <iconify-icon icon="mdi:checkbox-multiple-marked-outline" class="text-4xl mb-2 opacity-50"></iconify-icon>
-        <p>${window.t('incidencias.noIncidencesFound')}</p>
-      </div>
-    `;
-    return;
-  }
-
-  // 3. Generar HTML
-  lista.innerHTML = incidenciasActuales.map(inc => crearTarjetaIncidencia(inc)).join('');
-}
-
-/**
- * Crea la tarjeta visual de la incidencia con controles de ADMIN integrados
- */
-function crearTarjetaIncidencia(inc) {
-  const esAdmin = globalState.isAdmin === true; 
-
-  // ========== BÚSQUEDA MEJORADA ==========
-  let recursoData = null;
-  
-  if (globalState?.recursos?.length > 0) {
-    recursoData = globalState.recursos.find(r => 
-      r.id_recurso === inc.ID_Recurso || r.nombre === inc.Nombre_Recurso
-    );
-  }
-  
-  if (!recursoData && typeof AdminState !== 'undefined' && AdminState?.recursos?.length > 0) {
-    recursoData = AdminState.recursos.find(r => 
-      r.id_recurso === inc.ID_Recurso || r.nombre === inc.Nombre_Recurso
-    );
-  }
-  
-  const recursoEnMantenimiento = recursoData?.estado === 'Mantenimiento';
-  // ========== FIN BÚSQUEDA MEJORADA ==========
-  
-  // A. CONFIGURACIÓN VISUAL
-  const prioridadConfig = {
-    'Crítica': { color: 'text-red-700', bg: 'bg-red-50', border: 'border-red-200', icon: '🔴' },
-    'Alta':    { color: 'text-orange-700', bg: 'bg-orange-50', border: 'border-orange-200', icon: '🟠' },
-    'Media':   { color: 'text-yellow-700', bg: 'bg-yellow-50', border: 'border-yellow-200', icon: '🟡' },
-    'Baja':    { color: 'text-green-700', bg: 'bg-green-50', border: 'border-green-200', icon: '🟢' }
-  };
-  
-  const estadoConfig = {
-    'Pendiente':  { color: 'text-red-700', bg: 'bg-red-100', border: 'border-red-200', label: 'Pendiente' },
-    'En proceso': { color: 'text-blue-700', bg: 'bg-blue-100', border: 'border-blue-200', label: 'En proceso' },
-    'Resuelta':   { color: 'text-green-700', bg: 'bg-green-100', border: 'border-green-200', label: 'Resuelta' }
-  };
-  
-  const prio = prioridadConfig[inc.Prioridad] || prioridadConfig['Media'];
-  const est = estadoConfig[inc.Estado] || estadoConfig['Pendiente'];
-  
-  // B. FECHAS Y DATOS
-  const fecha = new Date(inc.Fecha_Reporte || inc.Fecha);
-  const diffDias = Math.floor((new Date() - fecha) / (1000 * 60 * 60 * 24));
-  const tiempoTexto = diffDias === 0 ? 'Hoy' : `Hace ${diffDias}d`;
-  const nombreUsuario = inc.Email_Usuario ? inc.Email_Usuario.split('@')[0] : (inc.Usuario_Reporta || 'Usuario');
-
-  // --- HTML DE SELECTORES (SOLO ADMIN) ---
-  let selectorPrioridad = `<span class="inline-flex items-center gap-1.5 text-xs font-medium text-gray-600">${prio.icon} ${inc.Prioridad || 'Media'}</span>`;
-  let selectorEstado = `<span class="inline-flex px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${est.bg} ${est.color} border ${est.border}">${est.label}</span>`;
-
-  if (esAdmin) {
-    // Selector Prioridad
-    selectorPrioridad = `
-      <select onchange="cambiarPrioridadIncidencia('${inc.ID_Incidencia}', this.value)" onclick="event.stopPropagation()"
-              class="bg-transparent text-xs font-medium text-gray-700 border-none focus:ring-0 cursor-pointer p-0 pr-6 relative z-20">
-        ${Object.keys(prioridadConfig).map(p => `<option value="${p}" ${inc.Prioridad === p ? 'selected' : ''}>${prioridadConfig[p].icon} ${p}</option>`).join('')}
-      </select>
-    `;
-
-    // Selector Estado (El importante)
-    selectorEstado = `
-      <div class="relative inline-block" onclick="event.stopPropagation()">
-        <select onchange="gestionarCambioEstadoIncidencia('${inc.ID_Incidencia}', this.value)" 
-                class="appearance-none pl-2 pr-6 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider cursor-pointer border focus:ring-2 focus:ring-offset-1 focus:ring-blue-400 focus:outline-none ${est.bg} ${est.color} ${est.border}">
-          ${Object.keys(estadoConfig).map(e => `<option value="${e}" ${inc.Estado === e ? 'selected' : ''}>${e.toUpperCase()}</option>`).join('')}
-        </select>
-        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 ${est.color}">
-          <iconify-icon icon="mdi:chevron-down" class="text-xs"></iconify-icon>
-        </div>
-      </div>
-    `;
-  }
-
-  return `
-    <div class="group bg-white hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0 relative">
-      
-      <div class="cursor-pointer" onclick="toggleDescripcionIncidencia('${inc.ID_Incidencia}')">
-        
-        <div class="hidden sm:grid grid-cols-12 gap-4 px-6 py-4 items-center">
-          <div class="col-span-1 text-xs font-mono text-gray-400">#${inc.ID_Incidencia}</div>
-          
-          <div class="col-span-3">
-            <div class="font-bold text-gray-800 text-sm truncate flex items-center gap-2">
-              ${inc.Nombre_Recurso}
-            </div>
-            <div class="text-xs text-gray-500 flex items-center gap-1"><iconify-icon icon="mdi:tag-outline"></iconify-icon> ${inc.Categoria}
-            ${recursoEnMantenimiento ? `<span title="En Mantenimiento" class="text-[10px] bg-yellow-100 text-yellow-800 px-1.5 py-0.5 rounded border border-yellow-200">⚠️ MANT</span>` : ''}
-            </div>
-          </div>
-          
-          <div class="col-span-2">${selectorEstado}</div>
-          <div class="col-span-2">${selectorPrioridad}</div>
-          
-          <div class="col-span-2 text-sm text-gray-600 truncate flex items-center gap-1"><iconify-icon icon="mdi:account" class="text-gray-300"></iconify-icon> ${nombreUsuario}</div>
-          
-          <div class="col-span-2 flex items-center justify-end gap-3">
-            <span class="text-xs text-gray-400">${tiempoTexto}</span>
-            <iconify-icon id="chevron-${inc.ID_Incidencia}" icon="mdi:chevron-down" class="text-gray-400 text-xl transition-transform duration-200"></iconify-icon>
-          </div>
-        </div>
-
-        <div class="sm:hidden px-4 py-4">
-           <div class="flex justify-between items-start mb-2">
-              <div>
-                  <div class="text-sm font-bold text-gray-800 flex items-center gap-2">
-                      ${inc.Nombre_Recurso}
-                      ${recursoEnMantenimiento ? `⚠️` : ''}
-                  </div>
-                  <div class="text-xs text-gray-500">#${inc.ID_Incidencia}</div>
-              </div>
-              <div onclick="event.stopPropagation()">${selectorEstado}</div>
-           </div>
-           <div class="flex justify-between items-center mt-2">
-              <div onclick="event.stopPropagation()">${selectorPrioridad}</div>
-              <iconify-icon id="chevron-mobile-${inc.ID_Incidencia}" icon="mdi:chevron-down" class="text-lg"></iconify-icon>
-           </div>
-        </div>
-      </div>
-      
-      <div id="desc-${inc.ID_Incidencia}" class="hidden bg-gray-50/80 border-t border-gray-100 shadow-inner">
-        <div class="px-6 py-5">
-          
-          <div class="flex flex-col md:flex-row gap-6">
-            
-            <div class="w-full md:w-[70%] space-y-3">
-               <div>
-                  <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Descripción</p>
-                  <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">${inc.Descripcion || 'Sin descripción detallada.'}</p>
-               </div>
-               
-               ${inc.Notas_Admin ? `
-                 <div class="p-3 bg-blue-50 rounded border border-blue-100 flex gap-2 items-start group/nota relative">
-                   <iconify-icon icon="mdi:shield-account-outline" class="text-blue-500 mt-0.5 text-base"></iconify-icon>
-                   <div class="text-sm text-blue-800 flex-1">
-                      <span class="font-bold block text-xs uppercase opacity-75 mb-0.5">Nota Admin:</span> 
-                      ${inc.Notas_Admin}
-                   </div>
-                   ${esAdmin ? `
-                   <button onclick="editarIncidencia('${inc.ID_Incidencia}')" class="absolute top-2 right-2 text-blue-300 hover:text-blue-600 opacity-0 group-hover/nota:opacity-100 transition-opacity">
-                     <iconify-icon icon="mdi:pencil"></iconify-icon>
-                   </button>` : ''}
-                 </div>
-               ` : ''}
-            </div>
-
-            ${esAdmin ? `
-              <div class="w-full md:w-[30%] shrink-0 border-t md:border-t-0 md:border-l border-gray-200 pt-4 md:pt-0 md:pl-6 flex flex-col justify-start gap-3">
-                
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider hidden md:block">Gestión Recurso</p>
-                
-                <button onclick="toggleMantenimientoRecurso('${inc.ID_Incidencia}', '${inc.ID_Recurso}', ${recursoEnMantenimiento})" 
-                        class="w-full flex items-center justify-between px-3 py-3 rounded-lg border text-xs font-bold transition-all shadow-sm group/btn
-                        ${recursoEnMantenimiento 
-                          ? 'bg-yellow-50 border-yellow-200 text-yellow-800 hover:bg-yellow-100' 
-                          : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'}">
-                  
-                  <div class="flex items-center gap-2">
-                    <div class="p-1.5 rounded-md ${recursoEnMantenimiento ? 'bg-yellow-200 text-yellow-800' : 'bg-gray-100 text-gray-500'}">
-                       <iconify-icon icon="${recursoEnMantenimiento ? 'mdi:alert' : 'mdi:tools'}" class="text-base"></iconify-icon>
-                    </div>
-                    <div class="text-left">
-                       <span class="block">${recursoEnMantenimiento ? 'En Mantenimiento' : 'Recurso Activo'}</span>
-                       <span class="block text-[10px] font-normal opacity-75 mb-0.5">${recursoEnMantenimiento ? 'Haz clic para activar' : 'Clic para bloquear'}</span>
-                    </div>
-                  </div>
-
-                  <iconify-icon icon="${recursoEnMantenimiento ? 'mdi:toggle-switch' : 'mdi:toggle-switch-off-outline'}" 
-                                class="text-2xl ${recursoEnMantenimiento ? 'text-yellow-600' : 'text-gray-300'} transition-colors">
-                  </iconify-icon>
-                </button>
-
-                ${!inc.Notas_Admin ? `
-                <button onclick="editarIncidencia('${inc.ID_Incidencia}')" 
-                        class="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white hover:bg-gray-100 text-gray-500 border border-dashed border-gray-300 rounded-lg text-xs font-medium transition-all">
-                  <iconify-icon icon="mdi:comment-plus-outline"></iconify-icon>
-                  Añadir Nota Admin
-                </button>` : ''}
-
-              </div>
-            ` : ''} 
-            
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-
-/* =========================================================
-   LÓGICA DE CONTROL (Admin)
-   ========================================================= */
-
-// 1. GESTIONAR CAMBIO ESTADO (Desde el Select)
-function gestionarCambioEstadoIncidencia(idIncidencia, nuevoEstado) {
-  // A. Si elige "Resuelta", abrimos Modal Personalizado
-  if (nuevoEstado === 'Resuelta') {
-      // Truco: Devolvemos visualmente el select a su estado anterior temporalmente 
-      // hasta que confirme en el modal, para no confundir si cancela.
-      renderIncidencias(); 
-      
-      abrirModalResolucion(idIncidencia);
-      return;
-  }
-
-  // B. Otros estados (Pendiente, En proceso) -> Cambio directo
-  ejecutarCambioEstado(idIncidencia, nuevoEstado, null);
-}
-
-// 2. CAMBIAR PRIORIDAD (Directo)
-function cambiarPrioridadIncidencia(idIncidencia, nuevaPrioridad) {
-  document.body.style.cursor = 'wait';
-  google.script.run
-    .withSuccessHandler(() => {
-       document.body.style.cursor = 'default';
-       // Actualizar local
-       const inc = incidenciasActuales.find(i => i.ID_Incidencia === idIncidencia);
-       if(inc) inc.Prioridad = nuevaPrioridad;
-       renderIncidencias(); // Refrescar color iconos
-       // showToast('success', 'Prioridad actualizada'); // Si tienes toasts
-    })
-    .backend_actualizarIncidencia(idIncidencia, 'PRIORIDAD', nuevaPrioridad);
-}
-
-/**
- * Toggle Mantenimiento con sincronización dual (globalState + AdminState)
- */
-function toggleMantenimientoRecurso(idIncidencia, idRecurso, estaEnMantenimiento) {
-  const nuevoEstadoRecurso = estaEnMantenimiento ? 'Activo' : 'Mantenimiento';
-  
-  mostrarModalConfirmacion({
-    titulo: estaEnMantenimiento ? 'Activar Recurso' : 'Bloquear Recurso',
-    mensaje: estaEnMantenimiento 
-      ? '¿Deseas <strong>activar</strong> este recurso y permitir nuevas reservas?' 
-      : '¿Deseas poner este recurso en <strong>mantenimiento</strong>? No se podrán hacer reservas.',
-    icono: estaEnMantenimiento ? 'mdi:check-circle-outline' : 'mdi:tools',
-    tema: estaEnMantenimiento ? 'yellow' : 'green',
-    textoAceptar: estaEnMantenimiento ? 'Activar' : 'Bloquear',
-    info: {
-      icono: estaEnMantenimiento ? '🔧' : '🟢',
-      linea1: `Estado actual: ${estaEnMantenimiento ? 'En Mantenimiento' : 'Activo'}`,
-      linea2: `Nuevo estado: ${nuevoEstadoRecurso}`
-    },
-    onConfirm: () => {
-      ejecutarToggleMantenimiento(idRecurso, nuevoEstadoRecurso);
-    }
-  });
-}
-
-function ejecutarToggleMantenimiento(idRecurso, nuevoEstadoRecurso) {
-  showToast('loading', window.t('toast.resourceUpdating'));
-
-  google.script.run
-    .withSuccessHandler((res) => {
-      if (res.exito) {
-        // Actualizar globalState
-        if (globalState && globalState.recursos) {
-          const idx = globalState.recursos.findIndex(r => 
-            String(r.id_recurso).trim() === String(idRecurso).trim()
-          );
-          if (idx !== -1) globalState.recursos[idx].estado = nuevoEstadoRecurso;
-        }
-
-        // Actualizar AdminState
-        if (typeof AdminState !== 'undefined' && AdminState.recursos) {
-          const idxAdmin = AdminState.recursos.findIndex(r => 
-            String(r.id_recurso).trim() === String(idRecurso).trim()
-          );
-          if (idxAdmin !== -1) {
-            AdminState.recursos[idxAdmin].estado = nuevoEstadoRecurso;
-            if (AdminState.recursosOriginales && AdminState.recursosOriginales[idxAdmin]) {
-              AdminState.recursosOriginales[idxAdmin].estado = nuevoEstadoRecurso;
-            }
-          }
-        }
-
-        renderIncidencias();
-
-        if (typeof window.recargarDatosApp === 'function') {
-          window.recargarDatosApp();
-        }
-
-        showToast(
-          'success',
-          nuevoEstadoRecurso === 'Mantenimiento'
-            ? window.t('toast.resourceBlocked')
-            : window.t('toast.resourceActivated')
-        );
-
-      } else {
-        showToast('error', window.t('toast.errorPrefix') + ' ' + (res.error || window.t('toast.errorUnknown')));
-        renderIncidencias();
-      }
-    })
-    .withFailureHandler((err) => {
-      showToast('error', window.t('toast.connectionError') + ' ' + err.message);
-    })
-    .backend_toggleMantenimiento(idRecurso, nuevoEstadoRecurso);
-}
-
-// 4. EJECUTOR FINAL DE ESTADO
-function ejecutarCambioEstado(idIncidencia, nuevoEstado, notaCierre) {
-  document.body.style.cursor = 'wait';
-  
-  // ✅ Determinar acción correcta
-  const accion = nuevoEstado === 'Resuelta' ? 'RESOLVER' : 'ESTADO';
-  const valor = nuevoEstado === 'Resuelta' ? notaCierre : nuevoEstado;
-  
-  google.script.run
-    .withSuccessHandler((res) => {
-       document.body.style.cursor = 'default';
-       if(res.exito) {
-          // Actualizar en incidenciasActuales
-          const index = incidenciasActuales.findIndex(i => i.ID_Incidencia === idIncidencia);
-          if(index !== -1) {
-            incidenciasActuales[index].Estado = nuevoEstado;
-            if(notaCierre) incidenciasActuales[index].Notas_Admin = notaCierre;
-          }
-          
-          // ✅ También actualizar en todasLasIncidencias
-          const indexTodas = todasLasIncidencias.findIndex(i => i.ID_Incidencia === idIncidencia);
-          if(indexTodas !== -1) todasLasIncidencias[indexTodas].Estado = nuevoEstado;
-          if(notaCierre) todasLasIncidencias[indexTodas].Notas_Admin = notaCierre;
-
-          renderIncidencias();
-       } else {
-          alert('Error: ' + res.error);
-       }
-    })
-    .backend_actualizarIncidencia(idIncidencia, accion, valor);
-}
-
-// 5. ========== MODAL RESOLVER INCIDENCIA ==========
-
-function abrirModalResolucion(idIncidencia) {
-  const inc = incidenciasActuales.find(i => i.ID_Incidencia === idIncidencia);
-  if (!inc) return;
-  
-  incidenciaIdActual = idIncidencia;
-  
-  const modal = document.getElementById('modalResolverIncidencia');
-  if (!modal) return;
-  
-  // Configurar contenido
-  document.getElementById('modalResolverSubtitulo').textContent = `#${idIncidencia} - ${inc.Nombre_Recurso}`;
-  document.getElementById('modalResolverTexto').value = '';
-  
-  // Mostrar modal
-  modal.classList.remove('hidden');
-  modal.classList.add('flex');
-  document.body.style.overflow = 'hidden';
-}
-
-function cerrarModalResolver() {
-  const modal = document.getElementById('modalResolverIncidencia');
-  if (modal) {
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-    document.body.style.overflow = '';
-  }
-  incidenciaIdActual = null;
-}
-
-function confirmarResolucion() {
-  if (!incidenciaIdActual) return;
-  
-  const nota = document.getElementById('modalResolverTexto').value.trim();
-  
-  // Deshabilitar botón
-  const btn = document.getElementById('modalResolverBtnConfirmar');
-  btn.disabled = true;
-  btn.innerHTML = '<iconify-icon icon="mdi:loading" class="animate-spin"></iconify-icon> ' + window.t('incidencias.modalNote.saving');
-
-  ejecutarCambioEstado(incidenciaIdActual, 'Resuelta', nota);
-  cerrarModalResolver();
-  
-  // Restaurar botón (por si se vuelve a abrir)
-  setTimeout(() => {
-    btn.disabled = false;
-    btn.innerHTML = '<iconify-icon icon="mdi:check"></iconify-icon> ' + window.t('incidencias.modalNote.save');
-  }, 500);
-}
-
-/* =========================================================
-   MODAL CONFIRMACIÓN GENÉRICA
-   ========================================================= */
-
-let callbackConfirmacion = null;
-
-function mostrarModalConfirmacion(config) {
-  const modal = document.getElementById('modalConfirmacionIncidencia');
-  if (!modal) return;
-  
-  // Configurar contenido
-  document.getElementById('modalConfirmTitulo').textContent = config.titulo || 'Confirmar';
-  document.getElementById('modalConfirmMensaje').innerHTML = config.mensaje || '¿Estás seguro?';
-  
-  // Configurar icono y colores
-  const iconContainer = document.getElementById('modalConfirmIconContainer');
-  const icon = document.getElementById('modalConfirmIcon');
-  const btnAceptar = document.getElementById('modalConfirmBtnAceptar');
-  
-  const tema = config.tema || 'blue';
-  const temas = {
-    blue:   { bg: 'bg-blue-50',   text: 'text-blue-600',   btn: 'bg-blue-600 hover:bg-blue-700 text-white' },
-    yellow: { bg: 'bg-yellow-50', text: 'text-yellow-600', btn: 'bg-yellow-500 hover:bg-yellow-600 text-white' },
-    red:    { bg: 'bg-red-50',    text: 'text-red-600',    btn: 'bg-red-600 hover:bg-red-700 text-white' },
-    green:  { bg: 'bg-green-50',  text: 'text-green-600',  btn: 'bg-green-600 hover:bg-green-700 text-white' }
-  };
-  
-  const t = temas[tema];
-  iconContainer.className = `p-2.5 rounded-xl leading-none ${t.bg} ${t.text}`;
-  icon.setAttribute('icon', config.icono || 'mdi:help-circle');
-  btnAceptar.className = `flex-1 px-4 py-2.5 font-semibold rounded-xl transition-colors ${t.btn}`;
-  btnAceptar.textContent = config.textoAceptar || 'Aceptar';
-  
-  // Info box opcional
-  const infoBox = document.getElementById('modalConfirmInfoBox');
-  if (config.info) {
-    infoBox.classList.remove('hidden');
-    infoBox.className = `mt-4 p-3 rounded-lg border ${t.bg}`;
-    document.getElementById('modalConfirmInfoIcon').textContent = config.info.icono || '';
-    document.getElementById('modalConfirmInfoLinea1').textContent = config.info.linea1 || '';
-    document.getElementById('modalConfirmInfoLinea2').textContent = config.info.linea2 || '';
-  } else {
-    infoBox.classList.add('hidden');
-  }
-  
-  // Guardar callback
-  callbackConfirmacion = config.onConfirm;
-  
-  // Mostrar modal
-  modal.classList.remove('hidden');
-  modal.classList.add('flex');
-  document.body.style.overflow = 'hidden';
-}
-
-function cerrarModalConfirmacion() {
-  const modal = document.getElementById('modalConfirmacionIncidencia');
-  if (modal) {
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-    document.body.style.overflow = '';
-  }
-  callbackConfirmacion = null;
-}
-
-function ejecutarAccionConfirmacion() {
-  if (callbackConfirmacion) {
-    callbackConfirmacion();
-  }
-  cerrarModalConfirmacion();
-}
-
-/**
- * Función para abrir/cerrar el acordeón
- */
-function toggleDescripcionIncidencia(id) {
-  const elemento = document.getElementById(`desc-${id}`);
-  const chevron = document.getElementById(`chevron-${id}`);
-  const chevronMobile = document.getElementById(`chevron-mobile-${id}`);
-  
-  if (elemento) {
-    // Toggle visibilidad
-    const esVisible = !elemento.classList.contains('hidden');
-    
-    if (esVisible) {
-      elemento.classList.add('hidden');
-      if(chevron) chevron.style.transform = 'rotate(0deg)';
-      if(chevronMobile) chevronMobile.style.transform = 'rotate(0deg)';
-    } else {
-      elemento.classList.remove('hidden');
-      if(chevron) chevron.style.transform = 'rotate(180deg)';
-      if(chevronMobile) chevronMobile.style.transform = 'rotate(180deg)';
-    }
-  }
-}
-
-/**
- * Actualizar contador de incidencias
- */
 function actualizarContadorIncidencias() {
-  // Verificar que la función y elementos existen
   if (typeof todasLasIncidencias === 'undefined') {
     todasLasIncidencias = [];
   }
-  
-  const pendientes = todasLasIncidencias.filter(i => 
+
+  const pendientes = todasLasIncidencias.filter(i =>
     i.Estado === 'Pendiente' || i.Estado === 'En proceso'
   ).length;
-  
+
   const total = todasLasIncidencias.length;
-  
-  // Solo actualizar si los elementos existen en el DOM
+
   const contador = document.getElementById('contadorIncidencias');
   if (contador) {
     if (pendientes > 0) {
@@ -3410,8 +2621,7 @@ function actualizarContadorIncidencias() {
       contador.textContent = `${total} incidencia${total > 1 ? 's' : ''} (todas resueltas ✅)`;
     }
   }
-  
-  // Actualizar badge del botón global de incidencias
+
   const badge = document.getElementById('badgeIncidenciasGlobal');
   if (badge && pendientes > 0) {
     badge.textContent = pendientes;
@@ -3419,254 +2629,6 @@ function actualizarContadorIncidencias() {
   } else if (badge) {
     badge.classList.add('hidden');
   }
-}
-
-/* =========================================================
-   LÓGICA DE ACCIONES (Resolver / Editar)
-   ========================================================= */
-
-/**
- * CAMBIAR ESTADO (Botón Verde)
- */
-
-function cambiarEstadoIncidencia(idIncidencia, nuevoEstado) {
-  // Solo permitimos resolver por ahora con este botón
-  if (nuevoEstado !== 'Resuelta') return;
-
-  if (!confirm(`¿Confirmas que la incidencia ${idIncidencia} está resuelta?\n\nSe enviará un correo al usuario.`)) {
-    return;
-  }
-
-  document.body.style.cursor = 'wait';
-
-  // Llamada al nuevo backend
-  google.script.run
-    .withSuccessHandler(function(res) {
-      document.body.style.cursor = 'default';
-      if (res.exito) {
-        // Actualizar UI Localmente
-        const index = incidenciasActuales.findIndex(i => i.ID_Incidencia === idIncidencia);
-        if (index !== -1) {
-          incidenciasActuales[index].Estado = 'Resuelta';
-        }
-        renderIncidencias(); // Redibujar
-        // alert(res.mensaje); // Opcional: mostrar mensaje
-      } else {
-        alert('❌ Error: ' + res.error);
-      }
-    })
-    .withFailureHandler(function(err) {
-      document.body.style.cursor = 'default';
-      alert('Error de conexión');
-    })
-    .backend_actualizarIncidencia(idIncidencia, 'RESOLVER', null);
-}
-
-
-// ========== MODAL EDITAR NOTA INCIDENCIA ==========
-
-let incidenciaIdActual = null;
-
-function editarIncidencia(idIncidencia) {
-  const inc = incidenciasActuales.find(i => i.ID_Incidencia === idIncidencia);
-  if (!inc) return;
-  
-  incidenciaIdActual = idIncidencia;
-  
-  const modal = document.getElementById('modalNotaIncidencia');
-  if (!modal) return;
-  
-  // Configurar contenido
-  document.getElementById('modalNotaIncidenciaSubtitulo').textContent = `#${idIncidencia} - ${inc.Nombre_Recurso}`;
-  document.getElementById('modalNotaIncidenciaTexto').value = inc.Notas_Admin || '';
-  
-  // Mostrar modal
-  modal.classList.remove('hidden');
-  modal.classList.add('flex');
-  document.body.style.overflow = 'hidden';
-  
-  // Focus en textarea
-  setTimeout(() => {
-    document.getElementById('modalNotaIncidenciaTexto').focus();
-  }, 100);
-}
-
-function cerrarModalNotaIncidencia() {
-  const modal = document.getElementById('modalNotaIncidencia');
-  if (modal) {
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-    document.body.style.overflow = '';
-  }
-  incidenciaIdActual = null;
-}
-
-function guardarNotaIncidenciaModal() {
-  if (!incidenciaIdActual) return;
-  
-  const nuevaNota = document.getElementById('modalNotaIncidenciaTexto').value.trim();
-  const inc = incidenciasActuales.find(i => i.ID_Incidencia === incidenciaIdActual);
-  
-  if (inc && nuevaNota === (inc.Notas_Admin || '')) {
-    cerrarModalNotaIncidencia();
-    return;
-  }
-  
-  // Deshabilitar botón
-  const btn = document.getElementById('modalNotaIncidenciaBtnGuardar');
-  btn.disabled = true;
-  btn.innerHTML = '<iconify-icon icon="mdi:loading" class="animate-spin"></iconify-icon> ' + window.t('incidencias.modalNote.saving');
-
-  google.script.run
-    .withSuccessHandler(function(res) {
-      btn.disabled = false;
-      btn.innerHTML = '<iconify-icon icon="mdi:check"></iconify-icon> ' + window.t('incidencias.modalNote.save');
-
-      if (res.exito) {
-        const index = incidenciasActuales.findIndex(i => i.ID_Incidencia === incidenciaIdActual);
-        if (index !== -1) incidenciasActuales[index].Notas_Admin = nuevaNota;
-        
-        const indexTodas = todasLasIncidencias.findIndex(i => i.ID_Incidencia === incidenciaIdActual);
-        if (indexTodas !== -1) todasLasIncidencias[indexTodas].Notas_Admin = nuevaNota;
-        
-        cerrarModalNotaIncidencia();
-        renderIncidencias();
-        showToast('success', window.t('toast.noteSaved'));
-      } else {
-        showToast('error', res.error || window.t('toast.saveError'));
-      }
-    })
-    .withFailureHandler(function(err) {
-      btn.disabled = false;
-      btn.innerHTML = '<iconify-icon icon="mdi:check"></iconify-icon> ' + window.t('incidencias.modalNote.save');
-      showToast('error', window.t('toast.connectionError'));
-    })
-    .backend_actualizarIncidencia(incidenciaIdActual, 'EDITAR_NOTA', nuevaNota);
-}
-
-/**
- * Ajusta el tamaño del header según incidencias y rol de usuario
- */
-function ajustarHeaderSegunIncidencias() {
-  const numIncidencias = todasLasIncidencias.filter(i =>
-    i.Estado === 'Pendiente' || i.Estado === 'En proceso'
-  ).length;
-
-  const esAdmin = globalState && globalState.isAdmin === true;
-
-  const btnIncidencias = document.getElementById('btnIncidenciasGlobal');
-  const headerLogo = document.getElementById('headerLogo') || document.getElementById('headerLogoPlaceholder');
-  const headerTitle = document.getElementById('headerTitle');
-  const headerBranding = document.getElementById('headerBranding');
-  const myReservationsBtn = document.getElementById('myReservationsButton');
-
-  // ========== LÓGICA PRINCIPAL ==========
-
-  // Si hay incidencias pendientes y es admin, ajustar layout
-  if (numIncidencias > 0 && esAdmin && btnIncidencias) {
-    
-    // SOLO compactar si ES ADMIN
-    if (esAdmin) {
-      // --- MODO COMPACTO (Admin con incidencias) ---
-      
-      // Logo/placeholder
-      if (headerLogo) {
-        headerLogo.classList.remove('h-10', 'w-10');
-        headerLogo.classList.add('h-9', 'w-9', 'md:h-10', 'md:w-10');
-      }
-      
-      // Título
-      if (headerTitle) {
-        headerTitle.classList.remove('text-lg');
-        headerTitle.classList.add('text-base', 'md:text-lg', 'truncate', 'max-w-[160px]', 'sm:max-w-none');
-      }
-      
-      // Branding container
-      if (headerBranding) {
-        headerBranding.classList.remove('gap-4');
-        headerBranding.classList.add('gap-3', 'md:gap-4');
-      }
-      
-      // Botón incidencias
-      btnIncidencias.classList.remove('h-10', 'px-4');
-      btnIncidencias.classList.add('h-9', 'w-9', 'md:w-auto', 'md:h-10', 'md:px-4', 'justify-center', 'md:justify-start');
-      
-      const spanIncidencias = btnIncidencias.querySelector('span:not([id])');
-      if (spanIncidencias) {
-        spanIncidencias.classList.remove('hidden', 'sm:inline');
-        spanIncidencias.classList.add('hidden', 'md:inline');
-      }
-      
-      // Botón Mis Reservas
-      if (myReservationsBtn) {
-        myReservationsBtn.classList.remove('h-10', 'px-3', 'min-[480px]:px-4');
-        myReservationsBtn.classList.add('h-9', 'w-9', 'md:w-auto', 'md:h-10', 'md:px-4', 'justify-center', 'md:justify-start');
-        
-        const spanReservas = myReservationsBtn.querySelector('span');
-        if (spanReservas) {
-          spanReservas.classList.remove('hidden', 'min-[480px]:inline');
-          spanReservas.classList.add('hidden', 'md:inline');
-        }
-        
-        // Ajustar icono
-        const iconReservas = myReservationsBtn.querySelector('iconify-icon');
-        if (iconReservas) {
-          iconReservas.classList.remove('text-xl', 'min-[480px]:text-lg');
-          iconReservas.classList.add('text-xl', 'md:text-lg');
-        }
-      }
-      
-      // Botones Admin
-      const btnAdmin = document.getElementById('btnIrAdmin');
-      const btnVolver = document.getElementById('btnVolverApp');
-      
-      if (btnAdmin) {
-        btnAdmin.classList.remove('h-10', 'px-3', 'min-[480px]:px-4');
-        btnAdmin.classList.add('h-9', 'w-9', 'md:w-auto', 'md:h-10', 'md:px-4', 'justify-center', 'md:justify-start');
-        
-        const spanAdmin = btnAdmin.querySelector('span');
-        if (spanAdmin) {
-          spanAdmin.classList.remove('hidden', 'min-[480px]:inline');
-          spanAdmin.classList.add('hidden', 'md:inline');
-        }
-        
-        const iconAdmin = btnAdmin.querySelector('iconify-icon');
-        if (iconAdmin) {
-          iconAdmin.classList.remove('text-xl', 'min-[480px]:text-lg');
-          iconAdmin.classList.add('text-xl', 'md:text-lg');
-        }
-      }
-      
-      if (btnVolver) {
-        btnVolver.classList.remove('h-10', 'px-3', 'min-[480px]:px-4');
-        btnVolver.classList.add('h-9', 'w-9', 'md:w-auto', 'md:h-10', 'md:px-4', 'justify-center', 'md:justify-start');
-        
-        const spanVolver = btnVolver.querySelector('span');
-        if (spanVolver) {
-          spanVolver.classList.remove('hidden', 'min-[480px]:inline');
-          spanVolver.classList.add('hidden', 'md:inline');
-        }
-        
-        const iconVolver = btnVolver.querySelector('iconify-icon');
-        if (iconVolver) {
-          iconVolver.classList.remove('text-xl', 'min-[480px]:text-lg');
-          iconVolver.classList.add('text-xl', 'md:text-lg');
-        }
-      }
-    }
-    // Si NO es admin, mantener header GRANDE aunque haya incidencias
-  }
-
-  console.log(`📐 Header ajustado: ${numIncidencias} incidencias, Admin: ${esAdmin}`);
-}
-
-/**
- * Helper: ¿Hay incidencias pendientes?
- */
-function hayIncidenciasPendientes() {
-  return todasLasIncidencias.some(i => 
-    i.Estado === 'Pendiente' || i.Estado === 'En proceso'
-  );
 }
 
 </script>

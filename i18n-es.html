@@ -86,6 +86,7 @@ function getI18nEs() {
         resourceLabel: 'Recurso',
         resourcePlaceholder: '-- Selecciona un recurso --',
         resourceHelp: 'Selecciona el recurso sobre el que quieres reportar la incidencia',
+        selectResourceTitle: 'Selecciona un recurso',
         categoryLabel: 'Categoría',
         categoryOptions: {
           breakdown: '🔧 Avería',
@@ -106,6 +107,15 @@ function getI18nEs() {
         cancel: 'Cancelar',
         send: 'Enviar reporte'
       },
+      validation: {
+        selectResource: 'Por favor, selecciona un recurso',
+        resourceParseError: 'Error al procesar el recurso seleccionado',
+        describeProblem: 'Por favor, describe el problema',
+        descriptionMinLength: 'La descripción debe tener al menos 10 caracteres',
+        noResourceSelected: 'Error: no hay recurso seleccionado',
+        reportFailed: 'Error al reportar la incidencia'
+      },
+      sending: 'Enviando...',
       modalConfirm: {
         title: 'Confirmar acción',
         cancel: 'Cancelar',
@@ -295,6 +305,16 @@ function getI18nEs() {
       selectCoursePlaceholder: '-- Elige un curso --',
       coursesOfPrefix: 'Cursos de',
       classLabel: 'Clase:'
+    },
+    recurring: {
+      sending: 'Enviando...',
+      reportFailed: 'Error al enviar la solicitud',
+      connectionErrorPrefix: 'Error de conexión:',
+      validation: {
+        selectAtLeastOneSlot: 'Selecciona al menos un tramo en el calendario',
+        selectEndDate: 'Selecciona una fecha de finalización',
+        reasonMinLength: 'El motivo debe tener al menos 10 caracteres'
+      }
     }
   };
 }
