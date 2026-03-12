@@ -204,7 +204,9 @@ function getI18nCa() {
         thUserCourse: 'Usuari / Curs',
         thQuantity: 'Qt.',
         thStatus: 'Estat',
-        thActions: 'Accions'
+        thActions: 'Accions',
+        emptyState: 'No hi ha reserves registrades',
+        noResults: 'No hi ha coincidències amb la cerca'
       },
       recursos: {
         title: 'Gestió de recursos',
@@ -216,7 +218,9 @@ function getI18nCa() {
         thTypeLocation: 'Tipus / Ubicació',
         thCapacity: 'Cap.',
         thStatus: 'Estat',
-        dragHint: 'Arrossega des de la icona per reordenar. Els canvis es guarden en bloc.'
+        dragHint: 'Arrossega des de la icona per reordenar. Els canvis es guarden en bloc.',
+        emptyState: '✨ No hi ha recursos. Crea el primer a dalt.',
+        noneAvailable: 'No hi ha recursos disponibles.'
       },
       tramos: {
         title: 'Gestió de trams horaris',
@@ -227,7 +231,8 @@ function getI18nCa() {
         thStart: 'Inici',
         thEnd: 'Fi',
         thActions: 'Accions',
-        orderHint: 'Els trams es mostraran al calendari en aquest ordre exacte.'
+        orderHint: 'Els trams es mostraran al calendari en aquest ordre exacte.',
+        emptyState: 'No hi ha trams definits'
       },
       disponibilidad: {
         title: 'Gestió de recurs',
@@ -249,7 +254,11 @@ function getI18nCa() {
         legendAvailable: 'Disponible',
         legendBlocked: 'Bloquejat',
         legendRecurring: 'Recurrència',
-        legendEdit: 'Clic per editar'
+        legendEdit: 'Clic per editar',
+        savingMotivo: 'Desant...',
+        saveMotivo: 'Desar',
+        revoking: 'Revocant...',
+        revoke: 'Revocar'
       },
       cursos: {
         title: 'Gestió de cursos',
@@ -260,7 +269,8 @@ function getI18nCa() {
         searchPlaceholder: 'Cerca curs...',
         thStage: 'Etapa',
         thCourseGroup: 'Curs / Grup',
-        thActions: 'Accions'
+        thActions: 'Accions',
+        emptyState: 'No hi ha cursos'
       },
       usuarios: {
         title: 'Gestió d\'usuaris',
@@ -271,7 +281,15 @@ function getI18nCa() {
         thUserData: 'Dades d\'usuari (editable)',
         thAdmin: 'Admin',
         thAccess: 'Accés',
-        helpNote: 'Els canvis de nom o email no afecten el compte de Google, només com es veuen aquí.'
+        helpNote: 'Els canvis de nom o email no afecten el compte de Google, només com es veuen aquí.',
+        emptyState: 'No s\'han trobat usuaris',
+        roleAdmin: 'Admin',
+        roleUser: 'Usuari',
+        statusActive: 'Actiu',
+        statusInactive: 'Inactiu'
+      },
+      icons: {
+        noResults: 'No s\'han trobat icones'
       }
     },
     myReservations: {
@@ -279,7 +297,13 @@ function getI18nCa() {
       loading: 'Consultant agenda...',
       emptyTitle: 'Sense reserves actives',
       emptyMessage: 'No tens reserves futures programades en aquest moment.',
-      footer: 'Només es mostren reserves futures o del dia actual.'
+      footer: 'Només es mostren reserves futures o del dia actual.',
+      recurringLabel: 'Recurrències',
+      recurringFallback: 'Recurrència',
+      cancelGroup: 'Cancel·lar tota la recurrència',
+      deletedResource: 'Recurs eliminat',
+      unknownTime: 'Hora desconeguda',
+      canceling: 'Cancel·lant...'
     },
     common: {
       languageCatalan: 'Català',
@@ -310,10 +334,85 @@ function getI18nCa() {
       sending: 'Enviant...',
       reportFailed: 'Error en enviar la sol·licitud',
       connectionErrorPrefix: 'Error de connexió:',
+      slotsSelected: '{n} trams seleccionats',
+      slotsSelectedOne: '1 tram seleccionat',
       validation: {
         selectAtLeastOneSlot: 'Selecciona almenys un tram al calendari',
         selectEndDate: 'Selecciona una data de finalització',
         reasonMinLength: 'El motiu ha de tenir com a mínim 10 caràcters'
+      }
+    },
+    adminToast: {
+      changesDiscarded: 'Canvis descartats',
+      changesReverted: 'Canvis revertits',
+      errorSave: 'Error en desar',
+      errorLoadData: 'Error en carregar dades',
+      errorLoad: 'Error en carregar: {msg}',
+      connectionError: 'Error de connexió: {msg}',
+      genericError: 'Error: {msg}',
+      internalError: 'Error intern: botó no trobat',
+      reservas: {
+        canceled: 'Reserva cancel·lada correctament',
+        errorCancel: 'Error al cancel·lar'
+      },
+      recursos: {
+        saved: 'Recursos guardats',
+        missingName: 'Falta el nom a {n} recurs(os).'
+      },
+      disp: {
+        dispSaved: 'Disponibilitat guardada',
+        dispSavedNotified: 'Disponibilitat guardada i usuaris notificats',
+        requestNotFound: 'Sol·licitud no trobada',
+        requestApproved: 'Sol·licitud aprovada',
+        requestApprovedOk: 'Sol·licitud aprovada correctament',
+        errorApprove: 'Error en aprovar',
+        batchApproved: '{n} sol·licitud(s) aprovada(es)',
+        batchErrors: '{n} error(s) en aprovar',
+        motivoSaved: 'Motiu actualitzat',
+        recurringRevoked: 'Recurrència revocada',
+        errorRevoke: 'Error en revocar',
+        noResource: 'Error: No hi ha cap recurs seleccionat'
+      },
+      usuarios: {
+        saved: 'Usuaris actualitzats'
+      },
+      cursos: {
+        saved: 'Cursos actualitzats correctament',
+        missingName: 'Hi ha cursos sense nom. Si us plau, revisa\'ls (marcats en vermell).'
+      },
+      tramos: {
+        saved: 'Trams guardats correctament',
+        missingData: 'Hi ha trams amb dades incompletes (en vermell). Revisa\'ls.',
+        errorDelete: 'Error en eliminar el tram'
+      },
+      config: {
+        saved: 'Configuració guardada',
+        drivePermissions: 'Permisos d\'imatge actualitzats automàticament'
+      },
+      rec: {
+        noPending: 'No hi ha sol·licituds pendents',
+        noPendingApprove: 'No hi ha sol·licituds pendents per aprovar',
+        notFound: 'Sol·licitud no trobada',
+        canceling: 'Cancel·lant recurrència...',
+        canceled: 'Recurrència cancel·lada',
+        errorCancel: 'Error al cancel·lar',
+        noEditableSlots: 'Aquesta recurrència no té trams editables',
+        noChanges: 'No hi ha canvis per desar',
+        slotsUpdated: 'Trams actualitzats correctament',
+        errorUpdateSlots: 'Error en actualitzar els trams',
+        batchApproved: '{n} sol·licitud(s) aprovada(es). {r} reserves generades.',
+        batchPartial: 'Aprovades: {n}, Errors: {e}. Revisa els detalls.',
+        rejectReasonRequired: 'Has d\'indicar un motiu per rebutjar',
+        rejected: 'Sol·licitud rebutjada correctament',
+        errorReject: 'Error en rebutjar',
+        errorApprove: 'Error en aprovar',
+        direct: {
+          noEndDate: 'Indica la data de fi',
+          noResource: 'Selecciona un recurs',
+          noUser: 'Selecciona un usuari',
+          noSlots: 'Selecciona almenys un tram al calendari',
+          errorCreate: 'Error en crear reserves'
+        }
       }
     }
   };

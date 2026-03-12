@@ -204,7 +204,9 @@ function getI18nEs() {
         thUserCourse: 'Usuario / Curso',
         thQuantity: 'Cant.',
         thStatus: 'Estado',
-        thActions: 'Acciones'
+        thActions: 'Acciones',
+        emptyState: 'No hay reservas registradas',
+        noResults: 'No hay coincidencias con la búsqueda'
       },
       recursos: {
         title: 'Gestión de Recursos',
@@ -216,7 +218,9 @@ function getI18nEs() {
         thTypeLocation: 'Tipo / Ubicación',
         thCapacity: 'Cap.',
         thStatus: 'Estado',
-        dragHint: 'Arrastra desde el icono para reordenar. Los cambios se guardan en bloque.'
+        dragHint: 'Arrastra desde el icono para reordenar. Los cambios se guardan en bloque.',
+        emptyState: '✨ No hay recursos. Crea el primero arriba.',
+        noneAvailable: 'No hay recursos disponibles.'
       },
       tramos: {
         title: 'Gestión de Tramos Horarios',
@@ -227,7 +231,8 @@ function getI18nEs() {
         thStart: 'Inicio',
         thEnd: 'Fin',
         thActions: 'Acciones',
-        orderHint: 'Los tramos se mostrarán en el calendario en este orden exacto.'
+        orderHint: 'Los tramos se mostrarán en el calendario en este orden exacto.',
+        emptyState: 'No hay tramos definidos'
       },
       disponibilidad: {
         title: 'Gestión de Recurso',
@@ -249,7 +254,11 @@ function getI18nEs() {
         legendAvailable: 'Disponible',
         legendBlocked: 'Bloqueado',
         legendRecurring: 'Recurrencia',
-        legendEdit: 'Clic para editar'
+        legendEdit: 'Clic para editar',
+        savingMotivo: 'Guardando...',
+        saveMotivo: 'Guardar',
+        revoking: 'Revocando...',
+        revoke: 'Revocar'
       },
       cursos: {
         title: 'Gestión de Cursos',
@@ -260,7 +269,8 @@ function getI18nEs() {
         searchPlaceholder: 'Buscar curso...',
         thStage: 'Etapa',
         thCourseGroup: 'Curso / Grupo',
-        thActions: 'Acciones'
+        thActions: 'Acciones',
+        emptyState: 'No hay cursos'
       },
       usuarios: {
         title: 'Gestión de Usuarios',
@@ -271,7 +281,15 @@ function getI18nEs() {
         thUserData: 'Datos del usuario (editable)',
         thAdmin: 'Admin',
         thAccess: 'Acceso',
-        helpNote: 'Los cambios de nombre o email no afectan a la cuenta de Google, solo cómo se muestran aquí.'
+        helpNote: 'Los cambios de nombre o email no afectan a la cuenta de Google, solo cómo se muestran aquí.',
+        emptyState: 'No se encontraron usuarios',
+        roleAdmin: 'Admin',
+        roleUser: 'Usuario',
+        statusActive: 'Activo',
+        statusInactive: 'Inactivo'
+      },
+      icons: {
+        noResults: 'No se encontraron iconos'
       }
     },
     myReservations: {
@@ -279,7 +297,13 @@ function getI18nEs() {
       loading: 'Consultando agenda...',
       emptyTitle: 'Sin reservas activas',
       emptyMessage: 'No tienes reservas futuras programadas en este momento.',
-      footer: 'Solo se muestran reservas futuras o del día actual.'
+      footer: 'Solo se muestran reservas futuras o del día actual.',
+      recurringLabel: 'Recurrencias',
+      recurringFallback: 'Recurrencia',
+      cancelGroup: 'Cancelar toda la recurrencia',
+      deletedResource: 'Recurso eliminado',
+      unknownTime: 'Hora desconocida',
+      canceling: 'Cancelando...'
     },
     common: {
       languageCatalan: 'Català',
@@ -310,10 +334,85 @@ function getI18nEs() {
       sending: 'Enviando...',
       reportFailed: 'Error al enviar la solicitud',
       connectionErrorPrefix: 'Error de conexión:',
+      slotsSelected: '{n} tramos seleccionados',
+      slotsSelectedOne: '1 tramo seleccionado',
       validation: {
         selectAtLeastOneSlot: 'Selecciona al menos un tramo en el calendario',
         selectEndDate: 'Selecciona una fecha de finalización',
         reasonMinLength: 'El motivo debe tener al menos 10 caracteres'
+      }
+    },
+    adminToast: {
+      changesDiscarded: 'Cambios descartados',
+      changesReverted: 'Cambios revertidos',
+      errorSave: 'Error al guardar',
+      errorLoadData: 'Error al cargar datos',
+      errorLoad: 'Error al cargar: {msg}',
+      connectionError: 'Error de conexión: {msg}',
+      genericError: 'Error: {msg}',
+      internalError: 'Error interno: botón no encontrado',
+      reservas: {
+        canceled: 'Reserva cancelada correctamente',
+        errorCancel: 'Error al cancelar'
+      },
+      recursos: {
+        saved: 'Recursos guardados',
+        missingName: 'Falta el nombre en {n} recurso(s).'
+      },
+      disp: {
+        dispSaved: 'Disponibilidad guardada',
+        dispSavedNotified: 'Disponibilidad guardada y usuarios notificados',
+        requestNotFound: 'Solicitud no encontrada',
+        requestApproved: 'Solicitud aprobada',
+        requestApprovedOk: 'Solicitud aprobada correctamente',
+        errorApprove: 'Error al aprobar',
+        batchApproved: '{n} solicitud(es) aprobada(s)',
+        batchErrors: '{n} error(es) al aprobar',
+        motivoSaved: 'Motivo actualizado',
+        recurringRevoked: 'Recurrencia revocada',
+        errorRevoke: 'Error al revocar',
+        noResource: 'Error: No hay recurso seleccionado'
+      },
+      usuarios: {
+        saved: 'Usuarios actualizados'
+      },
+      cursos: {
+        saved: 'Cursos actualizados correctamente',
+        missingName: 'Hay cursos sin nombre. Por favor, revísalos (marcados en rojo).'
+      },
+      tramos: {
+        saved: 'Tramos guardados correctamente',
+        missingData: 'Hay tramos con datos incompletos (en rojo). Revísalos.',
+        errorDelete: 'Error al eliminar tramo'
+      },
+      config: {
+        saved: 'Configuración guardada',
+        drivePermissions: 'Permisos de imagen actualizados automáticamente'
+      },
+      rec: {
+        noPending: 'No hay solicitudes pendientes',
+        noPendingApprove: 'No hay solicitudes pendientes para aprobar',
+        notFound: 'Solicitud no encontrada',
+        canceling: 'Cancelando recurrencia...',
+        canceled: 'Recurrencia cancelada',
+        errorCancel: 'Error al cancelar',
+        noEditableSlots: 'Esta recurrencia no tiene tramos editables',
+        noChanges: 'No hay cambios para guardar',
+        slotsUpdated: 'Tramos actualizados correctamente',
+        errorUpdateSlots: 'Error al actualizar tramos',
+        batchApproved: '{n} solicitud(es) aprobada(s). {r} reservas generadas.',
+        batchPartial: 'Aprobadas: {n}, Errores: {e}. Revisa los detalles.',
+        rejectReasonRequired: 'Debes indicar un motivo para rechazar',
+        rejected: 'Solicitud rechazada correctamente',
+        errorReject: 'Error al rechazar',
+        errorApprove: 'Error al aprobar',
+        direct: {
+          noEndDate: 'Indica la fecha de fin',
+          noResource: 'Selecciona un recurso',
+          noUser: 'Selecciona un usuario',
+          noSlots: 'Selecciona al menos un tramo en el calendario',
+          errorCreate: 'Error al crear reservas'
+        }
       }
     }
   };
