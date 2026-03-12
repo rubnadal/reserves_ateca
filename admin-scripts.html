@@ -1589,12 +1589,18 @@ function rechazarSolicitudRapidaConSpinner(idSolicitud, btnElement) {
 /**
  * Aprobar todas las pendientes del recurso actual
  */
-async function aprobarTodasPendientesRecurso() {
+function aprobarTodasPendientesRecurso() {
   const pendientes = DispState.pendientes || [];
   if (pendientes.length === 0) return;
 
-  if (!confirm(`¿Aprobar las ${pendientes.length} solicitudes pendientes?`)) return;
+  mostrarConfirmacion(
+    '¿Aprobar solicitudes pendientes?',
+    `Se aprobarán <strong>${pendientes.length}</strong> solicitudes pendientes. Esta acción no se puede deshacer.`,
+    () => _ejecutarAprobarTodasPendientesRecurso(pendientes)
+  );
+}
 
+async function _ejecutarAprobarTodasPendientesRecurso(pendientes) {
   let aprobadas = 0;
   let errores = 0;
   let todasLasReservasNuevas = [];
@@ -4803,7 +4809,7 @@ function buscarSolicitudesRecurrentes(texto) {
 /**
  * Aprueba todas las solicitudes pendientes
  */
-async function aprobarTodasPendientes() {
+function aprobarTodasPendientes() {
   const pendientes = AdminState.solicitudesRecurrentes.filter(s =>
     (s.estado || '').toLowerCase() === 'pendiente'
   );
@@ -4813,10 +4819,14 @@ async function aprobarTodasPendientes() {
     return;
   }
 
-  if (!confirm(`¿Aprobar ${pendientes.length} solicitud(es) pendiente(s)?\n\nEsto generará todas las reservas correspondientes.`)) {
-    return;
-  }
+  mostrarConfirmacion(
+    '¿Aprobar solicitudes pendientes?',
+    `Se aprobarán <strong>${pendientes.length}</strong> solicitudes pendientes y se generarán las reservas correspondientes. Esta acción no se puede deshacer.`,
+    () => _ejecutarAprobarTodasPendientes(pendientes)
+  );
+}
 
+async function _ejecutarAprobarTodasPendientes(pendientes) {
   const btn = document.getElementById('btnAprobarTodasPendientes');
   const textoOriginal = btn.innerHTML;
   btn.disabled = true;

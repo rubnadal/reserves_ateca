@@ -1,7 +1,7 @@
 <script>
   // i18n core: expects getI18nCa() and getI18nEs() to be loaded before this file.
   // Dictionary shape: { header: {...}, sections: {...}, booking: {...}, admin: {...}, adminConfig: {...}, ... }.
-  // API: window.t(key) and window.applyI18n(root) are stable; update dictionaries in i18n-*.html only.
+  // API: window.t(key, params?), window.getLocale(), window.applyI18n(root) are stable; update dictionaries in i18n-*.html only.
   (function initI18n() {
     const I18N = {
       ca: (typeof getI18nCa === 'function') ? getI18nCa() : {},
@@ -19,13 +19,23 @@
     };
 
     window.APP_LANG_RESOLVED = resolveLang();
-    window.t = function t(key) {
+    window.t = function t(key, params) {
       const parts = key.split('.');
       let node = I18N[resolveLang()];
       for (const part of parts) {
         node = node && node[part];
       }
-      return node || key;
+      let value = (typeof node === 'string') ? node : key;
+      if (params && typeof value === 'string') {
+        Object.keys(params).forEach(function(k) {
+          value = value.replace(new RegExp('\\{' + k + '\\}', 'g'), params[k]);
+        });
+      }
+      return value;
+    };
+
+    window.getLocale = function getLocale() {
+      return resolveLang() === 'ca' ? 'ca-ES' : 'es-ES';
     };
 
     window.applyI18n = function applyI18n(root) {
