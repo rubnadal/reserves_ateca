@@ -946,6 +946,7 @@
   // 3. EVENTO PRINCIPAL: DOMContentLoaded
   document.addEventListener('DOMContentLoaded', function() {
     if (typeof applyI18n === 'function') applyI18n();
+    if (typeof window.t === 'function') document.title = window.t('registro.subtitle');
 
     // --- A. INICIALITZACIÓ DE L'APP (Cargar tarjetas, etc.) ---
     if (typeof initializeVariables === 'function') initializeVariables();

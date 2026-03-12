@@ -517,7 +517,9 @@ function renderTablaReservas() {
 
   // Debug: mostrar cuántas reservas recurrentes hay
   const totalRecurrentes = AdminState.reservas.filter(r => !!(r.ID_Solicitud_Recurrente || r.id_solicitud_recurrente)).length;
-  console.log(`📊 Total reservas: ${AdminState.reservas.length}, Recurrentes: ${totalRecurrentes}, Filtro: ${AdminState.filtroReservasTipo}, Resultado: ${lista.length}`);
+  const hoyDebug = new Date().toISOString().split('T')[0];
+  const cancelables = lista.filter(r => (r.Fecha || '') >= hoyDebug && (r.Estado || 'Confirmada') !== 'Cancelada').length;
+  console.log(`📊 Total reservas: ${AdminState.reservas.length}, Recurrents: ${totalRecurrentes}, Filtrat: ${lista.length}, Cancel·lables: ${cancelables} (hoy=${hoyDebug}, filtrePeriode=${AdminState.filtroReservasPeriodo})`);
 
   // --- C. ORDENACIÓN MULTINIVEL ---
   lista.sort((a, b) => {
@@ -659,10 +661,10 @@ function renderTablaReservas() {
 
       <td class="px-6 py-4 whitespace-nowrap text-right">
         ${!esPasado && estado !== 'Cancelada' ? `
-          <button onclick="cancelarReserva('${idReservaSafe}')" 
+          <button onclick="cancelarReserva('${idReservaSafe}')"
                   class="group/btn relative overflow-hidden bg-white text-red-500 hover:text-red-600 hover:bg-red-50 border border-red-200 hover:border-red-300 rounded-lg px-3 py-1.5 transition-all shadow-sm active:scale-95 flex items-center gap-1.5 ml-auto text-xs font-bold">
             <iconify-icon icon="mdi:delete-outline" width="16"></iconify-icon>
-            <span>Cancelar</span>
+            <span>${window.t('admin.reservas.cancelBtn')}</span>
           </button>
         ` : ''}
       </td>
@@ -4386,7 +4388,7 @@ function loadAdminData(isSilent = false) {
         window.APP_LANG = String(idiomaUi.valor).toLowerCase();
         if (typeof applyI18n === 'function') {
           const adminRoot = document.getElementById('tab-admin');
-          applyI18n(adminRoot || document);
+          applyI18n(document);
         }
       }
 
@@ -5829,8 +5831,9 @@ function actualizarContadorRecurrenteAdmin() {
   if (!contador) return;
 
   const num = seleccionesRecurrenteAdmin.size;
-  contador.textContent = num === 0 ? '0 tramos seleccionados' :
-    num === 1 ? '1 tramo seleccionado' : `${num} tramos seleccionados`;
+  contador.textContent = num === 1
+    ? window.t('recurring.slotsSelectedOne')
+    : window.t('recurring.slotsSelected', { n: num });
   contador.className = num > 0 ?
     'mt-2 text-center text-xs font-medium text-blue-600' :
     'mt-2 text-center text-xs text-gray-500';

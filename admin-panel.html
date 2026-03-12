@@ -796,7 +796,7 @@
     <!-- Header del Modal -->
     <div
       class="flex justify-between items-center p-5 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-      <h3 id="modalRecursoTitle" class="text-2xl font-bold text-gray-900">Nuevo Recurso</h3>
+      <h3 id="modalRecursoTitle" class="text-2xl font-bold text-gray-900" data-i18n="adminModal.recurso.titleNew">Nuevo Recurso</h3>
       <button id="closeModalRecurso" class="text-gray-400 hover:text-gray-600 text-2xl focus:outline-none focus:ring-2 focus:ring-gray-500 rounded">
         &times;
       </button>
@@ -809,27 +809,29 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label for="recursoId" class="block text-sm font-medium text-gray-700 mb-1">
-            ID del Recurso <span class="text-red-500">*</span>
+            <span data-i18n="adminModal.recurso.idLabel">ID del Recurso</span> <span class="text-red-500">*</span>
           </label>
           <input
             type="text"
             id="recursoId"
             name="id_recurso"
             placeholder="Ej: SALA_01, IMP3D_01"
+            data-i18n-attr="placeholder:adminModal.recurso.idPlaceholder"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
           >
-          <p class="text-xs text-gray-500 mt-1">Debe ser único y sin espacios</p>
+          <p class="text-xs text-gray-500 mt-1" data-i18n="adminModal.recurso.idHelp">Debe ser único y sin espacios</p>
         </div>
         <div>
           <label for="recursoNombre" class="block text-sm font-medium text-gray-700 mb-1">
-            Nombre <span class="text-red-500">*</span>
+            <span data-i18n="adminModal.recurso.nameLabel">Nombre</span> <span class="text-red-500">*</span>
           </label>
           <input
             type="text"
             id="recursoNombre"
             name="nombre"
             placeholder="Ej: Sala de Informática, Impresora 3D"
+            data-i18n-attr="placeholder:adminModal.recurso.namePlaceholder"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
           >
@@ -840,7 +842,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label for="recursoTipo" class="block text-sm font-medium text-gray-700 mb-1">
-            Tipo <span class="text-red-500">*</span>
+            <span data-i18n="adminModal.recurso.typeLabel">Tipo</span> <span class="text-red-500">*</span>
           </label>
           <select
             id="recursoTipo"
@@ -848,18 +850,18 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
           >
-            <option value="">Selecciona un tipo...</option>
-            <option value="Sala">Sala (espacio físico)</option>
-            <option value="Dispositivo">Dispositivo (unidad individual)</option>
-            <option value="Agrupado">Agrupado (múltiples unidades)</option>
+            <option value="" data-i18n="adminModal.recurso.typePlaceholder">Selecciona un tipo...</option>
+            <option value="Sala" data-i18n="adminModal.recurso.typeSala">Sala (espacio físico)</option>
+            <option value="Dispositivo" data-i18n="adminModal.recurso.typeDispositivo">Dispositivo (unidad individual)</option>
+            <option value="Agrupado" data-i18n="adminModal.recurso.typeAgrupado">Agrupado (múltiples unidades)</option>
           </select>
-          <p class="text-xs text-gray-500 mt-1">
+          <p class="text-xs text-gray-500 mt-1" data-i18n-html="adminModal.recurso.typeHelp">
             <b>Sala/Dispositivo:</b> Solo 1 reserva simultánea<br>Para Agrupados: nº de unidades
           </p>
         </div>
         <div>
           <label for="recursoCapacidad" class="block text-sm font-medium text-gray-700 mb-1">
-            Capacidad <span class="text-red-500">*</span>
+            <span data-i18n="adminModal.recurso.capacityLabel">Capacidad</span> <span class="text-red-500">*</span>
           </label>
           <input
             type="number"
@@ -871,7 +873,7 @@
             required
           >
           <p class="text-xs text-gray-500 mt-1">
-            <span id="capacidadHelp">Para Salas/Dispositivos: siempre 1<br>Para Agrupados: nº de unidades</span>
+            <span id="capacidadHelp" data-i18n-html="adminModal.recurso.capacityHelp">Para Salas/Dispositivos: siempre 1<br>Para Agrupados: nº de unidades</span>
           </p>
         </div>
       </div>
@@ -879,7 +881,7 @@
       <!-- Fila 3: Ubicación y Estado -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label for="recursoUbicacion" class="block text-sm font-medium text-gray-700 mb-1">
+          <label for="recursoUbicacion" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="adminModal.recurso.locationLabel">
             Ubicación
           </label>
           <input
@@ -887,12 +889,13 @@
             id="recursoUbicacion"
             name="ubicacion"
             placeholder="Ej: Planta 2, Edificio A, Aula 203"
+            data-i18n-attr="placeholder:adminModal.recurso.locationPlaceholder"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
         </div>
         <div>
           <label for="recursoEstado" class="block text-sm font-medium text-gray-700 mb-1">
-            Estado <span class="text-red-500">*</span>
+            <span data-i18n="adminModal.recurso.statusLabel">Estado</span> <span class="text-red-500">*</span>
           </label>
           <select
             id="recursoEstado"
@@ -900,9 +903,9 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
           >
-            <option value="Activo">Activo</option>
-            <option value="Mantenimiento">En Mantenimiento</option>
-            <option value="Inactivo">Inactivo</option>
+            <option value="Activo" data-i18n="adminModal.recurso.statusActivo">Activo</option>
+            <option value="Mantenimiento" data-i18n="adminModal.recurso.statusMantenimiento">En Mantenimiento</option>
+            <option value="Inactivo" data-i18n="adminModal.recurso.statusInactivo">Inactivo</option>
           </select>
         </div>
       </div>
@@ -910,7 +913,7 @@
       <!-- Selector de Iconos ICONIFY -->
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 mb-2">
-          Icono <span class="text-red-500">*</span>
+          <span data-i18n="adminModal.recurso.iconLabel">Icono</span> <span class="text-red-500">*</span>
         </label>
 
         <!-- Preview del Icono Seleccionado -->
@@ -919,7 +922,7 @@
             <iconify-icon icon="mdi:package-variant" width="48" height="48"></iconify-icon>
           </div>
           <div>
-            <p class="text-sm font-medium text-gray-700">Icono seleccionado:</p>
+            <p class="text-sm font-medium text-gray-700" data-i18n="adminModal.recurso.iconSelected">Icono seleccionado:</p>
             <p id="iconoPreviewCode" class="text-xs text-gray-500 font-mono">mdi:package-variant</p>
           </div>
         </div>
@@ -929,15 +932,15 @@
         <!-- Tabs de Categorías -->
         <div class="mb-3 border-b border-gray-200 overflow-x-auto">
           <div class="flex gap-1 min-w-max">
-            <button type="button" class="iconify-category-tab active" data-category="tecnologia">💻 Tecnología</button>
-            <button type="button" class="iconify-category-tab" data-category="ciencias">🔬 Ciencias</button>
-            <button type="button" class="iconify-category-tab" data-category="deportes">⚽ Deportes</button>
-            <button type="button" class="iconify-category-tab" data-category="arte">🎨 Arte</button>
-            <button type="button" class="iconify-category-tab" data-category="biblioteca">📚 Biblioteca</button>
-            <button type="button" class="iconify-category-tab" data-category="idiomas">🌍 Idiomas</button>
-            <button type="button" class="iconify-category-tab" data-category="naturaleza">🌱 Naturaleza</button>
-            <button type="button" class="iconify-category-tab" data-category="espacios">🏫 Espacios</button>
-            <button type="button" class="iconify-category-tab" data-category="ocio">🎮 Ocio</button>
+            <button type="button" class="iconify-category-tab active" data-category="tecnologia" data-i18n="adminModal.recurso.catTecnologia">💻 Tecnología</button>
+            <button type="button" class="iconify-category-tab" data-category="ciencias" data-i18n="adminModal.recurso.catCiencias">🔬 Ciencias</button>
+            <button type="button" class="iconify-category-tab" data-category="deportes" data-i18n="adminModal.recurso.catDeportes">⚽ Deportes</button>
+            <button type="button" class="iconify-category-tab" data-category="arte" data-i18n="adminModal.recurso.catArte">🎨 Arte</button>
+            <button type="button" class="iconify-category-tab" data-category="biblioteca" data-i18n="adminModal.recurso.catBiblioteca">📚 Biblioteca</button>
+            <button type="button" class="iconify-category-tab" data-category="idiomas" data-i18n="adminModal.recurso.catIdiomas">🌍 Idiomas</button>
+            <button type="button" class="iconify-category-tab" data-category="naturaleza" data-i18n="adminModal.recurso.catNaturaleza">🌱 Naturaleza</button>
+            <button type="button" class="iconify-category-tab" data-category="espacios" data-i18n="adminModal.recurso.catEspacios">🏫 Espacios</button>
+            <button type="button" class="iconify-category-tab" data-category="ocio" data-i18n="adminModal.recurso.catOcio">🎮 Ocio</button>
           </div>
         </div>
 
@@ -954,13 +957,14 @@
               type="text"
               id="iconifySearchInput"
               placeholder="🔍 Buscar entre 200,000+ iconos... (Ej: robot, music, lab)"
+              data-i18n-attr="placeholder:adminModal.recurso.iconSearchPlaceholder"
               class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-            <button type="button" id="iconifySearchBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+            <button type="button" id="iconifySearchBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm" data-i18n="adminModal.recurso.iconSearchBtn">
               Buscar
             </button>
           </div>
-          <p class="text-xs text-gray-500 mt-1">
+          <p class="text-xs text-gray-500 mt-1" data-i18n="adminModal.recurso.iconSearchHint">
             Escribe en inglés para mejores resultados (ej: "printer", "microscope", "guitar")
           </p>
         </div>
@@ -978,14 +982,15 @@
           type="button"
           id="btnGenerarDisponibilidad"
           class="hidden px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+          data-i18n="adminModal.recurso.generateAvailability"
         >
           📅 Generar Disponibilidad
         </button>
         <div class="flex gap-3 ml-auto">
-          <button type="button" id="cancelModalRecurso" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors">
+          <button type="button" id="cancelModalRecurso" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors" data-i18n="adminModal.recurso.cancel">
             Cancelar
           </button>
-          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" data-i18n="adminModal.recurso.save">
             Guardar Recurso
           </button>
         </div>
@@ -1006,8 +1011,8 @@
     <div
       class="flex justify-between items-center p-5 border-b border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50">
       <div>
-        <h3 class="text-2xl font-bold text-gray-900">Generar Disponibilidad</h3>
-        <p class="text-sm text-gray-600 mt-1">Para: <span id="recursoNombreDisp" class="font-semibold"></span></p>
+        <h3 class="text-2xl font-bold text-gray-900" data-i18n="adminModal.disp.title">Generar Disponibilidad</h3>
+        <p class="text-sm text-gray-600 mt-1"><span data-i18n="adminModal.disp.forLabel">Para:</span> <span id="recursoNombreDisp" class="font-semibold"></span></p>
       </div>
       <button id="closeModalDisponibilidad" class="text-gray-400 hover:text-gray-600 text-2xl focus:outline-none focus:ring-2 focus:ring-gray-500 rounded">
         &times;
@@ -1021,9 +1026,9 @@
       <div class="mb-4">
         <div class="flex justify-between items-center mb-2">
           <label class="block text-sm font-medium text-gray-700">
-            Días de la Semana <span class="text-red-500">*</span>
+            <span data-i18n="adminModal.disp.daysLabel">Días de la Semana</span> <span class="text-red-500">*</span>
           </label>
-          <button type="button" id="seleccionarTodosDias" class="text-xs text-blue-600 hover:text-blue-800 font-medium">
+          <button type="button" id="seleccionarTodosDias" class="text-xs text-blue-600 hover:text-blue-800 font-medium" data-i18n="adminModal.disp.selectAll">
             Todos
           </button>
         </div>
@@ -1062,7 +1067,7 @@
       <!-- Disponibilidad -->
       <div class="mb-4">
         <label for="dispPermitido" class="block text-sm font-medium text-gray-700 mb-2">
-          Disponibilidad <span class="text-red-500">*</span>
+          <span data-i18n="adminModal.disp.availabilityLabel">Disponibilidad</span> <span class="text-red-500">*</span>
         </label>
         <select
           id="dispPermitido"
@@ -1070,14 +1075,14 @@
           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           required
         >
-          <option value="Si">✅ Permitir reservas</option>
-          <option value="No">⛔ Bloquear reservas</option>
+          <option value="Si" data-i18n="adminModal.disp.optionAllow">✅ Permitir reservas</option>
+          <option value="No" data-i18n="adminModal.disp.optionBlock">⛔ Bloquear reservas</option>
         </select>
       </div>
 
       <!-- Razón de Bloqueo (Solo si está bloqueado) -->
       <div id="razonBloqueoContainer" class="mb-4 hidden">
-        <label for="dispRazonBloqueo" class="block text-sm font-medium text-gray-700 mb-2">
+        <label for="dispRazonBloqueo" class="block text-sm font-medium text-gray-700 mb-2" data-i18n="adminModal.disp.blockReasonLabel">
           Razón del Bloqueo
         </label>
         <input
@@ -1085,23 +1090,24 @@
           id="dispRazonBloqueo"
           name="razon_bloqueo"
           placeholder="Ej: Mantenimiento, Evento especial, etc."
+          data-i18n-attr="placeholder:adminModal.disp.blockReasonPlaceholder"
           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
       </div>
 
       <!-- Nota Informativa -->
       <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-        <p class="text-sm text-blue-800">
+        <p class="text-sm text-blue-800" data-i18n-html="adminModal.disp.infoNote">
           ℹ️ Esta configuración se aplicará a <b>todos los tramos horarios</b> de los días seleccionados.
         </p>
       </div>
 
       <!-- Botones de Acción -->
       <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
-        <button type="button" id="cancelModalDisponibilidad" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors">
+        <button type="button" id="cancelModalDisponibilidad" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors" data-i18n="adminModal.disp.cancel">
           Cancelar
         </button>
-        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors" data-i18n="adminModal.disp.submit">
           Generar Disponibilidad
         </button>
       </div>
@@ -1121,7 +1127,7 @@
         <div class="p-2 rounded-lg bg-blue-50 text-blue-600 leading-none">
           <iconify-icon icon="mdi:calendar-plus" class="text-2xl"></iconify-icon>
         </div>
-        <h3 class="text-lg font-bold text-gray-800">Nueva Reserva Recurrente</h3>
+        <h3 class="text-lg font-bold text-gray-800" data-i18n="adminModal.recDirecta.title">Nueva Reserva Recurrente</h3>
       </div>
       <button onclick="cerrarModalRecurrenteDirecta()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
         <iconify-icon icon="mdi:close" class="text-xl text-gray-400"></iconify-icon>
@@ -1136,21 +1142,21 @@
           <div>
             <label class="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1.5">
               <iconify-icon icon="mdi:cube-outline"></iconify-icon>
-              Recurso *
+              <span data-i18n="adminModal.recDirecta.resourceLabel">Recurso *</span>
             </label>
             <select id="recDirectaRecurso"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm">
-              <option value="">Selecciona un recurso</option>
+              <option value="" data-i18n="adminModal.recDirecta.resourcePlaceholder">Selecciona un recurso</option>
             </select>
           </div>
           <div>
             <label class="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1.5">
               <iconify-icon icon="mdi:account-outline"></iconify-icon>
-              Usuario *
+              <span data-i18n="adminModal.recDirecta.userLabel">Usuario *</span>
             </label>
             <select id="recDirectaUsuario"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm">
-              <option value="">Selecciona un usuario</option>
+              <option value="" data-i18n="adminModal.recDirecta.userPlaceholder">Selecciona un usuario</option>
             </select>
           </div>
         </div>
@@ -1159,26 +1165,26 @@
         <div>
           <label class="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-2">
             <iconify-icon icon="mdi:calendar-week"></iconify-icon>
-            Selecciona los tramos *
+            <span data-i18n="adminModal.recDirecta.slotsLabel">Selecciona los tramos *</span>
           </label>
           <div class="relative bg-white rounded-lg border border-gray-200 overflow-hidden">
             <!-- Spinner overlay mientras carga conflictos -->
             <div id="spinnerConflictosAdmin" class="absolute inset-0 bg-white/80 z-10 flex items-center justify-center hidden">
               <div class="flex flex-col items-center gap-2">
                 <iconify-icon icon="mdi:loading" class="text-2xl text-blue-500 animate-spin"></iconify-icon>
-                <span class="text-xs text-gray-500">Cargando disponibilidad...</span>
+                <span class="text-xs text-gray-500" data-i18n="adminModal.recDirecta.loadingAvailability">Cargando disponibilidad...</span>
               </div>
             </div>
             <div class="overflow-x-auto">
               <table class="min-w-full">
                 <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-medium">
                   <tr>
-                    <th class="px-2 py-2 text-left w-24 border-r border-gray-200">Tramo</th>
-                    <th class="px-1 py-2 text-center min-w-[50px]">Lun</th>
-                    <th class="px-1 py-2 text-center min-w-[50px]">Mar</th>
-                    <th class="px-1 py-2 text-center min-w-[50px]">Mié</th>
-                    <th class="px-1 py-2 text-center min-w-[50px]">Jue</th>
-                    <th class="px-1 py-2 text-center min-w-[50px]">Vie</th>
+                    <th class="px-2 py-2 text-left w-24 border-r border-gray-200" data-i18n="adminModal.recDirecta.thSlot">Tramo</th>
+                    <th class="px-1 py-2 text-center min-w-[50px]" data-i18n="adminModal.recDirecta.thMon">Lun</th>
+                    <th class="px-1 py-2 text-center min-w-[50px]" data-i18n="adminModal.recDirecta.thTue">Mar</th>
+                    <th class="px-1 py-2 text-center min-w-[50px]" data-i18n="adminModal.recDirecta.thWed">Mié</th>
+                    <th class="px-1 py-2 text-center min-w-[50px]" data-i18n="adminModal.recDirecta.thThu">Jue</th>
+                    <th class="px-1 py-2 text-center min-w-[50px]" data-i18n="adminModal.recDirecta.thFri">Vie</th>
                   </tr>
                 </thead>
                 <tbody id="cuerpoMatrizRecurrenteAdmin" class="bg-white divide-y divide-gray-100">
@@ -1195,15 +1201,15 @@
           <div class="mt-3 flex flex-wrap justify-center gap-3 text-[10px] text-gray-500">
             <span class="flex items-center gap-1">
               <span class="w-3 h-3 rounded bg-blue-500 border border-blue-300"></span>
-              Seleccionado
+              <span data-i18n="adminModal.recDirecta.legendSelected">Seleccionado</span>
             </span>
             <span class="flex items-center gap-1">
               <span class="w-3 h-3 rounded bg-red-100 border border-red-200"></span>
-              Ocupado (recurrencia)
+              <span data-i18n="adminModal.recDirecta.legendOccupied">Ocupado (recurrencia)</span>
             </span>
             <span class="flex items-center gap-1">
               <span class="w-3 h-3 rounded bg-gray-200 border border-gray-300"></span>
-              No disponible
+              <span data-i18n="adminModal.recDirecta.legendUnavailable">No disponible</span>
             </span>
           </div>
         </div>
@@ -1212,16 +1218,16 @@
         <div>
           <label class="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-2">
             <iconify-icon icon="mdi:calendar-end"></iconify-icon>
-            Hasta cuándo * <span class="text-xs font-normal text-gray-400">(desde hoy)</span>
+            <span data-i18n="adminModal.recDirecta.untilLabel">Hasta cuándo *</span> <span class="text-xs font-normal text-gray-400" data-i18n="adminModal.recDirecta.untilHint">(desde hoy)</span>
           </label>
           <div class="flex items-center gap-2 flex-wrap">
             <label class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-all text-sm">
               <input type="radio" name="recDirectaTipoFin" value="finCurso" checked class="accent-blue-600">
-              <span class="font-medium">Fin de curso</span>
+              <span class="font-medium" data-i18n="adminModal.recDirecta.endOfTerm">Fin de curso</span>
             </label>
             <label class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-all text-sm">
               <input type="radio" name="recDirectaTipoFin" value="fecha" class="accent-blue-600">
-              <span class="font-medium">Fecha concreta</span>
+              <span class="font-medium" data-i18n="adminModal.recDirecta.specificDate">Fecha concreta</span>
             </label>
             <div id="recDirectaFechaFinContainer" class="hidden">
               <input type="date" id="recDirectaFechaFin"
@@ -1234,9 +1240,10 @@
         <div>
           <label class="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1.5">
             <iconify-icon icon="mdi:message-text-outline"></iconify-icon>
-            Notas (opcional)
+            <span data-i18n="adminModal.recDirecta.notesLabel">Notas (opcional)</span>
           </label>
           <textarea id="recDirectaNotas" rows="2" placeholder="Ej: Clases de informática"
+            data-i18n-attr="placeholder:adminModal.recDirecta.notesPlaceholder"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none text-sm"></textarea>
         </div>
 
@@ -1244,12 +1251,12 @@
 
     <!-- Footer -->
     <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-5 py-4 flex gap-3 rounded-b-xl">
-      <button type="button" onclick="cerrarModalRecurrenteDirecta()" class="flex-1 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+      <button type="button" onclick="cerrarModalRecurrenteDirecta()" class="flex-1 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" data-i18n="adminModal.recDirecta.cancel">
         Cancelar
       </button>
       <button type="button" onclick="guardarRecurrenteDirecta()" id="btnGuardarRecurrenteDirecta" class="flex-[2] px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2">
         <iconify-icon icon="mdi:check"></iconify-icon>
-        Crear Reservas
+        <span data-i18n="adminModal.recDirecta.submit">Crear Reservas</span>
       </button>
     </div>
 
@@ -1267,7 +1274,7 @@
           <div class="p-1.5 rounded-lg bg-blue-100 text-blue-600">
             <iconify-icon icon="mdi:clipboard-check-outline" class="text-xl"></iconify-icon>
           </div>
-          <h3 class="text-lg font-bold text-gray-900">Gestionar Solicitud</h3>
+          <h3 class="text-lg font-bold text-gray-900" data-i18n="adminModal.gestionar.title">Gestionar Solicitud</h3>
         </div>
         <button onclick="cerrarModalGestionarSolicitud()" class="text-gray-400 hover:text-gray-600 text-xl focus:outline-none">
           <iconify-icon icon="mdi:close"></iconify-icon>
@@ -1284,9 +1291,10 @@
         <div class="mb-3">
           <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
             <iconify-icon icon="mdi:message-text-outline"></iconify-icon>
-            Notas (opcional al aprobar)
+            <span data-i18n="adminModal.gestionar.notesLabel">Notas (opcional al aprobar)</span>
           </label>
           <textarea id="gestionarSolicitudNotas" rows="2" placeholder="Añade un comentario opcional..."
+            data-i18n-attr="placeholder:adminModal.gestionar.notesPlaceholder"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none text-sm"></textarea>
         </div>
 
@@ -1294,9 +1302,10 @@
         <div class="mb-4">
           <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
             <iconify-icon icon="mdi:alert-circle-outline"></iconify-icon>
-            Motivo del rechazo (obligatorio)
+            <span data-i18n="adminModal.gestionar.rejectReasonLabel">Motivo del rechazo (obligatorio)</span>
           </label>
           <textarea id="gestionarSolicitudMotivo" rows="2" placeholder="Indica el motivo del rechazo..."
+            data-i18n-attr="placeholder:adminModal.gestionar.rejectReasonPlaceholder"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none resize-none text-sm"></textarea>
         </div>
 
@@ -1305,12 +1314,12 @@
           <button onclick="rechazarSolicitudRecurrente()" id="btnRechazarSolicitud"
             class="flex-1 px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors font-medium flex items-center justify-center gap-1.5 text-sm">
             <iconify-icon icon="mdi:close"></iconify-icon>
-            Rechazar
+            <span data-i18n="adminModal.gestionar.reject">Rechazar</span>
           </button>
           <button onclick="aprobarSolicitudRecurrente()" id="btnAprobarSolicitud"
             class="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center justify-center gap-1.5 text-sm">
             <iconify-icon icon="mdi:check"></iconify-icon>
-            Aprobar
+            <span data-i18n="adminModal.gestionar.approve">Aprobar</span>
           </button>
         </div>
       </div>
@@ -1340,7 +1349,8 @@
 
         <div class="flex gap-3 justify-center">
           <button onclick="cerrarConfirmacion()"
-                  class="flex-1 px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-semibold text-sm transition-colors">
+                  class="flex-1 px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-semibold text-sm transition-colors"
+                  data-i18n="confirm.modalCancel">
             Cancelar
           </button>
           <button id="btnConfirmarAccion"
@@ -1362,7 +1372,7 @@
       <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
         <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
           <iconify-icon icon="mdi:emoticon-outline" class="text-blue-600"></iconify-icon>
-          Seleccionar Icono
+          <span data-i18n="adminModal.iconPicker.title">Seleccionar Icono</span>
         </h3>
         <button onclick="cerrarSelectorIconos()" class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-200 transition-colors">
           <iconify-icon icon="mdi:close" class="text-xl"></iconify-icon>
@@ -1374,6 +1384,7 @@
           <iconify-icon icon="mdi:magnify" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
           </iconify-icon>
           <input type="text" id="searchIconInput" placeholder="Buscar icono (ej: wifi, book, computer)..."
+                 data-i18n-attr="placeholder:adminModal.iconPicker.searchPlaceholder"
                  class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none"
                  oninput="filtrarIconosGrid()">
         </div>
@@ -1403,14 +1414,15 @@
           <iconify-icon icon="mdi:comment-edit-outline" class="text-xl text-blue-600"></iconify-icon>
         </div>
         <div>
-          <h3 class="text-lg font-semibold leading-6 text-gray-900" id="modalEditarNotaTitle">Motivo del Bloqueo</h3>
-          <p class="text-sm text-gray-500">Añade una nota explicativa</p>
+          <h3 class="text-lg font-semibold leading-6 text-gray-900" id="modalEditarNotaTitle" data-i18n="adminModal.editarNota.title">Motivo del Bloqueo</h3>
+          <p class="text-sm text-gray-500" data-i18n="adminModal.editarNota.subtitle">Añade una nota explicativa</p>
         </div>
       </div>
 
       <div class="px-6 py-6">
-        <label for="notaTextarea" class="block text-sm font-medium leading-6 text-gray-900 mb-2">Descripción</label>
-        <textarea id="notaTextarea" rows="4" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 resize-none bg-gray-50/50 focus:bg-white transition-all" placeholder="Ej: Festivo, Mantenimiento, Reservado para examen..."></textarea>
+        <label for="notaTextarea" class="block text-sm font-medium leading-6 text-gray-900 mb-2" data-i18n="adminModal.editarNota.descLabel">Descripción</label>
+        <textarea id="notaTextarea" rows="4" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 resize-none bg-gray-50/50 focus:bg-white transition-all" placeholder="Ej: Festivo, Mantenimiento, Reservado para examen..."
+          data-i18n-attr="placeholder:adminModal.editarNota.placeholder"></textarea>
         <input type="hidden" id="notaTramoId">
         <input type="hidden" id="notaDia">
       </div>
@@ -1418,14 +1430,15 @@
       <div class="bg-gray-50/80 px-6 py-4 flex gap-3 items-center">
 
         <button type="button" onclick="cerrarModalEditarNota()"
-          class="px-4 py-2.5 text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:text-gray-700 transition-colors shadow-sm whitespace-nowrap">
+          class="px-4 py-2.5 text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:text-gray-700 transition-colors shadow-sm whitespace-nowrap"
+          data-i18n="adminModal.editarNota.cancel">
     Cancelar
   </button>
 
         <button type="button" onclick="guardarNotaModal()"
           class="flex-1 justify-center rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-600/20 hover:bg-blue-500 transition-all active:scale-95 flex items-center gap-2">
     <iconify-icon icon="mdi:content-save-outline" class="text-lg"></iconify-icon>
-    <span>Guardar Nota</span>
+    <span data-i18n="adminModal.editarNota.save">Guardar Nota</span>
   </button>
 
       </div>
@@ -1453,8 +1466,8 @@
             <iconify-icon icon="mdi:history" class="text-xl text-blue-600"></iconify-icon>
           </div>
           <div>
-            <h3 class="text-lg font-semibold text-gray-900">Historial de Recurrencias</h3>
-            <p class="text-sm text-gray-500">Todas las solicitudes registradas</p>
+            <h3 class="text-lg font-semibold text-gray-900" data-i18n="adminModal.historial.title">Historial de Recurrencias</h3>
+            <p class="text-sm text-gray-500" data-i18n="adminModal.historial.subtitle">Todas las solicitudes registradas</p>
           </div>
         </div>
         <button onclick="cerrarModalHistorialRecurrencias()" class="p-2 hover:bg-gray-200 rounded-full transition-colors">
@@ -1465,19 +1478,20 @@
       <!-- Filtros -->
       <div class="px-6 py-3 border-b border-gray-100 flex flex-col gap-2 shrink-0">
         <input type="text" id="busquedaHistorial" placeholder="Buscar..."
+          data-i18n-attr="placeholder:adminModal.historial.searchPlaceholder"
           onkeyup="filtrarHistorialRecurrencias()"
           class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
         <div class="flex gap-1 overflow-x-auto pb-1 -mx-1 px-1">
           <button onclick="setFiltroHistorial('todas')" data-filtro="todas"
-            class="filtro-historial px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-600 text-white whitespace-nowrap">Todas</button>
+            class="filtro-historial px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-600 text-white whitespace-nowrap" data-i18n="adminModal.historial.filterAll">Todas</button>
           <button onclick="setFiltroHistorial('pendiente')" data-filtro="pendiente"
-            class="filtro-historial px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 whitespace-nowrap">Pendientes</button>
+            class="filtro-historial px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 whitespace-nowrap" data-i18n="adminModal.historial.filterPending">Pendientes</button>
           <button onclick="setFiltroHistorial('aprobada')" data-filtro="aprobada"
-            class="filtro-historial px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 whitespace-nowrap">Aprobadas</button>
+            class="filtro-historial px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 whitespace-nowrap" data-i18n="adminModal.historial.filterApproved">Aprobadas</button>
           <button onclick="setFiltroHistorial('rechazada')" data-filtro="rechazada"
-            class="filtro-historial px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 whitespace-nowrap">Rechazadas</button>
+            class="filtro-historial px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 whitespace-nowrap" data-i18n="adminModal.historial.filterRejected">Rechazadas</button>
           <button onclick="setFiltroHistorial('cancelada')" data-filtro="cancelada"
-            class="filtro-historial px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 whitespace-nowrap">Revocadas</button>
+            class="filtro-historial px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 whitespace-nowrap" data-i18n="adminModal.historial.filterRevoked">Revocadas</button>
         </div>
       </div>
 
@@ -1485,14 +1499,15 @@
       <div id="listaHistorialRecurrencias" class="flex-1 overflow-y-auto">
         <div class="text-center py-8 text-gray-400">
           <iconify-icon icon="mdi:loading" class="text-3xl animate-spin"></iconify-icon>
-          <p class="mt-2 text-sm">Cargando...</p>
+          <p class="mt-2 text-sm" data-i18n="adminModal.historial.loading">Cargando...</p>
         </div>
       </div>
 
       <!-- Footer -->
       <div class="bg-gray-50 px-6 py-3 border-t border-gray-100 flex justify-end shrink-0">
         <button onclick="cerrarModalHistorialRecurrencias()"
-          class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">
+          class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
+          data-i18n="adminModal.historial.close">
           Cerrar
         </button>
       </div>
