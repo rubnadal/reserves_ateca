@@ -67,15 +67,20 @@ function mostrarConfirmacion(titulo, mensaje, callbackAccion) {
   // 1. Configurar Textos
   document.getElementById('confirmTitle').innerText = titulo;
   document.getElementById('confirmMessage').innerHTML = mensaje;
-  
+
+  // Actualizar textos de botones según idioma activo
+  const cancelBtn = modal.querySelector('button[onclick="cerrarConfirmacion()"]');
+  if (cancelBtn) cancelBtn.textContent = window.t('confirm.modalCancel');
+
   // 2. Guardar acción
   accionConfirmadaCallback = callbackAccion;
-  
+
   // 3. Configurar Botón Confirmar (Clonamos para limpiar eventos viejos)
   const btn = document.getElementById('btnConfirmarAccion');
   const newBtn = btn.cloneNode(true);
+  newBtn.textContent = window.t('confirm.modalAccept');
   btn.parentNode.replaceChild(newBtn, btn);
-  
+
   newBtn.addEventListener('click', function() {
     if (accionConfirmadaCallback) accionConfirmadaCallback();
     cerrarConfirmacion();
@@ -109,11 +114,16 @@ const SaveBarManager = {
     const btnSave = document.getElementById('btnGlobalSave');
     const btnDiscard = document.getElementById('btnGlobalDiscard');
     const subLabel = document.getElementById('saveBarSubtitle');
+    const titleLabel = document.getElementById('saveBarTitle');
 
     // 1. TEXTO (Solo si cambia)
+    if (titleLabel) titleLabel.textContent = window.t('saveBar.title');
     if (subLabel && subLabel.textContent !== subtitle) {
         subLabel.textContent = subtitle;
     }
+    if (btnDiscard) btnDiscard.textContent = window.t('saveBar.discard');
+    const btnSaveSpan = btnSave && btnSave.querySelector('span');
+    if (btnSaveSpan) btnSaveSpan.textContent = window.t('saveBar.save');
 
     // 2. ACCIONES (Sin recrear botones para evitar parpadeo)
     if(btnSave) btnSave.onclick = (e) => { e.preventDefault(); onSave(); };
@@ -671,8 +681,8 @@ function renderTablaReservas() {
 // --- 4. ACCIÓN: CANCELAR RESERVA ---
 function cancelarReserva(idReserva) {
   mostrarConfirmacion(
-    '¿Cancelar esta reserva?', 
-    'Esta acción liberará el recurso y notificará al usuario.',
+    window.t('confirm.cancelReservationTitle'),
+    window.t('confirm.cancelReservationMsg'),
     function() {
       showLoading();
       
@@ -1121,7 +1131,7 @@ function agregarNuevoRecurso() {
 }
 
 function eliminarRecursoFila(index) {
-  mostrarConfirmacion('¿Eliminar Recurso?', 'Recuerda guardar cambios para confirmar.', () => {
+  mostrarConfirmacion(window.t('confirm.deleteResourceTitle'), window.t('confirm.deleteResourceMsg'), () => {
       AdminState.recursos.splice(index, 1);
       renderTablaRecursos();
       checkRecursosChanges();
@@ -1152,7 +1162,7 @@ function checkRecursosChanges() {
   AdminState.cambiosPendientes = (actualStr !== originalStr);
   
   if (AdminState.cambiosPendientes) {
-    SaveBarManager.show("Recursos modificados", guardarCambiosRecursos, descartarCambiosRecursos);
+    SaveBarManager.show(window.t('saveBar.recursosModified'), guardarCambiosRecursos, descartarCambiosRecursos);
   } else {
     SaveBarManager.hide();
   }
@@ -1194,7 +1204,7 @@ function guardarCambiosRecursos() {
 }
 
 function descartarCambiosRecursos() {
-  mostrarConfirmacion('¿Descartar cambios?', 'Volverás al estado original.', () => {
+  mostrarConfirmacion(window.t('confirm.discardTitle'), window.t('confirm.discardMsgOriginal'), () => {
       AdminState.recursos = JSON.parse(JSON.stringify(AdminState.recursosOriginales));
       AdminState.cambiosPendientes = false;
       renderTablaRecursos();
@@ -1594,8 +1604,8 @@ function aprobarTodasPendientesRecurso() {
   if (pendientes.length === 0) return;
 
   mostrarConfirmacion(
-    '¿Aprobar solicitudes pendientes?',
-    `Se aprobarán <strong>${pendientes.length}</strong> solicitudes pendientes. Esta acción no se puede deshacer.`,
+    window.t('confirm.approveAllTitle'),
+    window.t('confirm.approveAllResourceMsg', { n: pendientes.length }),
     () => _ejecutarAprobarTodasPendientesRecurso(pendientes)
   );
 }
@@ -2061,8 +2071,8 @@ function confirmarEliminarTramoRecurrencia(idSolicitud, diaLetra, idTramo, btnEl
   const tramoNombre = getNombreTramo(idTramo);
 
   mostrarConfirmacion(
-    'Eliminar tramo',
-    `¿Eliminar el tramo ${diaNombre} — ${tramoNombre} de esta recurrencia? Se eliminarán las reservas futuras de ese tramo.`,
+    window.t('confirm.deleteRecSlotTitle'),
+    window.t('confirm.deleteRecSlotMsg', { dia: diaNombre, tramo: tramoNombre }),
     () => eliminarTramoRecurrencia(idSolicitud, diaLetra, idTramo)
   );
 }
@@ -2163,8 +2173,8 @@ async function guardarMotivoRecurrencia(idSolicitud) {
  */
 function confirmarRevocarRecurrencia(idSolicitud) {
   mostrarConfirmacion(
-    'Revocar recurrencia',
-    '¿Revocar esta recurrencia? Se cancelaran todas las reservas futuras asociadas.',
+    window.t('confirm.revokeRecTitle'),
+    window.t('confirm.revokeRecMsg'),
     () => revocarRecurrencia(idSolicitud)
   );
 }
@@ -2330,7 +2340,7 @@ function checkDispChanges() {
   DispState.cambiosPendientes = hayCambios;
   
   if (hayCambios) {
-    SaveBarManager.show("Horarios modificados", guardarCambiosDisp, descartarCambiosDisp);
+    SaveBarManager.show(window.t('saveBar.horariosModified'), guardarCambiosDisp, descartarCambiosDisp);
   } else {
     SaveBarManager.hide();
   }
@@ -2515,7 +2525,7 @@ function confirmarGuardarConConflictos() {
 }
 
 function descartarCambiosDisp() {
-  mostrarConfirmacion('¿Descartar cambios?', 'Volverás a la configuración guardada.', () => {
+  mostrarConfirmacion(window.t('confirm.discardTitle'), window.t('confirm.discardMsgSaved'), () => {
       DispState.datosActuales = JSON.parse(JSON.stringify(DispState.datosOriginales));
       renderMatrizHTML();
       checkDispChanges();
@@ -2909,8 +2919,8 @@ function eliminarUsuario(index) {
   const nombreSeguro = escaparHTML(usuario.Nombre || usuario.Email || 'Usuario');
 
   mostrarConfirmacion(
-    '¿Eliminar Usuario?', 
-    `Se eliminará el acceso para: <b>${nombreSeguro}</b>`, 
+    window.t('confirm.deleteUserTitle'),
+    window.t('confirm.deleteUserMsg', { nombre: nombreSeguro }),
     () => {
       AdminState.usuarios.splice(index, 1);
       renderTablaUsuarios(); // Aquí repintamos porque borramos una fila entera
@@ -2932,7 +2942,7 @@ function actualizarBotonGuardarUsuarios() {
   if (AdminState.cambiosPendientes) {
     const diff = Math.abs(AdminState.usuarios.length - AdminState.usuariosOriginales.length);
     SaveBarManager.show(
-        diff > 0 ? `${diff} cambios en lista` : 'Permisos modificados', 
+        diff > 0 ? window.t('saveBar.usuariosChanged', { n: diff }) : window.t('saveBar.permisosModified'),
         guardarCambiosUsuarios, 
         descartarCambiosUsuarios
     );
@@ -2980,7 +2990,7 @@ function guardarCambiosUsuarios() {
 
 // 8. Descartar
 function descartarCambiosUsuarios() {
-  mostrarConfirmacion('¿Descartar cambios?', 'Se perderán las modificaciones.', () => {
+  mostrarConfirmacion(window.t('confirm.discardTitle'), window.t('confirm.discardMsgLost'), () => {
       if (AdminState.usuariosOriginales) {
           AdminState.usuarios = JSON.parse(JSON.stringify(AdminState.usuariosOriginales));
       }
@@ -3171,8 +3181,8 @@ function eliminarCurso(index) {
   const nombreSeguro = typeof escaparHTML === 'function' ? escaparHTML(nombre) : nombre;
   
   mostrarConfirmacion(
-    '¿Eliminar Curso?', 
-    `Se eliminará &quot;<b>${nombreSeguro}</b>&quot;. Las reservas asociadas podrían quedar huérfanas.`, 
+    window.t('confirm.deleteCourseTitle'),
+    window.t('confirm.deleteCourseMsg', { nombre: nombreSeguro }),
     () => {
       CursosState.cursosEnMemoria.splice(index, 1);
       renderTablaCursos();
@@ -3210,9 +3220,9 @@ function checkCursosChanges() {
 function actualizarBotonGuardarCursos() {
   if (CursosState.cambiosPendientes) {
     const diff = CursosState.cursosEnMemoria.length - CursosState.cursosOriginales.length;
-    let texto = "Se han modificado los cursos";
-    if (diff > 0) texto = `${diff} cursos añadidos`;
-    if (diff < 0) texto = `${Math.abs(diff)} cursos eliminados`;
+    let texto = window.t('saveBar.cursosModified');
+    if (diff > 0) texto = window.t('saveBar.cursosAdded', { n: diff });
+    if (diff < 0) texto = window.t('saveBar.cursosRemoved', { n: Math.abs(diff) });
 
     SaveBarManager.show(texto, guardarCambiosCursos, descartarCambiosCursos);
   } else {
@@ -3265,8 +3275,8 @@ function guardarCambiosCursos() {
 
 function descartarCambiosCursos() {
   mostrarConfirmacion(
-    '¿Descartar cambios?',
-    'Se perderán todas las modificaciones no guardadas.',
+    window.t('confirm.discardTitle'),
+    window.t('confirm.discardMsgAllLost'),
     () => {
       CursosState.cursosEnMemoria = JSON.parse(JSON.stringify(CursosState.cursosOriginales));
       CursosState.modoVisualizacion = CursosState.modoOriginal;
@@ -3523,8 +3533,8 @@ function eliminarTramo(index) {
 
   // ✅ Usamos escaparHTML global
   mostrarConfirmacion(
-    '¿Eliminar Tramo?', 
-    `Se eliminará &quot;<b>${escaparHTML(nombre)}</b>&quot;. Desaparecerá de la configuración de horarios.`, 
+    window.t('confirm.deleteSlotTitle'),
+    window.t('confirm.deleteSlotMsg', { nombre: escaparHTML(nombre) }),
     () => {
       AdminState.tramos.splice(index, 1);
       renderTablaTramos();
@@ -3557,9 +3567,9 @@ function checkTramosChanges() {
 function actualizarEstadoBotonGuardarTramos() {
   if (AdminState.cambiosPendientes) {
     const diff = AdminState.tramos.length - (AdminState.tramosOriginales || []).length;
-    let texto = "Horarios modificados";
-    if (diff > 0) texto = `${diff} tramos añadidos`;
-    if (diff < 0) texto = `${Math.abs(diff)} tramos eliminados`;
+    let texto = window.t('saveBar.horariosModified');
+    if (diff > 0) texto = window.t('saveBar.tramosAdded', { n: diff });
+    if (diff < 0) texto = window.t('saveBar.tramosRemoved', { n: Math.abs(diff) });
 
     SaveBarManager.show(texto, guardarCambiosTramos, descartarCambiosTramos);
   } else {
@@ -3618,8 +3628,8 @@ function guardarCambiosTramos() {
 
 function descartarCambiosTramos() {
   mostrarConfirmacion(
-    '¿Descartar cambios?',
-    'Volverás a la configuración original de tramos.',
+    window.t('confirm.discardTitle'),
+    window.t('confirm.discardMsgSlots'),
     () => {
       AdminState.tramos = JSON.parse(JSON.stringify(AdminState.tramosOriginales));
       renderTablaTramos();
@@ -3751,7 +3761,7 @@ function checkConfigChanges() {
   ConfigState.cambiosPendientes = (actualStr !== originalStr);
   
   if (ConfigState.cambiosPendientes) {
-    SaveBarManager.show('Configuración modificada', guardarConfiguracion, descartarCambiosConfiguracion);
+    SaveBarManager.show(window.t('saveBar.configModified'), guardarConfiguracion, descartarCambiosConfiguracion);
   } else {
     SaveBarManager.hide();
   }
@@ -3901,8 +3911,8 @@ function finalizarGuardadoConfiguracion(newConfig) {
 // --- DESCARTAR ---
 function descartarCambiosConfiguracion() {
   mostrarConfirmacion(
-    '¿Descartar cambios?',
-    'Volverás a la configuración guardada.',
+    window.t('confirm.discardTitle'),
+    window.t('confirm.discardMsgSaved'),
     () => {
       // Revertir a snapshot original
       const configMap = {};
@@ -4654,8 +4664,8 @@ async function aprobarTodasPendientesGlobal() {
 
   // Usar modal de confirmación en lugar de confirm()
   mostrarConfirmacion(
-    '¿Aprobar todas las solicitudes?',
-    `Se aprobarán <strong>${pendientes.length}</strong> solicitudes pendientes.<br>Esta acción no se puede deshacer.`,
+    window.t('confirm.approveAllGlobalTitle'),
+    window.t('confirm.approveAllGlobalMsg', { n: pendientes.length }),
     () => ejecutarAprobarTodasPendientes(pendientes)
   );
 }
@@ -4820,8 +4830,8 @@ function aprobarTodasPendientes() {
   }
 
   mostrarConfirmacion(
-    '¿Aprobar solicitudes pendientes?',
-    `Se aprobarán <strong>${pendientes.length}</strong> solicitudes pendientes y se generarán las reservas correspondientes. Esta acción no se puede deshacer.`,
+    window.t('confirm.approveAllTitle'),
+    window.t('confirm.approveAllRecMsg', { n: pendientes.length }),
     () => _ejecutarAprobarTodasPendientes(pendientes)
   );
 }
@@ -4881,8 +4891,8 @@ function cancelarRecurrenciaAprobada(idSolicitud) {
   }
 
   mostrarConfirmacion(
-    '¿Cancelar recurrencia?',
-    `Se cancelarán todas las reservas futuras de <strong>"${escaparHTML(solicitud.nombre_recurso)}"</strong> para el usuario <strong>${escaparHTML(solicitud.nombre_usuario)}</strong>.`,
+    window.t('confirm.cancelRecTitle'),
+    window.t('confirm.cancelRecMsg', { recurso: escaparHTML(solicitud.nombre_recurso), usuario: escaparHTML(solicitud.nombre_usuario) }),
     async () => {
       showToast('info', window.t('adminToast.rec.canceling'));
 
@@ -5111,8 +5121,8 @@ async function guardarEdicionTramosRecurrencia(idSolicitud) {
   cerrarModalEditarTramosRecurrencia();
 
   mostrarConfirmacion(
-    '¿Confirmar cambios?',
-    `Se eliminarán los siguientes tramos: <strong>${eliminadosTexto}</strong>.<br><br>Las reservas futuras de estos tramos serán canceladas y el usuario recibirá una notificación.`,
+    window.t('confirm.confirmChangesTitle'),
+    window.t('confirm.confirmChangesMsg', { tramos: eliminadosTexto }),
     async () => {
       showLoading();
 
