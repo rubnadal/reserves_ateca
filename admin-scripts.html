@@ -423,7 +423,7 @@ function renderTablaReservas() {
 
   // Si no hay datos, mostrar mensaje vacío
   if (!AdminState.reservas || AdminState.reservas.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-gray-400 italic">No hay reservas registradas</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-gray-400 italic">${window.t('admin.reservas.emptyState')}</td></tr>`;
     document.getElementById('totalReservasCount').innerText = '0';
     return;
   }
@@ -543,7 +543,7 @@ function renderTablaReservas() {
   if(countSpan) countSpan.innerText = lista.length;
 
   if (lista.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-gray-400 bg-gray-50/50 italic">No hay coincidencias con la búsqueda</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-gray-400 bg-gray-50/50 italic">${window.t('admin.reservas.noResults')}</td></tr>`;
     return;
   }
 
@@ -691,19 +691,19 @@ function cancelarReserva(idReserva) {
                 // Repintamos la tabla (que ahora mantendrá el scroll)
                 renderTablaReservas();
                 
-                showToast('success', 'Reserva cancelada correctamente');
+                showToast('success', window.t('adminToast.reservas.canceled'));
             } else {
                 // Si no se encuentra (raro), recargamos todo
                 if (typeof loadAdminData === 'function') loadAdminData();
             }
 
           } else {
-            showToast('error', res.error || 'Error al cancelar');
+            showToast('error', res.error || window.t('adminToast.reservas.errorCancel'));
           }
         })
         .withFailureHandler(err => {
           hideLoading();
-          showToast('error', 'Error de conexión: ' + err);
+          showToast('error', window.t('adminToast.connectionError', { msg: err }));
         })
         .adminCancelarReserva(idReserva);
     }
@@ -847,7 +847,7 @@ function renderTablaRecursos() {
   tbody.innerHTML = '';
 
   if (!AdminState.recursos || AdminState.recursos.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="8" class="text-center py-12 text-gray-500 bg-gray-50/50 italic border-2 border-dashed border-gray-100 rounded-lg m-4">✨ No hay recursos. Crea el primero arriba.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" class="text-center py-12 text-gray-500 bg-gray-50/50 italic border-2 border-dashed border-gray-100 rounded-lg m-4">${window.t('admin.recursos.emptyState')}</td></tr>`;
     return;
   }
 
@@ -1161,7 +1161,7 @@ function checkRecursosChanges() {
 function guardarCambiosRecursos() {
   const invalidos = AdminState.recursos.filter(r => !r.nombre || r.nombre.trim() === '');
   if (invalidos.length > 0) {
-      showToast('warning', `Falta el nombre en ${invalidos.length} recurso(s).`);
+      showToast('warning', window.t('adminToast.recursos.missingName', { n: invalidos.length }));
       return;
   }
 
@@ -1170,7 +1170,7 @@ function guardarCambiosRecursos() {
     .withSuccessHandler(res => {
       hideLoading();
       if (res.success) {
-        showToast('success', 'Recursos guardados');
+        showToast('success', window.t('adminToast.recursos.saved'));
         AdminState.recursosOriginales = JSON.parse(JSON.stringify(AdminState.recursos));
         AdminState.cambiosPendientes = false;
         SaveBarManager.hide();
@@ -1199,7 +1199,7 @@ function descartarCambiosRecursos() {
       AdminState.cambiosPendientes = false;
       renderTablaRecursos();
       SaveBarManager.hide();
-      showToast('info', 'Cambios descartados');
+      showToast('info', window.t('adminToast.changesDiscarded'));
   });
 }
 
@@ -1245,7 +1245,7 @@ function renderSelectRecursos() {
   });
   
   if (lista.length === 0) {
-    container.innerHTML = '<div class="p-4 text-center text-xs text-gray-400 italic">No hay recursos disponibles.</div>';
+    container.innerHTML = `<div class="p-4 text-center text-xs text-gray-400 italic">${window.t('admin.recursos.noneAvailable')}</div>`;
     return;
   }
 
@@ -1336,7 +1336,7 @@ async function cargarMatrizDisponibilidad(idRecurso) {
     if (spinner) spinner.classList.add('hidden');
 
     if (!result || !result.success) {
-      showToast('error', result?.error || 'Error al cargar datos');
+      showToast('error', result?.error || window.t('adminToast.errorLoadData'));
       return;
     }
 
@@ -1365,7 +1365,7 @@ async function cargarMatrizDisponibilidad(idRecurso) {
   } catch (error) {
     if (spinner) spinner.classList.add('hidden');
     console.error('Error cargando matriz unificada:', error);
-    showToast('error', 'Error al cargar: ' + (error.message || String(error)));
+    showToast('error', window.t('adminToast.errorLoad', { msg: error.message || String(error) }));
   }
 }
 
@@ -1518,7 +1518,7 @@ function verDetalleSolicitudDirecto(idSolicitud) {
   if (sol) {
     abrirModalGestionarSolicitud(idSolicitud);
   } else {
-    showToast('error', 'Solicitud no encontrada');
+    showToast('error', window.t('adminToast.disp.requestNotFound'));
   }
 }
 
@@ -1542,7 +1542,7 @@ async function aprobarSolicitudRapidaConSpinner(idSolicitud, btnElement) {
     });
 
     if (result && result.success) {
-      showToast('success', 'Solicitud aprobada');
+      showToast('success', window.t('adminToast.disp.requestApproved'));
       // Eliminar la fila visualmente
       const row = document.getElementById(`pendiente-row-${idSolicitud}`);
       if (row) row.remove();
@@ -1558,12 +1558,12 @@ async function aprobarSolicitudRapidaConSpinner(idSolicitud, btnElement) {
     } else {
       btnElement.innerHTML = originalContent;
       btnElement.disabled = false;
-      showToast('error', result?.error || 'Error al aprobar');
+      showToast('error', result?.error || window.t('adminToast.disp.errorApprove'));
     }
   } catch (error) {
     btnElement.innerHTML = originalContent;
     btnElement.disabled = false;
-    showToast('error', 'Error: ' + (error.message || String(error)));
+    showToast('error', window.t('adminToast.genericError', { msg: error.message || String(error) }));
   }
 }
 
@@ -1625,10 +1625,10 @@ async function _ejecutarAprobarTodasPendientesRecurso(pendientes) {
   }
 
   if (aprobadas > 0) {
-    showToast('success', `${aprobadas} solicitud(es) aprobada(s)`);
+    showToast('success', window.t('adminToast.disp.batchApproved', { n: aprobadas }));
   }
   if (errores > 0) {
-    showToast('error', `${errores} error(es) al aprobar`);
+    showToast('error', window.t('adminToast.disp.batchErrors', { n: errores }));
   }
 
   // Recargar la matriz
@@ -2107,13 +2107,13 @@ async function eliminarTramoRecurrencia(idSolicitud, diaLetra, idTramo) {
       // Quitar overlay y rehabilitar botones en caso de error
       document.getElementById('overlayEliminandoTramo')?.remove();
       botones.forEach(b => b.disabled = false);
-      showToast('error', result?.error || 'Error al eliminar tramo');
+      showToast('error', result?.error || window.t('adminToast.tramos.errorDelete'));
     }
   } catch (error) {
     document.getElementById('overlayEliminandoTramo')?.remove();
     botones.forEach(b => b.disabled = false);
     console.error('Error eliminando tramo:', error);
-    showToast('error', 'Error: ' + (error.message || String(error)));
+    showToast('error', window.t('adminToast.genericError', { msg: error.message || String(error) }));
   }
 }
 
@@ -2127,7 +2127,7 @@ async function guardarMotivoRecurrencia(idSolicitud) {
   if (btn) btn.disabled = true;
   if (icon) icon.setAttribute('icon', 'mdi:loading');
   if (icon) icon.classList.add('animate-spin');
-  if (texto) texto.textContent = 'Guardando...';
+  if (texto) texto.textContent = window.t('admin.disponibilidad.savingMotivo');
 
   try {
     const result = await new Promise((resolve, reject) => {
@@ -2138,23 +2138,23 @@ async function guardarMotivoRecurrencia(idSolicitud) {
     });
 
     if (result && result.success) {
-      showToast('success', 'Motivo actualizado');
+      showToast('success', window.t('adminToast.disp.motivoSaved'));
       cerrarModalDetalleRecurrencia();
       // Recargar matriz
       if (DispState.recursoId) cargarMatrizDisponibilidad(DispState.recursoId);
     } else {
-      showToast('error', result?.error || 'Error al guardar');
+      showToast('error', result?.error || window.t('adminToast.errorSave'));
       // Restaurar botón en caso de error
       if (btn) btn.disabled = false;
       if (icon) { icon.setAttribute('icon', 'mdi:content-save'); icon.classList.remove('animate-spin'); }
-      if (texto) texto.textContent = 'Guardar';
+      if (texto) texto.textContent = window.t('admin.disponibilidad.saveMotivo');
     }
   } catch (error) {
-    showToast('error', 'Error: ' + (error.message || String(error)));
+    showToast('error', window.t('adminToast.genericError', { msg: error.message || String(error) }));
     // Restaurar botón en caso de error
     if (btn) btn.disabled = false;
     if (icon) { icon.setAttribute('icon', 'mdi:content-save'); icon.classList.remove('animate-spin'); }
-    if (texto) texto.textContent = 'Guardar';
+    if (texto) texto.textContent = window.t('admin.disponibilidad.saveMotivo');
   }
 }
 
@@ -2177,7 +2177,7 @@ async function revocarRecurrencia(idSolicitud) {
   // Mostrar spinner
   if (btn) btn.disabled = true;
   if (icon) { icon.setAttribute('icon', 'mdi:loading'); icon.classList.add('animate-spin'); }
-  if (texto) texto.textContent = 'Revocando...';
+  if (texto) texto.textContent = window.t('admin.disponibilidad.revoking');
 
   try {
     const result = await new Promise((resolve, reject) => {
@@ -2188,7 +2188,7 @@ async function revocarRecurrencia(idSolicitud) {
     });
 
     if (result && result.success) {
-      showToast('success', 'Recurrencia revocada');
+      showToast('success', window.t('adminToast.disp.recurringRevoked'));
       cerrarModalDetalleRecurrencia();
       // Recargar matriz
       if (DispState.recursoId) cargarMatrizDisponibilidad(DispState.recursoId);
@@ -2213,18 +2213,18 @@ async function revocarRecurrencia(idSolicitud) {
       );
       if (typeof renderTablaReservas === 'function') renderTablaReservas();
     } else {
-      showToast('error', result?.error || 'Error al revocar');
+      showToast('error', result?.error || window.t('adminToast.disp.errorRevoke'));
       // Restaurar boton
       if (btn) btn.disabled = false;
       if (icon) { icon.setAttribute('icon', 'mdi:cancel'); icon.classList.remove('animate-spin'); }
-      if (texto) texto.textContent = 'Revocar';
+      if (texto) texto.textContent = window.t('admin.disponibilidad.revoke');
     }
   } catch (error) {
-    showToast('error', 'Error: ' + (error.message || String(error)));
+    showToast('error', window.t('adminToast.genericError', { msg: error.message || String(error) }));
     // Restaurar boton
     if (btn) btn.disabled = false;
     if (icon) { icon.setAttribute('icon', 'mdi:cancel'); icon.classList.remove('animate-spin'); }
-    if (texto) texto.textContent = 'Revocar';
+    if (texto) texto.textContent = window.t('admin.disponibilidad.revoke');
   }
 }
 
@@ -2243,7 +2243,7 @@ async function aprobarSolicitudRapida(idSolicitud) {
     });
 
     if (result && result.success) {
-      showToast('success', 'Solicitud aprobada correctamente');
+      showToast('success', window.t('adminToast.disp.requestApprovedOk'));
       // Recargar la matriz
       if (DispState.recursoId) {
         cargarMatrizDisponibilidad(DispState.recursoId);
@@ -2270,11 +2270,11 @@ async function aprobarSolicitudRapida(idSolicitud) {
         }
       }
     } else {
-      showToast('error', result?.error || 'Error al aprobar');
+      showToast('error', result?.error || window.t('adminToast.disp.errorApprove'));
     }
   } catch (error) {
     console.error('Error aprobando solicitud:', error);
-    showToast('error', 'Error: ' + (error.message || String(error)));
+    showToast('error', window.t('adminToast.genericError', { msg: error.message || String(error) }));
   }
 }
 
@@ -2341,7 +2341,7 @@ let payloadDisponibilidadPendiente = null;
 
 function guardarCambiosDisp(forzar = false) {
   if (!DispState.recursoId) {
-      showToast('error', 'Error: No hay recurso seleccionado');
+      showToast('error', window.t('adminToast.disp.noResource'));
       return;
   }
 
@@ -2367,14 +2367,14 @@ function guardarCambiosDisp(forzar = false) {
       }
 
       if(res.success) {
-        showToast('success', 'Disponibilidad guardada');
+        showToast('success', window.t('adminToast.disp.dispSaved'));
         DispState.datosOriginales = JSON.parse(JSON.stringify(DispState.datosActuales));
         AdminState.disponibilidad = AdminState.disponibilidad.filter(d => String(d.id_recurso) !== String(DispState.recursoId));
         payload.forEach(p => AdminState.disponibilidad.push(p));
         checkDispChanges();
         payloadDisponibilidadPendiente = null;
       } else {
-        showToast('error', res.error || 'Error al guardar');
+        showToast('error', res.error || window.t('adminToast.errorSave'));
       }
     })
     .withFailureHandler(err => { hideLoading(); showToast('error', err); })
@@ -2497,19 +2497,19 @@ function confirmarGuardarConConflictos() {
       payloadDisponibilidadPendiente = null;
 
       if (res.success) {
-        showToast('success', 'Disponibilidad guardada y usuarios notificados');
+        showToast('success', window.t('adminToast.disp.dispSavedNotified'));
         DispState.datosOriginales = JSON.parse(JSON.stringify(DispState.datosActuales));
         AdminState.disponibilidad = AdminState.disponibilidad.filter(d => String(d.id_recurso) !== String(DispState.recursoId));
         payload.forEach(p => AdminState.disponibilidad.push(p));
         checkDispChanges();
       } else {
-        showToast('error', res.error || 'Error al guardar');
+        showToast('error', res.error || window.t('adminToast.errorSave'));
       }
     })
     .withFailureHandler(err => {
       hideLoading();
       payloadDisponibilidadPendiente = null;
-      showToast('error', 'Error: ' + err);
+      showToast('error', window.t('adminToast.genericError', { msg: err }));
     })
     .saveBatchDisponibilidadConValidacion(payload, true);
 }
@@ -2519,7 +2519,7 @@ function descartarCambiosDisp() {
       DispState.datosActuales = JSON.parse(JSON.stringify(DispState.datosOriginales));
       renderMatrizHTML();
       checkDispChanges();
-      showToast('info', 'Cambios revertidos');
+      showToast('info', window.t('adminToast.changesReverted'));
   });
 }
 
@@ -2753,7 +2753,7 @@ function renderTablaUsuarios() {
   }
 
   if (lista.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-12 text-gray-400">No se encontraron usuarios</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-12 text-gray-400">${window.t('admin.usuarios.emptyState')}</td></tr>`;
     return;
   }
 
@@ -2799,7 +2799,7 @@ function renderTablaUsuarios() {
                 <span class="translate-x-1 inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${usuario.Admin ? 'translate-x-5' : 'translate-x-1'}"></span>
             </div>
             <span class="text-[10px] text-gray-400 mt-1 select-none w-full text-center block h-3 leading-3">
-                ${usuario.Admin ? 'Admin' : 'Usuario'}
+                ${usuario.Admin ? window.t('admin.usuarios.roleAdmin') : window.t('admin.usuarios.roleUser')}
             </span>
         </div>
       </td>
@@ -2810,7 +2810,7 @@ function renderTablaUsuarios() {
                 <span class="translate-x-1 inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${usuario.Activo ? 'translate-x-5' : 'translate-x-1'}"></span>
             </div>
              <span class="text-[10px] text-gray-400 mt-1 select-none w-full text-center block h-3 leading-3">
-                ${usuario.Activo ? 'Activo' : 'Inactivo'}
+                ${usuario.Activo ? window.t('admin.usuarios.statusActive') : window.t('admin.usuarios.statusInactive')}
              </span>
         </div>
       </td>
@@ -2863,12 +2863,12 @@ function toggleUsuarioPropiedad(index, propiedad) {
         // ACTIVO (ON)
         slider.className = `relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${propiedad === 'Admin' ? 'bg-purple-600' : 'bg-green-500'}`;
         circle.className = 'translate-x-1 inline-block h-3 w-3 transform rounded-full bg-white transition-transform translate-x-5';
-        label.textContent = propiedad === 'Admin' ? 'Admin' : 'Activo';
+        label.textContent = propiedad === 'Admin' ? window.t('admin.usuarios.roleAdmin') : window.t('admin.usuarios.statusActive');
       } else {
         // INACTIVO (OFF)
         slider.className = 'relative inline-flex h-5 w-9 items-center rounded-full transition-colors bg-gray-200 group-hover/toggle:bg-gray-300';
         circle.className = 'translate-x-1 inline-block h-3 w-3 transform rounded-full bg-white transition-transform translate-x-1';
-        label.textContent = propiedad === 'Admin' ? 'Usuario' : 'Inactivo';
+        label.textContent = propiedad === 'Admin' ? window.t('admin.usuarios.roleUser') : window.t('admin.usuarios.statusInactive');
       }
   }
   
@@ -2967,7 +2967,7 @@ function guardarCambiosUsuarios() {
     .withSuccessHandler(res => {
       hideLoading();
       if(res.success) {
-        showToast('success', 'Usuarios actualizados');
+        showToast('success', window.t('adminToast.usuarios.saved'));
         AdminState.usuariosOriginales = JSON.parse(JSON.stringify(AdminState.usuarios));
         checkUsuariosChanges();
       } else {
@@ -2986,7 +2986,7 @@ function descartarCambiosUsuarios() {
       }
       renderTablaUsuarios();
       checkUsuariosChanges();
-      showToast('info', 'Cambios descartados');
+      showToast('info', window.t('adminToast.changesDiscarded'));
   });
 }
 
@@ -3047,7 +3047,7 @@ function renderTablaCursos(filtro = null) {
   let lista = filtro || CursosState.cursosEnMemoria;
 
   if (lista.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-gray-400">No hay cursos</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-gray-400">${window.t('admin.cursos.emptyState')}</td></tr>`;
     return;
   }
 
@@ -3224,7 +3224,7 @@ function guardarCambiosCursos() {
   // ✅ Validación Previa (Bloqueante)
   const cursosVacios = CursosState.cursosEnMemoria.some(c => !c.curso || !c.curso.trim());
   if (cursosVacios) {
-      showToast('warning', 'Hay cursos sin nombre. Por favor, revísalos (marcados en rojo).');
+      showToast('warning', window.t('adminToast.cursos.missingName'));
       renderTablaCursos();
       return;
   }
@@ -3240,7 +3240,7 @@ function guardarCambiosCursos() {
     .withSuccessHandler(res => {
   hideLoading();
   if (res.success) {
-    showToast('success', 'Cursos actualizados correctamente');
+    showToast('success', window.t('adminToast.cursos.saved'));
     
     CursosState.cursosOriginales = JSON.parse(JSON.stringify(CursosState.cursosEnMemoria));
     CursosState.modoOriginal = CursosState.modoVisualizacion;
@@ -3276,7 +3276,7 @@ function descartarCambiosCursos() {
       renderTablaCursos(); // Reset total
       SaveBarManager.hide();
       
-      showToast('info', 'Cambios descartados');
+      showToast('info', window.t('adminToast.changesDiscarded'));
     }
   );
 }
@@ -3375,7 +3375,7 @@ function renderTablaTramos() {
 
   // Validación de seguridad
   if (!AdminState.tramos || AdminState.tramos.length === 0) {
-     tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-gray-400">No hay tramos definidos</td></tr>`;
+     tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-gray-400">${window.t('admin.tramos.emptyState')}</td></tr>`;
      return;
   }
 
@@ -3575,7 +3575,7 @@ function guardarCambiosTramos() {
   );
 
   if (tramosInvalidos) {
-    showToast('warning', 'Hay tramos con datos incompletos (en rojo). Revísalos.');
+    showToast('warning', window.t('adminToast.tramos.missingData'));
     renderTablaTramos(); 
     return;
   }
@@ -3595,7 +3595,7 @@ function guardarCambiosTramos() {
     .withSuccessHandler(function(response) {
   hideLoading();
   if (response.success) {
-    showToast('success', 'Tramos guardados correctamente');
+    showToast('success', window.t('adminToast.tramos.saved'));
     AdminState.tramosOriginales = JSON.parse(JSON.stringify(AdminState.tramos));
     AdminState.tramos.forEach(t => delete t._originalId);
     checkTramosChanges();
@@ -3625,7 +3625,7 @@ function descartarCambiosTramos() {
       renderTablaTramos();
       AdminState.cambiosPendientes = false;
       SaveBarManager.hide();
-      showToast('info', 'Cambios en tramos descartados');
+      showToast('info', window.t('adminToast.changesDiscarded'));
     }
   );
 }
@@ -3852,7 +3852,7 @@ function guardarConfiguracion() {
         if (driveResult.warning) {
           showToast('warning', driveResult.message, 5000);
         } else if (driveResult.isDrive && driveResult.permissionsChanged) {
-          showToast('info', 'Permisos de imagen actualizados automáticamente');
+          showToast('info', window.t('adminToast.config.drivePermissions'));
         }
         // Continuar guardando la configuración
         finalizarGuardadoConfiguracion(newConfig);
@@ -3874,7 +3874,7 @@ function finalizarGuardadoConfiguracion(newConfig) {
     .withSuccessHandler(res => {
       hideLoading();
       if(res.success) {
-        showToast('success', 'Configuración guardada');
+        showToast('success', window.t('adminToast.config.saved'));
 
         AdminState.config = newConfig;
         ConfigState.configOriginal = JSON.parse(JSON.stringify(newConfig));
@@ -3926,7 +3926,7 @@ function descartarCambiosConfiguracion() {
       
       ConfigState.cambiosPendientes = false;
       SaveBarManager.hide();
-      showToast('info', 'Cambios descartados');
+      showToast('info', window.t('adminToast.changesDiscarded'));
     }
   );
 }
@@ -4202,7 +4202,7 @@ function renderIconsToGrid(iconList) {
   if(!grid) return;
   
   if(iconList.length === 0) {
-      grid.innerHTML = `<div class="col-span-full text-center py-8 text-gray-400 text-sm">No se encontraron iconos</div>`;
+      grid.innerHTML = `<div class="col-span-full text-center py-8 text-gray-400 text-sm">${window.t('admin.icons.noResults')}</div>`;
       return;
   }
   
@@ -4355,7 +4355,7 @@ function loadAdminData(isSilent = false) {
       if (!isSilent) hideLoading(); 
       
       if (!data || !data.success) {
-        if (!isSilent) showToast('error', data ? (data.error || 'Error al cargar datos') : 'Error servidor');
+        if (!isSilent) showToast('error', data ? (data.error || window.t('adminToast.errorLoadData')) : window.t('adminToast.errorLoadData'));
         adminDataLoading = false;
         return;
       }
@@ -4425,7 +4425,7 @@ function loadAdminData(isSilent = false) {
      .withFailureHandler(function(error) {
       if (!isSilent) {
           hideLoading();
-          showToast('error', 'Error de conexión: ' + error.message);
+          showToast('error', window.t('adminToast.connectionError', { msg: error.message }));
       }
       console.warn("⚠️ Fallo en precarga silenciosa:", error);
       adminDataLoading = false;
@@ -4648,7 +4648,7 @@ async function aprobarTodasPendientesGlobal() {
   );
 
   if (pendientes.length === 0) {
-    showToast('info', 'No hay solicitudes pendientes');
+    showToast('info', window.t('adminToast.rec.noPending'));
     return;
   }
 
@@ -4709,10 +4709,10 @@ async function ejecutarAprobarTodasPendientes(pendientes) {
   overlay.remove();
 
   if (aprobadas > 0) {
-    showToast('success', `${aprobadas} solicitudes aprobadas`);
+    showToast('success', window.t('adminToast.rec.approvedN', { n: aprobadas }));
   }
   if (errores > 0) {
-    showToast('warning', `${errores} solicitudes con error`);
+    showToast('warning', window.t('adminToast.rec.errorsN', { n: errores }));
   }
 
   // Recargar datos
@@ -4754,7 +4754,7 @@ async function cargarSolicitudesRecurrentes() {
     }
   } catch (error) {
     console.error('Error cargando solicitudes recurrentes:', error);
-    container.innerHTML = `<p class="text-red-500 text-center py-4">Error al cargar: ${escaparHTML(error.message || String(error))}</p>`;
+    container.innerHTML = `<p class="text-red-500 text-center py-4">${escaparHTML(window.t('adminToast.errorLoad', { msg: error.message || String(error) }))}</p>`;
   }
 }
 
@@ -4815,7 +4815,7 @@ function aprobarTodasPendientes() {
   );
 
   if (pendientes.length === 0) {
-    showToast('info', 'No hay solicitudes pendientes para aprobar');
+    showToast('info', window.t('adminToast.rec.noPendingApprove'));
     return;
   }
 
@@ -4861,9 +4861,9 @@ async function _ejecutarAprobarTodasPendientes(pendientes) {
   btn.innerHTML = textoOriginal;
 
   if (errores === 0) {
-    showToast('success', `${aprobadas} solicitud(es) aprobada(s). ${totalReservas} reservas generadas.`);
+    showToast('success', window.t('adminToast.rec.batchApproved', { n: aprobadas, r: totalReservas }));
   } else {
-    showToast('warning', `Aprobadas: ${aprobadas}, Errores: ${errores}. Revisa los detalles.`);
+    showToast('warning', window.t('adminToast.rec.batchPartial', { n: aprobadas, e: errores }));
   }
 
   await cargarSolicitudesRecurrentes();
@@ -4876,7 +4876,7 @@ async function _ejecutarAprobarTodasPendientes(pendientes) {
 function cancelarRecurrenciaAprobada(idSolicitud) {
   const solicitud = AdminState.solicitudesRecurrentes.find(s => s.id_solicitud === idSolicitud);
   if (!solicitud) {
-    showToast('error', 'Solicitud no encontrada');
+    showToast('error', window.t('adminToast.rec.notFound'));
     return;
   }
 
@@ -4884,7 +4884,7 @@ function cancelarRecurrenciaAprobada(idSolicitud) {
     '¿Cancelar recurrencia?',
     `Se cancelarán todas las reservas futuras de <strong>"${escaparHTML(solicitud.nombre_recurso)}"</strong> para el usuario <strong>${escaparHTML(solicitud.nombre_usuario)}</strong>.`,
     async () => {
-      showToast('info', 'Cancelando recurrencia...');
+      showToast('info', window.t('adminToast.rec.canceling'));
 
       try {
         const result = await new Promise((resolve, reject) => {
@@ -4895,15 +4895,15 @@ function cancelarRecurrenciaAprobada(idSolicitud) {
         });
 
         if (result && result.success) {
-          showToast('success', result.message || 'Recurrencia cancelada');
+          showToast('success', result.message || window.t('adminToast.rec.canceled'));
           await cargarSolicitudesRecurrentes();
           adminHaCambiadoDatos = true;
         } else {
-          showToast('error', result?.error || 'Error al cancelar');
+          showToast('error', result?.error || window.t('adminToast.rec.errorCancel'));
         }
       } catch (error) {
         console.error('Error cancelando recurrencia:', error);
-        showToast('error', 'Error: ' + (error.message || error));
+        showToast('error', window.t('adminToast.genericError', { msg: error.message || error }));
       }
     }
   );
@@ -4915,7 +4915,7 @@ function cancelarRecurrenciaAprobada(idSolicitud) {
 function abrirModalEditarTramosRecurrencia(idSolicitud) {
   const solicitud = AdminState.solicitudesRecurrentes.find(s => s.id_solicitud === idSolicitud);
   if (!solicitud) {
-    showToast('error', 'Solicitud no encontrada');
+    showToast('error', window.t('adminToast.rec.notFound'));
     return;
   }
 
@@ -4933,7 +4933,7 @@ function abrirModalEditarTramosRecurrencia(idSolicitud) {
   }
 
   if (tramosActuales.length === 0) {
-    showToast('warning', 'Esta recurrencia no tiene tramos editables');
+    showToast('warning', window.t('adminToast.rec.noEditableSlots'));
     return;
   }
 
@@ -5076,7 +5076,7 @@ async function guardarEdicionTramosRecurrencia(idSolicitud) {
   // Obtener tramos originales
   const solicitud = AdminState.solicitudesRecurrentes.find(s => s.id_solicitud === idSolicitud);
   if (!solicitud) {
-    showToast('error', 'Solicitud no encontrada');
+    showToast('error', window.t('adminToast.rec.notFound'));
     return;
   }
 
@@ -5091,7 +5091,7 @@ async function guardarEdicionTramosRecurrencia(idSolicitud) {
 
   // Verificar si hay cambios
   if (tramosRestantes.length === tramosOriginales.length) {
-    showToast('info', 'No hay cambios para guardar');
+    showToast('info', window.t('adminToast.rec.noChanges'));
     cerrarModalEditarTramosRecurrencia();
     return;
   }
@@ -5127,16 +5127,16 @@ async function guardarEdicionTramosRecurrencia(idSolicitud) {
         hideLoading();
 
         if (result && result.success) {
-          showToast('success', result.message || 'Tramos actualizados correctamente');
+          showToast('success', result.message || window.t('adminToast.rec.slotsUpdated'));
           await cargarSolicitudesRecurrentes();
           adminHaCambiadoDatos = true;
         } else {
-          showToast('error', result?.error || 'Error al actualizar tramos');
+          showToast('error', result?.error || window.t('adminToast.rec.errorUpdateSlots'));
         }
       } catch (error) {
         hideLoading();
         console.error('Error editando tramos:', error);
-        showToast('error', 'Error: ' + (error.message || error));
+        showToast('error', window.t('adminToast.genericError', { msg: error.message || error }));
       }
     }
   );
@@ -5333,7 +5333,7 @@ function abrirModalGestionarSolicitud(idSolicitud) {
   }
 
   if (!solicitud) {
-    showToast('error', 'Solicitud no encontrada');
+    showToast('error', window.t('adminToast.rec.notFound'));
     return;
   }
 
@@ -5401,7 +5401,7 @@ async function aprobarSolicitudRecurrente() {
   const btnAprobar = document.getElementById('btnAprobarSolicitud');
   const btnRechazar = document.getElementById('btnRechazarSolicitud');
   if (!btnAprobar) {
-    showToast('error', 'Error interno: botón no encontrado');
+    showToast('error', window.t('adminToast.internalError'));
     return;
   }
 
@@ -5424,16 +5424,16 @@ async function aprobarSolicitudRecurrente() {
     if (btnRechazar) btnRechazar.disabled = false;
 
     if (result && result.success) {
-      showToast('success', `Solicitud aprobada. Se crearon ${result.reservasCreadas || 0} reservas.`);
+      showToast('success', window.t('adminToast.rec.batchApproved', { n: 1, r: result.reservasCreadas || 0 }));
       cerrarModalGestionarSolicitud();
       await cargarSolicitudesRecurrentes();
       adminHaCambiadoDatos = true;
     } else {
-      showToast('error', result?.error || 'Error al aprobar');
+      showToast('error', result?.error || window.t('adminToast.rec.errorApprove'));
     }
   } catch (error) {
     console.error('Error al aprobar:', error);
-    showToast('error', 'Error al aprobar la solicitud: ' + (error.message || error));
+    showToast('error', window.t('adminToast.genericError', { msg: error.message || error }));
     btnAprobar.disabled = false;
     btnAprobar.innerHTML = textoOriginal;
     if (btnRechazar) btnRechazar.disabled = false;
@@ -5448,13 +5448,13 @@ async function rechazarSolicitudRecurrente() {
   const motivo = document.getElementById('gestionarSolicitudMotivo').value.trim();
 
   if (!motivo) {
-    showToast('error', 'Debes indicar un motivo para rechazar');
+    showToast('error', window.t('adminToast.rec.rejectReasonRequired'));
     return;
   }
 
   const btnRechazar = document.getElementById('btnRechazarSolicitud');
   if (!btnRechazar) {
-    showToast('error', 'Error interno: botón no encontrado');
+    showToast('error', window.t('adminToast.internalError'));
     return;
   }
 
@@ -5471,17 +5471,17 @@ async function rechazarSolicitudRecurrente() {
     });
 
     if (result && result.success) {
-      showToast('success', 'Solicitud rechazada correctamente');
+      showToast('success', window.t('adminToast.rec.rejected'));
       cerrarModalGestionarSolicitud();
       await cargarSolicitudesRecurrentes();
     } else {
-      showToast('error', result?.error || 'Error al rechazar');
+      showToast('error', result?.error || window.t('adminToast.rec.errorReject'));
       btnRechazar.disabled = false;
       btnRechazar.innerHTML = textoOriginal;
     }
   } catch (error) {
     console.error('Error al rechazar:', error);
-    showToast('error', 'Error al rechazar la solicitud: ' + (error.message || error));
+    showToast('error', window.t('adminToast.genericError', { msg: error.message || error }));
     btnRechazar.disabled = false;
     btnRechazar.innerHTML = textoOriginal;
   }
@@ -5493,7 +5493,7 @@ async function rechazarSolicitudRecurrente() {
 function verDetalleSolicitud(idSolicitud) {
   const solicitud = AdminState.solicitudesRecurrentes.find(s => s.id_solicitud === idSolicitud);
   if (!solicitud) {
-    showToast('error', 'Solicitud no encontrada');
+    showToast('error', window.t('adminToast.rec.notFound'));
     return;
   }
 
@@ -5845,7 +5845,7 @@ async function guardarRecurrenteDirecta() {
   let fechaFin = '';
   if (tipoFin === 'fecha') {
     fechaFin = document.getElementById('recDirectaFechaFin').value;
-    if (!fechaFin) return showToast('error', 'Indica la fecha de fin');
+    if (!fechaFin) return showToast('error', window.t('adminToast.rec.direct.noEndDate'));
   } else {
     // Fin de curso - usar fecha de la config o 30 junio
     const config = AdminState.config || [];
@@ -5854,9 +5854,9 @@ async function guardarRecurrenteDirecta() {
   }
 
   // Validaciones
-  if (!recurso) return showToast('error', 'Selecciona un recurso');
-  if (!usuario) return showToast('error', 'Selecciona un usuario');
-  if (seleccionesArray.length === 0) return showToast('error', 'Selecciona al menos un tramo en el calendario');
+  if (!recurso) return showToast('error', window.t('adminToast.rec.direct.noResource'));
+  if (!usuario) return showToast('error', window.t('adminToast.rec.direct.noUser'));
+  if (seleccionesArray.length === 0) return showToast('error', window.t('adminToast.rec.direct.noSlots'));
 
   const btn = document.getElementById('btnGuardarRecurrenteDirecta');
   const textoOriginal = btn.innerHTML;
@@ -5884,16 +5884,16 @@ async function guardarRecurrenteDirecta() {
     btn.innerHTML = textoOriginal;
 
     if (result && result.success) {
-      showToast('success', `Reservas generadas: ${result.reservasCreadas || result.reservasGeneradas || 0}`);
+      showToast('success', window.t('adminToast.rec.direct.created', { n: result.reservasCreadas || result.reservasGeneradas || 0 }));
       cerrarModalRecurrenteDirecta();
       await cargarSolicitudesRecurrentes();
       adminHaCambiadoDatos = true;
     } else {
-      showToast('error', result?.error || 'Error al crear reservas');
+      showToast('error', result?.error || window.t('adminToast.rec.direct.errorCreate'));
     }
   } catch (error) {
     console.error('Error al crear recurrente directa:', error);
-    showToast('error', 'Error: ' + (error.message || error));
+    showToast('error', window.t('adminToast.genericError', { msg: error.message || error }));
     btn.disabled = false;
     btn.innerHTML = textoOriginal;
   }
@@ -6129,7 +6129,7 @@ function abrirDetalleDesdeHistorial(idSolicitud) {
   const sol = datosHistorialRecurrencias.find(s => s.id_solicitud === idSolicitud);
   if (!sol) {
     console.error('Solicitud no encontrada en historial:', idSolicitud);
-    mostrarToast('Solicitud no encontrada', 'error');
+    mostrarToast(window.t('adminToast.rec.notFound'), 'error');
     return;
   }
 
