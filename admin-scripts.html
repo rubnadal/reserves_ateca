@@ -394,6 +394,9 @@ function setupAdminListeners() {
 
 // --- 1. HELPERS SEGUROS (Locales para evitar conflictos) ---
 
+// Data local en format YYYY-MM-DD (evita el bug UTC de toISOString en fusos UTC+N)
+const localDateStr = (d = new Date()) => d.toLocaleDateString('sv');
+
 // Limpiador de HTML para evitar inyecciones (XSS)
 const safeHtmlRes = (str) => {
   if (!str) return '';
@@ -466,10 +469,10 @@ function renderTablaReservas() {
   });
 
   // --- B. PROCESADO Y FILTRADO ---
-  const hoyStr = new Date().toISOString().split('T')[0];
+  const hoyStr = localDateStr();
   const { fechaInicio, fechaFin } = getFechasFiltroPeriodo();
-  const fechaInicioStr = fechaInicio ? fechaInicio.toISOString().split('T')[0] : null;
-  const fechaFinStr = fechaFin ? fechaFin.toISOString().split('T')[0] : null;
+  const fechaInicioStr = fechaInicio ? localDateStr(fechaInicio) : null;
+  const fechaFinStr = fechaFin ? localDateStr(fechaFin) : null;
 
   const lista = AdminState.reservas
     .map(reserva => {
@@ -517,7 +520,7 @@ function renderTablaReservas() {
 
   // Debug: mostrar cuántas reservas recurrentes hay
   const totalRecurrentes = AdminState.reservas.filter(r => !!(r.ID_Solicitud_Recurrente || r.id_solicitud_recurrente)).length;
-  const hoyDebug = new Date().toISOString().split('T')[0];
+  const hoyDebug = localDateStr();
   const cancelables = lista.filter(r => (r.Fecha || '') >= hoyDebug && (r.Estado || 'Confirmada') !== 'Cancelada').length;
   console.log(`📊 Total reservas: ${AdminState.reservas.length}, Recurrents: ${totalRecurrentes}, Filtrat: ${lista.length}, Cancel·lables: ${cancelables} (hoy=${hoyDebug}, filtrePeriode=${AdminState.filtroReservasPeriodo})`);
 
@@ -5686,7 +5689,7 @@ function abrirModalRecurrenteDirecta() {
 
   const fechaInput = document.getElementById('recDirectaFechaFin');
   if (fechaInput) {
-    const hoy = new Date().toISOString().split('T')[0];
+    const hoy = localDateStr();
     fechaInput.min = hoy;
     fechaInput.value = '';
   }
@@ -5881,7 +5884,7 @@ async function guardarRecurrenteDirecta() {
       id_recurso: recurso,
       email_usuario: usuario,
       dias_semana: seleccionesArray.join(','), // Formato: "L:T001,M:T002"
-      fecha_inicio: new Date().toISOString().split('T')[0], // Siempre desde hoy
+      fecha_inicio: localDateStr(), // Siempre desde hoy
       fecha_fin: fechaFin,
       notas_admin: notas
     };

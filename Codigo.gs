@@ -588,7 +588,7 @@ function getActiveReservations() {
     // A veces Sheets devuelve un objeto Date, a veces String. Esto lo unifica:
     let fechaStr = r.fecha;
     if (r.fecha instanceof Date) {
-      fechaStr = r.fecha.toISOString().split('T')[0]; // Convierte a YYYY-MM-DD
+      fechaStr = Utilities.formatDate(r.fecha, Session.getScriptTimeZone(), 'yyyy-MM-dd');
     }
 
     const fechaReserva = new Date(fechaStr + "T12:00:00Z");

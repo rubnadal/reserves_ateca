@@ -1944,7 +1944,7 @@ function abrirModalSolicitudRecurrente() {
 
   // Configurar fecha mínima
   const hoy = new Date();
-  const fechaMinima = hoy.toISOString().split('T')[0];
+  const fechaMinima = hoy.toLocaleDateString('sv');
   document.getElementById('recurrenteFechaFin').min = fechaMinima;
 
   // Listener para mostrar/ocultar campo de fecha
@@ -2174,7 +2174,7 @@ function enviarSolicitudRecurrente() {
   const datos = {
     id_recurso: globalState.recursoActual.id_recurso,
     selecciones: selecciones, // Nuevo formato: múltiples día-tramo
-    fecha_fin: fechaFin.toISOString().split('T')[0],
+    fecha_fin: fechaFin.toLocaleDateString('sv'),
     motivo: motivo
   };
 
