@@ -1725,6 +1725,44 @@ function renderReservaIndividual(res) {
     badgesHtml += `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-100 uppercase tracking-wide"># ${res.cantidad} Uds.</span>`;
   }
 
+  // Dispositiu i nombre d'alumnat
+  let dispositiuHtml = '';
+  if (res.dispositius_usats) {
+    const esEspai = recurso.tipo && recurso.tipo.toLowerCase() === 'sala';
+    let dispositiuText = '';
+    let dispositiuIcon = 'mdi:laptop';
+
+    if (esEspai) {
+      const disp = (globalState.dispositivos || []).find(d =>
+        String(d.id_dispositiu || d.ID_Dispositiu || '').toLowerCase() === res.dispositius_usats.toLowerCase()
+      );
+      dispositiuText = disp ? (disp.nom || disp.Nom || res.dispositius_usats) : res.dispositius_usats;
+      dispositiuIcon = disp ? (disp.icono || disp.Icono || 'mdi:laptop') : 'mdi:laptop';
+    } else {
+      if (res.dispositius_usats === 'AULA_EXTERNA') {
+        dispositiuText = window.t('myReservations.locationExternal');
+        dispositiuIcon = 'mdi:map-marker-outline';
+      } else {
+        const espai = (globalState.recursos || []).find(r => String(r.id_recurso || '').toLowerCase() === res.dispositius_usats.toLowerCase());
+        dispositiuText = espai ? espai.nombre : res.dispositius_usats;
+        dispositiuIcon = 'mdi:map-marker-outline';
+      }
+    }
+
+    dispositiuHtml = `<div class="mt-2 flex items-center gap-3 text-xs text-gray-600">
+      <span class="flex items-center gap-1 bg-cyan-50 text-cyan-700 border border-cyan-100 px-2 py-0.5 rounded font-medium">
+        <iconify-icon icon="${dispositiuIcon}" class="text-sm"></iconify-icon>
+        <span class="font-semibold text-[10px] text-cyan-500 uppercase mr-1">${window.t('myReservations.deviceLabel')}</span>
+        ${dispositiuText}
+      </span>
+      ${res.num_alumnat > 0 ? `<span class="flex items-center gap-1 bg-violet-50 text-violet-700 border border-violet-100 px-2 py-0.5 rounded font-medium">
+        <iconify-icon icon="mdi:account-group-outline" class="text-sm"></iconify-icon>
+        <span class="font-semibold text-[10px] text-violet-500 uppercase mr-1">${window.t('myReservations.studentsLabel')}</span>
+        ${res.num_alumnat}
+      </span>` : ''}
+    </div>`;
+  }
+
   const notasHtml = res.notas ?
     `<div class="mt-2 text-xs text-gray-500 bg-gray-50 p-2 rounded border border-gray-100 flex gap-1 items-start">
         <iconify-icon icon="mdi:comment-text-outline" class="mt-0.5 text-gray-400"></iconify-icon>
@@ -1761,6 +1799,7 @@ function renderReservaIndividual(res) {
               </button>
           </div>
       </div>
+      ${dispositiuHtml}
       ${notasHtml}
   </div>`;
 }

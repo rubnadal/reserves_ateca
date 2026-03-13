@@ -1132,6 +1132,8 @@ function crearNuevaReserva(reservaData) {
       estado: 'Confirmada',
       notas: notas,
       curso: curso,
+      num_alumnat: num_alumnat || 0,
+      dispositius_usats: dispositius_usats || '',
       timestamp_creacion: timestamp.toISOString()
     };
 
