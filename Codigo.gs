@@ -1081,6 +1081,27 @@ function crearNuevaReserva(reservaData) {
       day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC'
     });
 
+    // Resoldre el nom del dispositiu / ubicació per a l'email
+    let dispositiuNom = '';
+    if (dispositius_usats) {
+      const esEspai = recurso.tipo && recurso.tipo.toLowerCase() === 'sala';
+      if (esEspai) {
+        const disp = (staticData.dispositivos || []).find(d =>
+          String(d.id_dispositiu || '').toLowerCase() === dispositius_usats.toLowerCase()
+        );
+        dispositiuNom = disp ? (disp.nom || disp.Nom || dispositius_usats) : dispositius_usats;
+      } else {
+        if (dispositius_usats === 'AULA_EXTERNA') {
+          dispositiuNom = 'Aula externa';
+        } else {
+          const espai = (staticData.recursos || []).find(r =>
+            String(r.id_recurso || '').toLowerCase() === dispositius_usats.toLowerCase()
+          );
+          dispositiuNom = espai ? espai.nombre : dispositius_usats;
+        }
+      }
+    }
+
     sendConfirmationEmail(email, authResult.userName, {
       idReserva: idReserva,
       recursoNombre: recursoNombre,
@@ -1088,7 +1109,9 @@ function crearNuevaReserva(reservaData) {
       tramoNombre: tramoCompletoConHoras,
       curso: curso,
       cantidad: cantidad,
-      notas: notas
+      notas: notas,
+      num_alumnat: num_alumnat || 0,
+      dispositiuNom: dispositiuNom
     });
 
     // ✅ Limpiar caché (ACTUALIZADO)
@@ -1134,21 +1157,23 @@ function sendConfirmationEmail(email, userName, details) {
 
   const asunto = `Reserva Confirmada: ${details.recursoNombre} - ${details.fechaFormateada}`;
   const cuerpoHtml = `
-    <p>¡Hola ${userName || ''}!</p>
-    <p>Tu reserva ha sido confirmada con éxito.</p>
+    <p>Hola, ${userName || ''}!</p>
+    <p>La teva reserva ha estat confirmada correctament.</p>
     <hr>
     <ul>
-      <li><strong>Recurso:</strong> ${details.recursoNombre}</li>
-      <li><strong>Fecha:</strong> ${details.fechaFormateada}</li>
-      <li><strong>Tramo:</strong> ${details.tramoNombre}</li>
-      <li><strong>Curso:</strong> ${details.curso}</li>
-      ${details.cantidad > 1 ? `<li><strong>Cantidad:</strong> ${details.cantidad}</li>` : ''}
-      ${details.notas ? `<li><strong>Notas:</strong> ${details.notas}</li>` : ''}
+      <li><strong>Espai / Recurs:</strong> ${details.recursoNombre}</li>
+      <li><strong>Data:</strong> ${details.fechaFormateada}</li>
+      <li><strong>Tram horari:</strong> ${details.tramoNombre}</li>
+      <li><strong>Grup / Curs:</strong> ${details.curso}</li>
+      ${details.dispositiuNom ? `<li><strong>Dispositiu / Ubicació:</strong> ${details.dispositiuNom}</li>` : ''}
+      ${details.num_alumnat > 0 ? `<li><strong>Nombre d'alumnat:</strong> ${details.num_alumnat}</li>` : ''}
+      ${details.cantidad > 1 ? `<li><strong>Quantitat:</strong> ${details.cantidad}</li>` : ''}
+      ${details.notas ? `<li><strong>Notes:</strong> ${details.notas}</li>` : ''}
     </ul>
     <hr>
-    <p>Si necesitas cancelar la reserva, puedes hacerlo desde este enlace:</p>
-    <p><a href="${urlCancelacion}" style="padding: 10px 15px; background-color: #d9534f; color: white; text-decoration: none; border-radius: 5px;">Cancelar esta Reserva</a></p>
-    <p style="font-size: 0.8em; color: #777;">O puedes gestionarla desde la propia aplicación.</p>
+    <p>Si necessites cancel·lar la reserva, pots fer-ho des d'aquest enllaç:</p>
+    <p><a href="${urlCancelacion}" style="padding: 10px 15px; background-color: #d9534f; color: white; text-decoration: none; border-radius: 5px;">Cancel·lar aquesta reserva</a></p>
+    <p style="font-size: 0.8em; color: #777;">També pots gestionar-la des de la pròpia aplicació.</p>
   `;
 
   try {
