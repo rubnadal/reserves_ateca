@@ -217,8 +217,8 @@
             <p class="text-gray-500 text-sm mt-1" data-i18n="admin.disponibilidad.subtitle">Disponibilidad y reservas recurrentes.</p>
           </div>
 
-          <!-- Botones -->
-          <div class="flex gap-2">
+          <!-- Botons de recurrents ocults: gestionat via matriu de disponibilitat -->
+          <!-- <div class="flex gap-2">
             <button onclick="abrirModalHistorialRecurrencias()"
               class="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all text-sm font-medium">
               <iconify-icon icon="mdi:history" class="text-lg"></iconify-icon>
@@ -229,7 +229,7 @@
               <iconify-icon icon="mdi:plus" class="text-lg"></iconify-icon>
               <span data-i18n="admin.disponibilidad.newRecurring">Nueva Recurrente</span>
             </button>
-          </div>
+          </div> -->
         </div>
 
         <!-- Fila 2: Selector de recurso (izq) + Panel pendientes (der) -->
@@ -254,31 +254,10 @@
           </div>
         </div>
 
-          <!-- Panel de Solicitudes Pendientes (alineado derecha) -->
-          <div id="panelPendientesRecurso" class="hidden w-full sm:w-auto sm:min-w-[280px] sm:max-w-[320px]">
-            <div class="bg-amber-50 border border-amber-200 rounded-xl overflow-hidden">
-              <div class="px-3 py-2 flex items-center justify-between hover:bg-amber-100/50 transition-colors cursor-pointer" onclick="togglePanelPendientes()">
-                <div class="flex items-center gap-2">
-                  <iconify-icon icon="mdi:clock-alert-outline" class="text-amber-600 text-base"></iconify-icon>
-                  <span class="font-semibold text-amber-800 text-sm" data-i18n="admin.disponibilidad.pending">Pendientes</span>
-                  <span id="badgePendientesRecurso" class="px-2 py-0.5 bg-amber-500 text-white text-xs font-bold rounded-full">0</span>
-                </div>
-                <iconify-icon id="iconExpandPendientes" icon="mdi:chevron-down" class="text-amber-500 text-lg transition-transform"></iconify-icon>
-              </div>
-              <div id="contenidoPendientesExpandido" class="hidden border-t border-amber-200">
-                <div id="listaPendientesRecurso" class="max-h-48 overflow-y-auto">
-                  <!-- Se llena dinámicamente -->
-                </div>
-                <div class="px-3 py-2 border-t border-amber-200 bg-amber-100/50">
-                  <button onclick="aprobarTodasPendientesGlobal()"
-                    class="w-full py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-200 rounded-lg transition-colors flex items-center justify-center gap-1">
-                    <iconify-icon icon="mdi:check-all"></iconify-icon>
-                    <span data-i18n="admin.disponibilidad.approveAll">Aprobar todas</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <!-- Panell de sol·licituds pendents ocult: gestionat via matriu de disponibilitat -->
+          <!-- <div id="panelPendientesRecurso" class="hidden w-full sm:w-auto sm:min-w-[280px] sm:max-w-[320px]">
+            ...
+          </div> -->
         </div>
 
       </div>
