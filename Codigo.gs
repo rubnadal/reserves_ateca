@@ -612,13 +612,14 @@ function getActiveReservations() {
     id_reserva: r.id_reserva,
     id_recurso: r.id_recurso,
     email_usuario: r.email_usuario,
-    fecha: r.fecha, // Puedes devolver el objeto Date original o formatearlo
+    fecha: r.fecha,
     id_tramo: r.id_tramo,
     cantidad: parseInt(r.cantidad, 10) || 1,
     estado: r.estado,
     notas: r.notas || '',
     curso: r.curso || '',
-    id_solicitud_recurrente: r.id_solicitud_recurrente || ''
+    id_solicitud_recurrente: r.id_solicitud_recurrente || '',
+    dispositius_usats: r.dispositius_usats || ''
   }));
 }
 
@@ -884,7 +885,7 @@ function getDisponibilidadRecurso(recursoId) {
 /* ============================================
    VALIDACIÓN DE DISPONIBILIDAD (LÓGICA PERMISIVA ✅)
    ============================================ */
-function checkAvailability(recursoId, fechaISO, tramoId, cantidadPedida, recurso = null, staticData = null) {
+function checkAvailability(recursoId, fechaISO, tramoId, cantidadPedida, recurso = null, staticData = null, dispositiusUsats = '') {
 
   // ✅ Solo cargar si no se pasaron como parámetro
   if (!staticData) {
@@ -952,6 +953,42 @@ function checkAvailability(recursoId, fechaISO, tramoId, cantidadPedida, recurso
     }
   }
 
+  // 4. Validació creuada: espai ↔ dispositiu flotant
+  const esEspai = recurso.tipo.toLowerCase() === 'sala';
+
+  const coincideixData = (r) => {
+    let fechaR = r.fecha;
+    if (fechaR instanceof Date) {
+      fechaR = Utilities.formatDate(fechaR, Session.getScriptTimeZone(), "yyyy-MM-dd");
+    }
+    return fechaR === fechaISO && String(r.id_tramo) === String(tramoId);
+  };
+
+  if (esEspai) {
+    // Cas A: es vol reservar un espai → comprovar si hi ha un dispositiu flotant que ja l'ocupa
+    const flotantOcupant = reservasActivas.find(r =>
+      String(r.dispositius_usats).trim() === String(recursoId).trim() && coincideixData(r)
+    );
+    if (flotantOcupant) {
+      throw new Error("Aquest espai ja està ocupat per una reserva de dispositiu en aquest horari.");
+    }
+  } else if (dispositiusUsats && dispositiusUsats !== 'AULA_EXTERNA') {
+    // Cas B: es vol reservar un dispositiu flotant en un espai → comprovar si l'espai ja és reservat
+    const espaiJaReservat = reservasActivas.find(r =>
+      String(r.id_recurso).trim() === String(dispositiusUsats).trim() && coincideixData(r)
+    );
+    if (espaiJaReservat) {
+      throw new Error("L'espai seleccionat ja té una reserva en aquest horari.");
+    }
+    // Cas C: un altre dispositiu flotant ja ocupa el mateix espai
+    const altreFlotantMateixEspai = reservasActivas.find(r =>
+      String(r.dispositius_usats).trim() === String(dispositiusUsats).trim() && coincideixData(r)
+    );
+    if (altreFlotantMateixEspai) {
+      throw new Error("Un altre dispositiu ja té reservat aquest espai en aquest horari.");
+    }
+  }
+
   return true;
 }
 
@@ -990,7 +1027,7 @@ function crearNuevaReserva(reservaData) {
     }
 
     Logger.log(`[crearNuevaReserva] Validando disponibilidad para ${recursoId} en ${fechaISO}...`);
-    checkAvailability(recursoId, fechaISO, tramoId, cantidad, recurso, staticData);
+    checkAvailability(recursoId, fechaISO, tramoId, cantidad, recurso, staticData, dispositius_usats || '');
     Logger.log(`[crearNuevaReserva] Validación superada.`);
 
     const idReserva = Utilities.getUuid();
