@@ -19,7 +19,7 @@
    ========================================== */
 
 // DEBUG es declara a scripts.html (carregat primer). Aquí només apliquem l'override.
-if (typeof DEBUG !== 'undefined' && !DEBUG) { console.log = console.warn = () => {}; }
+if (typeof DEBUG !== 'undefined' && !DEBUG) { console.log = console.warn = console.group = console.groupEnd = console.groupCollapsed = () => {}; }
 
 const AdminState = {
   recursos: [],

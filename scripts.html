@@ -4,7 +4,7 @@
    ============================================ */
 
 const DEBUG = false;
-if (!DEBUG) { console.log = console.warn = () => {}; }
+if (!DEBUG) { console.log = console.warn = console.group = console.groupEnd = console.groupCollapsed = () => {}; }
 
 /* === ESTADO GLOBAL === */
 // NOTA: userEmail, userName e isAdmin se inyectan desde index.html
