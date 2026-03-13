@@ -368,6 +368,8 @@ function setupAdminListeners() {
         
         if (sectionName === 'config') renderConfiguracion();
 
+        if (sectionName === 'dispositivos') renderTablaDispositivos();
+
         if (sectionName === 'recurrentes') {
           if (typeof cargarSolicitudesRecurrentes === 'function') cargarSolicitudesRecurrentes();
         }
@@ -3688,6 +3690,247 @@ window.descartarCambiosTramos = descartarCambiosTramos;
 
 
 /* =========================================================
+   6.6b. GESTIÓ DE DISPOSITIUS
+   ========================================================= */
+
+// 1. INICIALITZACIÓ
+function inicializarDispositivos() {
+  AdminState.dispositivosOriginales = JSON.parse(JSON.stringify(AdminState.dispositivos || []));
+  AdminState.cambiosPendientesDispositivos = false;
+  renderTablaDispositivos();
+  SaveBarManager.hide();
+}
+
+// 2. RENDERIZADO
+function renderTablaDispositivos() {
+  const tbody = document.getElementById('taula-dispositivos-body');
+  if (!tbody) return;
+
+  tbody.innerHTML = '';
+
+  if (!AdminState.dispositivos || AdminState.dispositivos.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-gray-400">${window.t('admin.dispositivos.emptyState')}</td></tr>`;
+    return;
+  }
+
+  // Mapa d'espais per al desplegable
+  const espais = (AdminState.recursos || []).filter(r => r.tipo && r.tipo.toLowerCase() === 'sala');
+
+  const fragment = document.createDocumentFragment();
+
+  AdminState.dispositivos.forEach((disp, index) => {
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-gray-50 transition-colors group bg-white border-b border-gray-100';
+    tr.dataset.index = index;
+
+    const valId   = escaparHTML(disp.ID_Dispositiu || disp.id_dispositiu || '');
+    const valNom  = escaparHTML(disp.Nom || disp.nom || '');
+    const valEspai = String(disp.ID_Espai || disp.id_espai || '');
+    const valIcon = escaparHTML(disp.Icono || disp.icono || '');
+    const isActiu = String(disp.Estat || disp.estat || '').toLowerCase() === 'actiu';
+
+    const errId  = !valId.trim()  ? 'border-red-300 bg-red-50' : 'border-transparent hover:border-gray-300';
+    const errNom = !valNom.trim() ? 'border-red-300 bg-red-50' : 'border-transparent hover:border-gray-300';
+
+    const espaisOptions = espais.map(e =>
+      `<option value="${escaparHTML(e.id_recurso)}" ${valEspai === String(e.id_recurso) ? 'selected' : ''}>${escaparHTML(e.nombre || e.Nombre || e.id_recurso)}</option>`
+    ).join('');
+    const noSpaceLabel = window.t('admin.dispositivos.noSpace');
+
+    tr.innerHTML = `
+      <td class="px-4 py-2 w-24 min-w-[80px]">
+        <input type="text" value="${valId}" placeholder="ID"
+          class="w-full bg-transparent border-b ${errId} focus:border-blue-500 outline-none py-1 text-sm font-mono font-bold text-gray-700 transition-colors"
+          oninput="editarDispositiu(${index}, 'ID_Dispositiu', this.value)">
+      </td>
+
+      <td class="px-4 py-2 min-w-[150px]">
+        <input type="text" value="${valNom}" placeholder="Nom"
+          class="w-full bg-transparent border-b ${errNom} focus:border-blue-500 outline-none py-1 font-bold text-gray-800 transition-colors"
+          oninput="editarDispositiu(${index}, 'Nom', this.value)">
+      </td>
+
+      <td class="px-4 py-2 w-44 min-w-[140px]">
+        <select class="w-full bg-white border border-gray-200 rounded-lg px-2 py-1 text-sm focus:border-blue-500 outline-none transition-colors"
+          onchange="editarDispositiu(${index}, 'ID_Espai', this.value)">
+          <option value="">${noSpaceLabel}</option>
+          ${espaisOptions}
+        </select>
+      </td>
+
+      <td class="px-4 py-2 w-36 min-w-[110px]">
+        <input type="text" value="${valIcon}" placeholder="mdi:laptop"
+          class="w-full bg-transparent border-b border-transparent hover:border-gray-300 focus:border-blue-500 outline-none py-1 text-sm font-mono text-gray-600 transition-colors"
+          oninput="editarDispositiu(${index}, 'Icono', this.value)">
+      </td>
+
+      <td class="px-4 py-2 w-32 text-center">
+        <button onclick="toggleEstatDispositiu(${index})"
+          class="px-3 py-1 rounded-full text-xs font-semibold transition-colors ${isActiu ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}">
+          ${isActiu ? window.t('admin.dispositivos.statusActive') : window.t('admin.dispositivos.statusInactive')}
+        </button>
+      </td>
+
+      <td class="px-4 py-2 text-right w-16 min-w-[60px]">
+        <button onclick="eliminarDispositiu(${index})" class="text-gray-300 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition-colors opacity-100 sm:opacity-0 sm:group-hover:opacity-100">
+          <iconify-icon icon="mdi:trash-can-outline" width="20"></iconify-icon>
+        </button>
+      </td>
+    `;
+    fragment.appendChild(tr);
+  });
+
+  tbody.appendChild(fragment);
+  checkDispositivosChanges();
+}
+
+// 3. EDICIÓN
+function editarDispositiu(index, camp, valor) {
+  const disp = AdminState.dispositivos[index];
+  if (!disp) return;
+  disp[camp] = valor;
+  checkDispositivosChanges();
+}
+
+function toggleEstatDispositiu(index) {
+  const disp = AdminState.dispositivos[index];
+  if (!disp) return;
+  const current = String(disp.Estat || disp.estat || '').toLowerCase();
+  disp.Estat = current === 'actiu' ? 'inactiu' : 'actiu';
+  disp.estat = disp.Estat;
+  renderTablaDispositivos();
+}
+
+// 4. AFEGIR / ELIMINAR
+function agregarNouDispositiu() {
+  if (!AdminState.dispositivos) AdminState.dispositivos = [];
+
+  const num = AdminState.dispositivos.length + 1;
+  AdminState.dispositivos.push({
+    ID_Dispositiu: `D-${String(num).padStart(3, '0')}`,
+    Nom: '',
+    ID_Espai: '',
+    Icono: 'mdi:laptop',
+    Estat: 'actiu'
+  });
+
+  renderTablaDispositivos();
+
+  setTimeout(() => {
+    const tbody = document.getElementById('taula-dispositivos-body');
+    if (tbody && tbody.lastElementChild) {
+      tbody.lastElementChild.scrollIntoView({ behavior: 'smooth' });
+      const inputs = tbody.lastElementChild.querySelectorAll('input');
+      if (inputs[1]) inputs[1].focus();
+    }
+  }, 100);
+}
+
+function eliminarDispositiu(index) {
+  const disp = AdminState.dispositivos[index];
+  const nom = disp.Nom || disp.nom || 'aquest dispositiu';
+
+  mostrarConfirmacion(
+    window.t('confirm.deleteSlotTitle'),
+    window.t('confirm.deleteSlotMsg', { nombre: escaparHTML(nom) }),
+    () => {
+      AdminState.dispositivos.splice(index, 1);
+      renderTablaDispositivos();
+      checkDispositivosChanges();
+    }
+  );
+}
+
+// 5. CONTROL DE CANVIS
+function checkDispositivosChanges() {
+  if (!AdminState.dispositivosOriginales) return;
+
+  const currentStr  = JSON.stringify(AdminState.dispositivos);
+  const originalStr = JSON.stringify(AdminState.dispositivosOriginales);
+
+  AdminState.cambiosPendientesDispositivos = (currentStr !== originalStr);
+  actualizarEstadoBotonGuardarDispositivos();
+}
+
+function actualizarEstadoBotonGuardarDispositivos() {
+  if (AdminState.cambiosPendientesDispositivos) {
+    const diff = AdminState.dispositivos.length - (AdminState.dispositivosOriginales || []).length;
+    let text = window.t('saveBar.dispositivosModified');
+    if (diff > 0) text = window.t('saveBar.dispositivosAdded', { n: diff });
+    if (diff < 0) text = window.t('saveBar.dispositivosRemoved', { n: Math.abs(diff) });
+
+    SaveBarManager.show(text, guardarCambiosDispositivos, descartarCambiosDispositivos);
+  } else {
+    SaveBarManager.hide();
+  }
+}
+
+// 6. DESAR I DESCARTAR
+function guardarCambiosDispositivos() {
+  const invalids = AdminState.dispositivos.some(d => !String(d.ID_Dispositiu || '').trim() || !String(d.Nom || '').trim());
+  if (invalids) {
+    showToast('warning', window.t('adminToast.dispositivos.missingData'));
+    renderTablaDispositivos();
+    return;
+  }
+
+  showLoading();
+
+  const data = AdminState.dispositivos.map(d => ({
+    ID_Dispositiu: d.ID_Dispositiu || d.id_dispositiu || '',
+    Nom:           d.Nom || d.nom || '',
+    ID_Espai:      d.ID_Espai || d.id_espai || '',
+    Icono:         d.Icono || d.icono || '',
+    Estat:         d.Estat || d.estat || 'actiu'
+  }));
+
+  google.script.run
+    .withSuccessHandler(function(response) {
+      hideLoading();
+      if (response.success) {
+        showToast('success', window.t('adminToast.dispositivos.saved'));
+        AdminState.dispositivosOriginales = JSON.parse(JSON.stringify(AdminState.dispositivos));
+        AdminState.cambiosPendientesDispositivos = false;
+        SaveBarManager.hide();
+        adminHaCambiadoDatos = true;
+        if (typeof window.recargarDatosApp === 'function') window.recargarDatosApp();
+      } else {
+        showToast('error', response.error);
+      }
+    })
+    .withFailureHandler(err => {
+      hideLoading();
+      showToast('error', err);
+    })
+    .saveDispositivos(data);
+}
+
+function descartarCambiosDispositivos() {
+  mostrarConfirmacion(
+    window.t('confirm.discardTitle'),
+    window.t('confirm.discardMsgSlots'),
+    () => {
+      AdminState.dispositivos = JSON.parse(JSON.stringify(AdminState.dispositivosOriginales));
+      renderTablaDispositivos();
+      AdminState.cambiosPendientesDispositivos = false;
+      SaveBarManager.hide();
+      showToast('info', window.t('adminToast.changesDiscarded'));
+    }
+  );
+}
+
+// EXPORTS
+window.inicializarDispositivos    = inicializarDispositivos;
+window.renderTablaDispositivos    = renderTablaDispositivos;
+window.editarDispositiu           = editarDispositiu;
+window.toggleEstatDispositiu      = toggleEstatDispositiu;
+window.agregarNouDispositiu       = agregarNouDispositiu;
+window.eliminarDispositiu         = eliminarDispositiu;
+window.guardarCambiosDispositivos = guardarCambiosDispositivos;
+window.descartarCambiosDispositivos = descartarCambiosDispositivos;
+
+
+/* =========================================================
    6.7. GESTIÓN DE CONFIGURACIÓN (V5 - FIX DETECCIÓN ⚙️)
    ========================================================= */
 
@@ -4416,6 +4659,8 @@ function loadAdminData(isSilent = false) {
       AdminState.reservas = data.reservas || [];
       AdminState.config = data.config || [];
       AdminState.dispositivos = data.dispositivos || [];
+      AdminState.dispositivosOriginales = JSON.parse(JSON.stringify(AdminState.dispositivos));
+      AdminState.cambiosPendientesDispositivos = false;
       AdminState.modoVisualizacion = data.modoVisualizacion || 'botones'; // ✅ AÑADIDO
 
       const idiomaUi = (AdminState.config || []).find(c => c.clave === 'idioma_ui');

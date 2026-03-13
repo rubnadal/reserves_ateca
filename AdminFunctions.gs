@@ -999,6 +999,39 @@ function saveBatchTramos(listaTramos) {
 }
 
 /* ===========================================
+   GUARDADO DISPOSITIVOS
+   =========================================== */
+function saveDispositivos(listaDispositivos) {
+  try {
+    if (!isUserAdmin()) throw new Error("Permiso denegado");
+
+    const ss = getDB();
+    const sh = ss.getSheetByName(SHEETS.DISPOSITIVOS);
+    if (!sh) throw new Error("Full Dispositivos no trobat");
+
+    // Esborrar dades anteriors (mantenir capçalera)
+    const lastRow = sh.getLastRow();
+    if (lastRow > 1) {
+      sh.getRange(2, 1, lastRow - 1, 5).clearContent();
+    }
+
+    if (listaDispositivos && listaDispositivos.length > 0) {
+      const files = listaDispositivos.map(d => [
+        d.ID_Dispositiu,
+        d.Nom,
+        d.ID_Espai,
+        d.Icono,
+        d.Estat
+      ]);
+      sh.getRange(2, 1, files.length, 5).setValues(files);
+    }
+
+    purgarCache();
+    return { success: true };
+  } catch (e) { return { success: false, error: e.toString() }; }
+}
+
+/* ===========================================
    GUARDADO MASIVO DISPONIBILIDAD (RESPETANDO ESTRUCTURA)
    =========================================== */
 function saveBatchDisponibilidad(cambios) {
