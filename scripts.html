@@ -1035,24 +1035,17 @@ function handleTramoClick(tramoBtn) {
   const ubicacioContainer = $('ubicacioContainer');
 
   if (esEspai) {
-    // --- ESPAI: selector de dispositius + nombre alumnat ---
-    const checkboxList = $('dispositivosCheckboxList');
-    if (checkboxList) {
+    // --- ESPAI: selector de dispositius (select) + nombre alumnat ---
+    const dispositivosSelect = $('dispositivosSelect');
+    if (dispositivosSelect) {
       const dispositivosEspai = (globalState.dispositivos || []).filter(d => d.id_espai === recurso.id_recurso);
-      checkboxList.innerHTML = dispositivosEspai.map(d => `
-        <label class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-gray-200 bg-gray-50 hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-colors">
-          <input type="checkbox" value="${d.id_dispositiu}" class="sr-only">
-          <iconify-icon icon="${d.icono}" class="text-gray-500 text-base pointer-events-none"></iconify-icon>
-          <span class="text-xs font-medium text-gray-700">${d.nom}</span>
-        </label>`).join('');
-      checkboxList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-        cb.addEventListener('change', () => {
-          cb.closest('label').classList.toggle('bg-blue-50', cb.checked);
-          cb.closest('label').classList.toggle('border-blue-400', cb.checked);
-          cb.closest('label').querySelector('iconify-icon').classList.toggle('text-blue-600', cb.checked);
-          cb.closest('label').querySelector('iconify-icon').classList.toggle('text-gray-500', !cb.checked);
-        });
-      });
+      dispositivosSelect.innerHTML =
+        `<option value="">${window.t('modalReservation.devicesPlaceholder')}</option>` +
+        dispositivosEspai.map(d => `<option value="${d.id_dispositiu}">${d.nom}</option>`).join('');
+      dispositivosSelect.addEventListener('change', () => {
+        const err = $('dispositivosError');
+        if (err) err.classList.toggle('hidden', dispositivosSelect.value !== '');
+      }, { once: true });
     }
     if (dispositivosContainer) dispositivosContainer.classList.remove('hidden');
     if (numAlumnatContainer) numAlumnatContainer.classList.remove('hidden');
@@ -1391,6 +1384,24 @@ function handleConfirmReservation() {
     cursoError.classList.remove('hidden');
     return;
   }
+
+  const esEspaiActualVal = globalState.recursoActual?.tipo?.toLowerCase() === 'sala';
+  if (esEspaiActualVal) {
+    const selDev = $('dispositivosSelect');
+    const errDev = $('dispositivosError');
+    const inpAlum = $('numAlumnatInput');
+    const errAlum = $('numAlumnatError');
+    let invalid = false;
+    if (selDev && !selDev.value) {
+      if (errDev) errDev.classList.remove('hidden');
+      invalid = true;
+    }
+    if (inpAlum && (!inpAlum.value || parseInt(inpAlum.value, 10) < 1)) {
+      if (errAlum) errAlum.classList.remove('hidden');
+      invalid = true;
+    }
+    if (invalid) return;
+  }
   
   confirmModalButton.disabled = true;
   confirmModalButton.textContent = window.t('modalReservation.submitting');
@@ -1411,9 +1422,7 @@ function handleConfirmReservation() {
   const esEspaiActual = globalState.recursoActual.tipo.toLowerCase() === 'sala';
   let dispostiusUsatsValue = '';
   if (esEspaiActual) {
-    dispostiusUsatsValue = Array.from(
-      document.querySelectorAll('#dispositivosCheckboxList input:checked')
-    ).map(cb => cb.value).join(',');
+    dispostiusUsatsValue = $('dispositivosSelect')?.value || '';
   } else {
     const ubicacioSeleccionada = document.querySelector('input[name="ubicacioUs"]:checked');
     dispostiusUsatsValue = ubicacioSeleccionada ? ubicacioSeleccionada.value : '';

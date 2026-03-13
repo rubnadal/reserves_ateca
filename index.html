@@ -398,20 +398,36 @@
 
       <!-- DISPOSITIUS D'ESPAI (només per a recursos de tipus Sala/Espai) -->
       <div id="dispositivosEspaiContainer" class="hidden animate-fade-in">
-        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2" data-i18n="modalReservation.devicesLabel">
-          Dispositius a utilitzar (opcional)
+        <label for="dispositivosSelect" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+          <span data-i18n="modalReservation.devicesLabel">Dispositiu a utilitzar</span> <span class="text-red-500">*</span>
         </label>
-        <div id="dispositivosCheckboxList" class="flex flex-wrap gap-2"></div>
+        <div class="relative">
+          <iconify-icon icon="mdi:devices" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg pointer-events-none"></iconify-icon>
+          <select id="dispositivosSelect"
+            class="block w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-gray-50 focus:bg-white transition-colors appearance-none">
+          </select>
+        </div>
+        <p id="dispositivosError" class="hidden flex items-center gap-1 text-xs text-red-500 mt-2 font-medium bg-red-50 p-2 rounded-lg">
+          <iconify-icon icon="mdi:alert-circle"></iconify-icon>
+          <span data-i18n="modalReservation.devicesError">Has de seleccionar un dispositiu</span>
+        </p>
       </div>
 
       <!-- NOMBRE D'ALUMNAT (per a espais) -->
       <div id="numAlumnatContainer" class="hidden animate-fade-in">
-        <label for="numAlumnatInput" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2" data-i18n="modalReservation.numAlumnatLabel">
-          Nombre d'alumnat
+        <label for="numAlumnatInput" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+          <span data-i18n="modalReservation.numAlumnatLabel">Nombre d'alumnat</span> <span class="text-red-500">*</span>
         </label>
-        <input type="number" id="numAlumnatInput" min="1" inputmode="numeric"
-          class="block w-full px-3 py-2.5 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-gray-50 focus:bg-white transition-colors"
-          data-i18n-attr="placeholder:modalReservation.numAlumnatPlaceholder" placeholder="Ex: 25">
+        <div class="relative">
+          <iconify-icon icon="mdi:account-group-outline" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg pointer-events-none"></iconify-icon>
+          <input type="number" id="numAlumnatInput" min="1" inputmode="numeric"
+            class="block w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-gray-50 focus:bg-white transition-colors"
+            data-i18n-attr="placeholder:modalReservation.numAlumnatPlaceholder" placeholder="Ex: 25">
+        </div>
+        <p id="numAlumnatError" class="hidden flex items-center gap-1 text-xs text-red-500 mt-2 font-medium bg-red-50 p-2 rounded-lg">
+          <iconify-icon icon="mdi:alert-circle"></iconify-icon>
+          <span data-i18n="modalReservation.numAlumnatError">Has d'indicar el nombre d'alumnat</span>
+        </p>
       </div>
 
       <!-- UBICACIÓ D'ÚS (només per a dispositius flotants) -->
