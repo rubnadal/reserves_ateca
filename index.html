@@ -396,6 +396,24 @@
         </p>
       </div>
 
+      <!-- DISPOSITIUS D'ESPAI (només per a recursos de tipus Sala/Espai) -->
+      <div id="dispositivosEspaiContainer" class="hidden animate-fade-in">
+        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2" data-i18n="modalReservation.devicesLabel">
+          Dispositius a utilitzar (opcional)
+        </label>
+        <div id="dispositivosCheckboxList" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <!-- NOMBRE D'ALUMNAT (per a espais) -->
+      <div id="numAlumnatContainer" class="hidden animate-fade-in">
+        <label for="numAlumnatInput" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2" data-i18n="modalReservation.numAlumnatLabel">
+          Nombre d'alumnat
+        </label>
+        <input type="number" id="numAlumnatInput" min="1" inputmode="numeric"
+          class="block w-full px-3 py-2.5 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-gray-50 focus:bg-white transition-colors"
+          data-i18n-attr="placeholder:modalReservation.numAlumnatPlaceholder" placeholder="Ex: 25">
+      </div>
+
       <div id="cantidadContainer" class="hidden animate-fade-in">
         <label class="flex justify-between items-center text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
               <span data-i18n="modalReservation.quantityLabel">Quantitat necessària</span>

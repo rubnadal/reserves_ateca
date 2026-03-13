@@ -23,7 +23,8 @@ const SHEETS = {
   USUARIOS: "Usuarios",
   CURSOS: "Cursos",
   INCIDENCIAS: 'INCIDENCIAS',
-  CONFIG: 'Config'
+  CONFIG: 'Config',
+  DISPOSITIVOS: 'Dispositivos'
 };
 
 const CACHE_KEYS = {
@@ -371,7 +372,7 @@ function checkUserAuthorization(emailUser) {
    GESTIÓN DE CACHÉ
    ============================================ */
 
-const CACHE_KEY_STATIC = "STATIC_DATA_V6_FULL"; // Clave única
+const CACHE_KEY_STATIC = "STATIC_DATA_V7_FULL"; // Clave única
 const CACHE_TIME = 21600; // 6 Horas
 
 /**
@@ -392,17 +393,18 @@ function getStaticData() {
     const cache = CacheService.getScriptCache();
     const cachedJSON = cache.get(CACHE_KEY_STATIC);
 
-    let recursos, tramos, usuariosMap, cursos, modoVisualizacionCursos, configuracion;  // ✅ MODIFICADO
+    let recursos, tramos, usuariosMap, cursos, modoVisualizacionCursos, configuracion, dispositivos;
 
     if (cachedJSON) {
-      Logger.log("✅ Datos estáticos desde CACHÉ V6");
+      Logger.log("✅ Datos estáticos desde CACHÉ V7");
       const staticData = JSON.parse(cachedJSON);
       recursos = staticData.recursos;
       tramos = staticData.tramos;
       usuariosMap = staticData.usuariosMap;
       cursos = staticData.cursos;
       modoVisualizacionCursos = staticData.modoVisualizacionCursos;
-      configuracion = staticData.configuracion || {};  // ✅ AÑADIDO
+      configuracion = staticData.configuracion || {};
+      dispositivos = staticData.dispositivos || [];
     } else {
       Logger.log("🔄 Generando datos estáticos desde Excel...");
       const ss = getDB();
@@ -487,14 +489,24 @@ function getStaticData() {
         Logger.log(`⚙️ Configuración cargada: ${Object.keys(configuracion).length} parámetros`);
       }
 
-      // GUARDAR EN CACHÉ V6
+      // DISPOSITIVOS D'ESPAI
+      const sheetDispositivos = ss.getSheetByName(SHEETS.DISPOSITIVOS);
+      dispositivos = [];
+      if (sheetDispositivos) {
+        dispositivos = sheetToObjects(sheetDispositivos)
+          .filter(d => d.estat && d.estat.toLowerCase() === 'actiu');
+        Logger.log(`📱 Dispositivos cargados: ${dispositivos.length}`);
+      }
+
+      // GUARDAR EN CACHÉ V7
       const dataToCache = {
         recursos,
         tramos,
         usuariosMap,
         cursos,
         modoVisualizacionCursos,
-        configuracion  // ✅ AÑADIDO
+        configuracion,
+        dispositivos
       };
 
       try {
@@ -553,7 +565,8 @@ function getStaticData() {
       reservas: reservas,
       misReservasActivas: misReservasActivas,
       misRecurrencias: misRecurrencias,
-      configuracion: configuracion  // ✅ AÑADIDO
+      configuracion: configuracion,
+      dispositivos: dispositivos || []
     };
 
   } catch (error) {
@@ -958,7 +971,7 @@ function crearNuevaReserva(reservaData) {
       throw new Error("Tu sesión ha caducado o ya no tienes permisos.");
     }
 
-    const { recursoId, recursoNombre, fechaISO, tramoId, tramoNombre, notas, cantidad, curso } = reservaData;
+    const { recursoId, recursoNombre, fechaISO, tramoId, tramoNombre, notas, cantidad, curso, num_alumnat, dispositius_usats } = reservaData;
 
     if (!curso || curso.trim() === '') {
       throw new Error("Debes seleccionar un curso para realizar la reserva.");
@@ -1005,6 +1018,8 @@ function crearNuevaReserva(reservaData) {
     if (headerMap['notas'] !== undefined) nuevaFilaArray[headerMap['notas']] = notas;
     if (headerMap['curso'] !== undefined) nuevaFilaArray[headerMap['curso']] = curso;
     if (headerMap['timestamp'] !== undefined) nuevaFilaArray[headerMap['timestamp']] = timestamp;
+    if (headerMap['num_alumnat'] !== undefined) nuevaFilaArray[headerMap['num_alumnat']] = num_alumnat || '';
+    if (headerMap['dispositius_usats'] !== undefined) nuevaFilaArray[headerMap['dispositius_usats']] = dispositius_usats || '';
 
     sheetReservas.appendRow(nuevaFilaArray);
     Logger.log(`[crearNuevaReserva] Reserva creada con ID: ${idReserva}`);

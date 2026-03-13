@@ -323,8 +323,9 @@ function onInitialDataSuccess(data) {
   
   globalState.recursos = data.recursos || [];
   globalState.tramos = data.tramos || [];
-  globalState.disponibilidad = []; 
+  globalState.disponibilidad = [];
   globalState.reservas = data.reservas || [];
+  globalState.dispositivos = data.dispositivos || [];
   globalState.cursos = data.cursos || [];
   globalState.modoVisualizacionCursos = data.modoVisualizacionCursos || 'botones';
   globalState.usuariosMap = data.usuariosMap || {};
@@ -403,11 +404,24 @@ function renderRecursos() {
       iconWatermark = `<span class="text-[7rem] sm:text-[8rem] leading-none grayscale opacity-60">${emoji}</span>`;
     }
     
+    // DISPOSITIUS D'ESPAI (per a targetes de tipus 'sala')
+    const dispositivosEspai = isSala
+      ? (globalState.dispositivos || []).filter(d => d.id_espai === recurso.id_recurso)
+      : [];
+    const dispositivosTagsHtml = dispositivosEspai.length > 0
+      ? `<div class="flex flex-wrap gap-1 mt-2">
+          ${dispositivosEspai.map(d => `
+            <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] font-medium border border-blue-100 leading-none">
+              <iconify-icon icon="${d.icono}" class="text-[11px]"></iconify-icon>
+              ${d.nom}
+            </span>`).join('')}
+        </div>` : '';
+
     // HTML TARJETA
     const buttonHtml = `
-    <button onclick="handleRecursoClick(this)" data-id="${recurso.id_recurso}" 
+    <button onclick="handleRecursoClick(this)" data-id="${recurso.id_recurso}"
         class="recurso-btn group relative w-full bg-white rounded-xl shadow-md hover:shadow-xl border border-gray-200 hover:border-gray-300 transition-all duration-300 hover:-translate-y-1 overflow-hidden text-left cursor-pointer h-full min-h-[100px] sm:min-h-[140px]">
-      
+
       <div class="absolute left-0 top-0 bottom-0 w-2 ${theme.border}"></div>
 
       <div class="absolute -right-6 -bottom-8 rotate-12 opacity-[0.35] group-hover:opacity-[0.2] group-hover:scale-110 transition-all duration-500 pointer-events-none select-none ${theme.watermark}">
@@ -415,16 +429,17 @@ function renderRecursos() {
       </div>
 
       <div class="relative z-10 p-3 sm:p-5 pl-5 sm:pl-8 flex flex-col justify-between h-full">
-         
+
          <div class="flex-1">
             <h3 class="font-bold text-[1.15rem] sm:text-xl ${theme.textTitle} leading-tight mb-0.5 pr-4 line-clamp-2">${recurso.nombre}</h3>
-            
+
             <div class="hidden sm:flex items-center gap-2 text-gray-500 text-sm font-medium mt-1">
                <div class="bg-gray-100 p-0.5 rounded-md leading-none">
                    <iconify-icon icon="mdi:map-marker-radius-outline" class="text-sm"></iconify-icon>
                </div>
                <span class="truncate">${recurso.ubicacion}</span>
             </div>
+            ${dispositivosTagsHtml}
          </div>
 
          <div class="w-1/2 h-px bg-gray-100 my-2 sm:my-3 group-hover:bg-gray-200 transition-colors"></div>
@@ -997,8 +1012,42 @@ function handleTramoClick(tramoBtn) {
     inputCant.max = 1;
   }
   
-  // 5. LIMPIEZA FINAL Y ABRIR
-  
+  // 5. DISPOSITIUS D'ESPAI + NUM ALUMNAT
+  const esEspai = recurso.tipo.toLowerCase() === 'sala';
+  const dispositivosContainer = $('dispositivosEspaiContainer');
+  const numAlumnatContainer = $('numAlumnatContainer');
+  const numAlumnatInput = $('numAlumnatInput');
+
+  if (esEspai) {
+    const checkboxList = $('dispositivosCheckboxList');
+    if (checkboxList) {
+      const dispositivosEspai = (globalState.dispositivos || []).filter(d => d.id_espai === recurso.id_recurso);
+      checkboxList.innerHTML = dispositivosEspai.map(d => `
+        <label class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-gray-200 bg-gray-50 hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-colors has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400">
+          <input type="checkbox" value="${d.id_dispositiu}" class="sr-only">
+          <iconify-icon icon="${d.icono}" class="text-gray-500 has-[:checked]:text-blue-600 text-base pointer-events-none"></iconify-icon>
+          <span class="text-xs font-medium text-gray-700">${d.nom}</span>
+        </label>`).join('');
+      // Re-apply checked style via JS (has-[] may not work in all browsers)
+      checkboxList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.addEventListener('change', () => {
+          cb.closest('label').classList.toggle('bg-blue-50', cb.checked);
+          cb.closest('label').classList.toggle('border-blue-400', cb.checked);
+          cb.closest('label').querySelector('iconify-icon').classList.toggle('text-blue-600', cb.checked);
+          cb.closest('label').querySelector('iconify-icon').classList.toggle('text-gray-500', !cb.checked);
+        });
+      });
+    }
+    if (dispositivosContainer) dispositivosContainer.classList.remove('hidden');
+    if (numAlumnatContainer) numAlumnatContainer.classList.remove('hidden');
+    if (numAlumnatInput) numAlumnatInput.value = '';
+  } else {
+    if (dispositivosContainer) dispositivosContainer.classList.add('hidden');
+    if (numAlumnatContainer) numAlumnatContainer.classList.add('hidden');
+  }
+
+  // 6. LIMPIEZA FINAL Y ABRIR
+
   if(notas) notas.value = '';
   if(btnConfirm) {
       btnConfirm.disabled = false;
@@ -1313,6 +1362,10 @@ function handleConfirmReservation() {
     return;
   }
   
+  const checkedDevices = Array.from(
+    document.querySelectorAll('#dispositivosCheckboxList input:checked')
+  ).map(cb => cb.value);
+
   const reservaData = {
     recursoId: globalState.recursoActual.id_recurso,
     recursoNombre: globalState.recursoActual.nombre,
@@ -1321,7 +1374,9 @@ function handleConfirmReservation() {
     tramoNombre: globalState.tramoActual.nombre_tramo,
     notas: notasInput.value.trim(),
     cantidad: cantidad,
-    curso: globalState.cursoSeleccionado
+    curso: globalState.cursoSeleccionado,
+    num_alumnat: parseInt($('numAlumnatInput')?.value || '0', 10) || 0,
+    dispositius_usats: checkedDevices.join(',')
   };
   
   google.script.run
