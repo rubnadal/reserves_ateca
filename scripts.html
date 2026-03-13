@@ -788,6 +788,15 @@ function loadTramos() {
       const cantidad = parseInt(r.cantidad, 10) || 1;
       reservasMap.set(tramoId, (reservasMap.get(tramoId) || 0) + cantidad);
     });
+
+  // 3b. Per a espais: dispositius flotants que ocupen aquest espai
+  if (tipo.toLowerCase() === 'sala') {
+    globalState.reservas
+      .filter(r => String(r.dispositius_usats) === String(recursoId) && r.fecha === fechaISO && r.estado.toLowerCase() === 'confirmada')
+      .forEach(r => {
+        reservasMap.set(String(r.id_tramo), (reservasMap.get(String(r.id_tramo)) || 0) + 1);
+      });
+  }
     
   let tramosHtml = '';
   let tramosCount = 0;
@@ -868,10 +877,15 @@ function loadTramos() {
             }
           } else {
             if (totalReservado > 0) {
-              const reserva = globalState.reservas.find(r => 
-                String(r.id_recurso) === String(recursoId) && 
-                r.fecha === fechaISO && 
-                String(r.id_tramo) === tramoId && 
+              const reserva = globalState.reservas.find(r =>
+                String(r.id_recurso) === String(recursoId) &&
+                r.fecha === fechaISO &&
+                String(r.id_tramo) === tramoId &&
+                r.estado.toLowerCase() === 'confirmada'
+              ) || globalState.reservas.find(r =>
+                String(r.dispositius_usats) === String(recursoId) &&
+                r.fecha === fechaISO &&
+                String(r.id_tramo) === tramoId &&
                 r.estado.toLowerCase() === 'confirmada'
               );
               
