@@ -2972,7 +2972,7 @@ function guardarCambiosUsuarios() {
   });
 
   if (errores.length > 0) {
-      showToast('warning', `Revisa los datos: ${errores.slice(0,3).join('. ')}`);
+      showToast('warning', window.t('adminToast.usuarios.validationError', { errors: errores.slice(0,3).join('. ') }));
       return;
   }
 
@@ -3855,7 +3855,7 @@ function validarConfiguracion() {
 function guardarConfiguracion() {
   const errores = validarConfiguracion();
   if (errores.length > 0) {
-    showToast('warning', `Revisa: ${errores.slice(0, 2).join('. ')}`);
+    showToast('warning', window.t('adminToast.config.validationError', { errors: errores.slice(0, 2).join('. ') }));
     return;
   }
 
@@ -4852,7 +4852,7 @@ async function _ejecutarAprobarTodasPendientes(pendientes) {
   const btn = document.getElementById('btnAprobarTodasPendientes');
   const textoOriginal = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = '<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>Procesando...';
+  btn.innerHTML = `<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>${window.t('saveBar.processing')}`;
 
   let aprobadas = 0;
   let errores = 0;
@@ -5023,7 +5023,7 @@ function abrirModalEditarTramosRecurrencia(idSolicitud) {
         </div>
 
         <div id="contadorTramosSeleccionados" class="mt-3 text-center text-sm text-gray-500">
-          ${tramosActuales.length} de ${tramosActuales.length} tramos seleccionados
+          ${window.t('admin.historial.slotsCounter', { sel: tramosActuales.length, total: tramosActuales.length })}
         </div>
       </div>
 
@@ -5055,7 +5055,7 @@ function actualizarContadorTramosEditar() {
   const btnGuardar = document.getElementById('btnGuardarTramosRecurrencia');
 
   if (contador) {
-    contador.textContent = `${seleccionados} de ${total} tramos seleccionados`;
+    contador.textContent = window.t('admin.historial.slotsCounter', { sel: seleccionados, total });
 
     if (seleccionados === 0) {
       contador.classList.add('text-red-500');
@@ -5430,7 +5430,7 @@ async function aprobarSolicitudRecurrente() {
   const textoOriginal = btnAprobar.innerHTML;
   btnAprobar.disabled = true;
   if (btnRechazar) btnRechazar.disabled = true;
-  btnAprobar.innerHTML = '<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>Aprobando...';
+  btnAprobar.innerHTML = `<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>${window.t('adminModal.gestionar.approving')}`;
 
   try {
     const result = await new Promise((resolve, reject) => {
@@ -5482,7 +5482,7 @@ async function rechazarSolicitudRecurrente() {
 
   const textoOriginal = btnRechazar.innerHTML;
   btnRechazar.disabled = true;
-  btnRechazar.innerHTML = '<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>Rechazando...';
+  btnRechazar.innerHTML = `<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>${window.t('adminModal.gestionar.rejecting')}`;
 
   try {
     const result = await new Promise((resolve, reject) => {
@@ -5658,7 +5658,7 @@ function abrirModalRecurrenteDirecta() {
 
   // Poblar selector de recursos
   const selectRecurso = document.getElementById('recDirectaRecurso');
-  selectRecurso.innerHTML = '<option value="">Selecciona un recurso</option>';
+  selectRecurso.innerHTML = `<option value="">${window.t('adminModal.recDirecta.resourcePlaceholder')}</option>`;
   (AdminState.recursos || []).forEach(r => {
     if (r.estado === 'Activo') {
       selectRecurso.innerHTML += `<option value="${r.id_recurso}">${escaparHTML(r.nombre)}</option>`;
@@ -5675,7 +5675,7 @@ function abrirModalRecurrenteDirecta() {
 
   // Poblar selector de usuarios (campos: Nombre, Email, Activo, Admin)
   const selectUsuario = document.getElementById('recDirectaUsuario');
-  selectUsuario.innerHTML = '<option value="">Selecciona un usuario</option>';
+  selectUsuario.innerHTML = `<option value="">${window.t('adminModal.recDirecta.userPlaceholder')}</option>`;
   const usuariosActivos = (AdminState.usuarios || []).filter(u => {
     const activo = u.Activo ?? u.activo;
     return activo === true || activo === 'TRUE' || activo === 'true' || activo === 'Sí' || activo === 'Si';
@@ -5884,7 +5884,7 @@ async function guardarRecurrenteDirecta() {
   const btn = document.getElementById('btnGuardarRecurrenteDirecta');
   const textoOriginal = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = '<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>Generando...';
+  btn.innerHTML = `<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>${window.t('adminModal.recDirecta.generating')}`;
 
   try {
     const datos = {
