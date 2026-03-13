@@ -1018,17 +1018,19 @@ function handleTramoClick(tramoBtn) {
   const numAlumnatContainer = $('numAlumnatContainer');
   const numAlumnatInput = $('numAlumnatInput');
 
+  const ubicacioContainer = $('ubicacioContainer');
+
   if (esEspai) {
+    // --- ESPAI: selector de dispositius + nombre alumnat ---
     const checkboxList = $('dispositivosCheckboxList');
     if (checkboxList) {
       const dispositivosEspai = (globalState.dispositivos || []).filter(d => d.id_espai === recurso.id_recurso);
       checkboxList.innerHTML = dispositivosEspai.map(d => `
-        <label class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-gray-200 bg-gray-50 hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-colors has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400">
+        <label class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-gray-200 bg-gray-50 hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-colors">
           <input type="checkbox" value="${d.id_dispositiu}" class="sr-only">
-          <iconify-icon icon="${d.icono}" class="text-gray-500 has-[:checked]:text-blue-600 text-base pointer-events-none"></iconify-icon>
+          <iconify-icon icon="${d.icono}" class="text-gray-500 text-base pointer-events-none"></iconify-icon>
           <span class="text-xs font-medium text-gray-700">${d.nom}</span>
         </label>`).join('');
-      // Re-apply checked style via JS (has-[] may not work in all browsers)
       checkboxList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
         cb.addEventListener('change', () => {
           cb.closest('label').classList.toggle('bg-blue-50', cb.checked);
@@ -1041,7 +1043,37 @@ function handleTramoClick(tramoBtn) {
     if (dispositivosContainer) dispositivosContainer.classList.remove('hidden');
     if (numAlumnatContainer) numAlumnatContainer.classList.remove('hidden');
     if (numAlumnatInput) numAlumnatInput.value = '';
+    if (ubicacioContainer) ubicacioContainer.classList.add('hidden');
   } else {
+    // --- DISPOSITIU FLOTANT: selector d'ubicació ---
+    const optionsList = $('ubicacioOptionsList');
+    if (optionsList) {
+      const espais = (globalState.recursos || []).filter(r => r.tipo.toLowerCase() === 'sala');
+      const opcions = [
+        { value: 'AULA_EXTERNA', label: window.t('modalReservation.locationExternal'), icono: 'mdi:school-outline' },
+        ...espais.map(e => ({ value: e.id_recurso, label: e.nombre, icono: e.icono || 'mdi:door-open' }))
+      ];
+      optionsList.innerHTML = opcions.map((op, i) => `
+        <label class="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 cursor-pointer transition-colors">
+          <input type="radio" name="ubicacioUs" value="${op.value}" ${i === 0 ? 'checked' : ''} class="sr-only">
+          <iconify-icon icon="${op.icono}" class="text-gray-400 text-lg shrink-0"></iconify-icon>
+          <span class="text-sm font-medium text-gray-700">${op.label}</span>
+          <iconify-icon icon="mdi:check-circle" class="ml-auto text-emerald-500 text-base opacity-0 check-icon"></iconify-icon>
+        </label>`).join('');
+      // Estil selecció
+      const applyRadioStyle = () => {
+        optionsList.querySelectorAll('label').forEach(lbl => {
+          const rb = lbl.querySelector('input[type="radio"]');
+          lbl.classList.toggle('bg-emerald-50', rb.checked);
+          lbl.classList.toggle('border-emerald-400', rb.checked);
+          lbl.querySelector('.check-icon').classList.toggle('opacity-0', !rb.checked);
+          lbl.querySelector('.check-icon').classList.toggle('opacity-100', rb.checked);
+        });
+      };
+      applyRadioStyle();
+      optionsList.querySelectorAll('input[type="radio"]').forEach(rb => rb.addEventListener('change', applyRadioStyle));
+    }
+    if (ubicacioContainer) ubicacioContainer.classList.remove('hidden');
     if (dispositivosContainer) dispositivosContainer.classList.add('hidden');
     if (numAlumnatContainer) numAlumnatContainer.classList.add('hidden');
   }
@@ -1362,9 +1394,16 @@ function handleConfirmReservation() {
     return;
   }
   
-  const checkedDevices = Array.from(
-    document.querySelectorAll('#dispositivosCheckboxList input:checked')
-  ).map(cb => cb.value);
+  const esEspaiActual = globalState.recursoActual.tipo.toLowerCase() === 'sala';
+  let dispostiusUsatsValue = '';
+  if (esEspaiActual) {
+    dispostiusUsatsValue = Array.from(
+      document.querySelectorAll('#dispositivosCheckboxList input:checked')
+    ).map(cb => cb.value).join(',');
+  } else {
+    const ubicacioSeleccionada = document.querySelector('input[name="ubicacioUs"]:checked');
+    dispostiusUsatsValue = ubicacioSeleccionada ? ubicacioSeleccionada.value : '';
+  }
 
   const reservaData = {
     recursoId: globalState.recursoActual.id_recurso,
@@ -1376,7 +1415,7 @@ function handleConfirmReservation() {
     cantidad: cantidad,
     curso: globalState.cursoSeleccionado,
     num_alumnat: parseInt($('numAlumnatInput')?.value || '0', 10) || 0,
-    dispositius_usats: checkedDevices.join(',')
+    dispositius_usats: dispostiusUsatsValue
   };
   
   google.script.run
