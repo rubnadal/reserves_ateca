@@ -18,6 +18,9 @@
    1️⃣ ESTADO GLOBAL Y CONFIGURACIÓN
    ========================================== */
 
+// DEBUG es declara a scripts.html (carregat primer). Aquí només apliquem l'override.
+if (typeof DEBUG !== 'undefined' && !DEBUG) { console.log = console.warn = () => {}; }
+
 const AdminState = {
   recursos: [],
   tramos: [],

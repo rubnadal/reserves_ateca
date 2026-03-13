@@ -3,6 +3,9 @@
    SISTEMA DE RESERVAS - JAVASCRIPT PRINCIPAL
    ============================================ */
 
+const DEBUG = false;
+if (!DEBUG) { console.log = console.warn = () => {}; }
+
 /* === ESTADO GLOBAL === */
 // NOTA: userEmail, userName e isAdmin se inyectan desde index.html
 const globalState = {
