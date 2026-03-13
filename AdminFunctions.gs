@@ -138,7 +138,9 @@ function getAdminData() {
           Cantidad: Number(row[headerMap['cantidad'] || 6] || 1),
           Estado: String(row[headerMap['estado'] || 7]),
           Notas: String(row[headerMap['notas'] || 8] || ''),
-          ID_Solicitud_Recurrente: idSolicitudRecurrente
+          ID_Solicitud_Recurrente: idSolicitudRecurrente,
+          Num_Alumnat: headerMap['num_alumnat'] !== undefined ? Number(row[headerMap['num_alumnat']] || 0) : 0,
+          Dispositius_Usats: headerMap['dispositius_usats'] !== undefined ? String(row[headerMap['dispositius_usats']] || '').trim() : ''
         };
       });
     }
@@ -185,7 +187,11 @@ function getAdminData() {
       reservas: reservas, 
       cursos: cursosData.cursos,
       modoVisualizacion: cursosData.modoVisualizacion,
-      config: configData // <--- ¡AQUÍ ENVIAMOS LA CONFIGURACIÓN AL FRONTEND!
+      config: configData,
+      dispositivos: (() => {
+        const sh = ss.getSheetByName(SHEETS.DISPOSITIVOS);
+        return (sh && sh.getLastRow() > 1) ? sheetToObjects(sh) : [];
+      })()
     };
 
   } catch (e) { return { success: false, error: "Error getAdminData: " + e.toString() }; }
