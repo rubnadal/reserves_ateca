@@ -33,7 +33,7 @@ const AdminState = {
   cambiosPendientes: false, // Indica si hay cambios sin guardar
   ordenOriginal: {}, // Guarda el orden original para detectar cambios
   // Filtros de reservas
-  filtroReservasPeriodo: 'semana', // 'semana', '2semanas', 'mes', 'todas'
+  filtroReservasPeriodo: 'todas', // 'semana', '2semanas', 'mes', 'todas'
   filtroReservasTipo: 'todas' // 'todas', 'normal', 'recurrente'
 };
 
@@ -558,7 +558,11 @@ function renderTablaReservas() {
   if(countSpan) countSpan.innerText = lista.length;
 
   if (lista.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-gray-400 bg-gray-50/50 italic">${window.t('admin.reservas.noResults')}</td></tr>`;
+    const hiHaFiltrePeriode = AdminState.filtroReservasPeriodo !== 'todas';
+    const msg = hiHaFiltrePeriode
+      ? window.t('admin.reservas.noResultsPeriod')
+      : window.t('admin.reservas.noResults');
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-gray-400 bg-gray-50/50 italic">${msg}</td></tr>`;
     return;
   }
 
