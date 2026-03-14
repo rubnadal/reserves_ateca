@@ -1967,6 +1967,198 @@ function getSolicitudesPendientesGlobal() {
 }
 
 /* ============================================
+   ESTADÍSTIQUES D'ÚS
+   ============================================ */
+
+function getEstadistiques(filtre) {
+  try {
+    if (!isUserAdmin()) throw new Error("Permiso denegado");
+
+    const ss = getDB();
+    const sheetReservas = ss.getSheetByName(SHEETS.RESERVAS);
+    const sheetRecursos = ss.getSheetByName(SHEETS.RECURSOS);
+    const sheetTramos   = ss.getSheetByName(SHEETS.TRAMOS);
+    const sheetDisp     = ss.getSheetByName(SHEETS.DISPOSITIVOS);
+
+    const todasReservas = sheetToObjects(sheetReservas);
+    const recursos      = sheetToObjects(sheetRecursos);
+    const tramos        = sheetToObjects(sheetTramos);
+    const dispositivos  = sheetDisp && sheetDisp.getLastRow() > 1 ? sheetToObjects(sheetDisp) : [];
+
+    // --- Filtre de dates ---
+    const avui = new Date();
+    let dataInici, dataFi;
+
+    if (filtre.tipus === 'mes') {
+      dataInici = new Date(avui.getFullYear(), avui.getMonth(), 1);
+      dataFi    = new Date(avui.getFullYear(), avui.getMonth() + 1, 0);
+    } else if (filtre.tipus === 'mes_anterior') {
+      dataInici = new Date(avui.getFullYear(), avui.getMonth() - 1, 1);
+      dataFi    = new Date(avui.getFullYear(), avui.getMonth(), 0);
+    } else if (filtre.tipus === 'curs') {
+      // Curs escolar: setembre–juny
+      const any = avui.getMonth() >= 8 ? avui.getFullYear() : avui.getFullYear() - 1;
+      dataInici = new Date(any, 8, 1);       // 1 setembre
+      dataFi    = new Date(any + 1, 5, 30);  // 30 juny
+    } else if (filtre.tipus === 'custom' && filtre.dataInici && filtre.dataFi) {
+      dataInici = new Date(filtre.dataInici + 'T00:00:00');
+      dataFi    = new Date(filtre.dataFi    + 'T23:59:59');
+    } else {
+      // Per defecte: mes actual
+      dataInici = new Date(avui.getFullYear(), avui.getMonth(), 1);
+      dataFi    = new Date(avui.getFullYear(), avui.getMonth() + 1, 0);
+    }
+
+    // --- Filtrar reserves confirmades dins el rang ---
+    const reservesFiltrades = todasReservas.filter(r => {
+      if (!r.fecha || !r.estado) return false;
+      if (String(r.estado).toLowerCase() !== 'confirmada') return false;
+      const d = new Date(r.fecha + 'T12:00:00Z');
+      return d >= dataInici && d <= dataFi;
+    });
+
+    const total = reservesFiltrades.length;
+
+    // --- Per recurs ---
+    const comptRecurs = {};
+    reservesFiltrades.forEach(r => {
+      const id = String(r.id_recurso || '');
+      comptRecurs[id] = (comptRecurs[id] || 0) + 1;
+    });
+
+    // Calcular slots disponibles per recurs en el període (aproximació: dies laborables × disponibilitat)
+    const perRecurs = recursos.map(rec => {
+      const id = String(rec.id_recurso || '');
+      const count = comptRecurs[id] || 0;
+      return {
+        id:     id,
+        nom:    rec.nombre || rec.Nombre || id,
+        icono:  rec.icono  || rec.Icono  || 'mdi:cube-outline',
+        tipus:  rec.tipo   || rec.Tipo   || '',
+        count:  count
+      };
+    }).filter(r => r.count > 0).sort((a, b) => b.count - a.count);
+
+    // --- Per dispositiu (espais: quin dispositiu s'ha usat) ---
+    const comptDisp = {};
+    reservesFiltrades.forEach(r => {
+      const du = String(r.dispositius_usats || '');
+      if (!du) return;
+      // Només comptar si és un ID de dispositiu (espais reservats amb dispositiu)
+      const rec = recursos.find(re => String(re.id_recurso || '') === String(r.id_recurso || ''));
+      if (rec && String(rec.tipo || '').toLowerCase() === 'sala') {
+        comptDisp[du] = (comptDisp[du] || 0) + 1;
+      }
+    });
+
+    const perDispositiu = Object.entries(comptDisp).map(([id, count]) => {
+      const d = dispositivos.find(x => String(x.id_dispositiu || x.ID_Dispositiu || '').toLowerCase() === id.toLowerCase());
+      return {
+        id:    id,
+        nom:   d ? (d.nom || d.Nom || id) : id,
+        icono: d ? (d.icono || d.Icono || 'mdi:laptop') : 'mdi:laptop',
+        count: count
+      };
+    }).sort((a, b) => b.count - a.count);
+
+    // --- Per tram ---
+    const comptTram = {};
+    reservesFiltrades.forEach(r => {
+      const id = String(r.id_tramo || '');
+      comptTram[id] = (comptTram[id] || 0) + 1;
+    });
+    const perTram = tramos.map(t => {
+      const id = String(t.id_tramo || '');
+      return {
+        id:    id,
+        nom:   t.nombre_tramo || t.Nombre_Tramo || id,
+        hora:  (t.hora_inicio || '') + '–' + (t.hora_fin || ''),
+        count: comptTram[id] || 0
+      };
+    }).filter(t => t.count > 0).sort((a, b) => b.count - a.count);
+
+    // --- Per dia de la setmana ---
+    const DIES = ['Diumenge','Dilluns','Dimarts','Dimecres','Dijous','Divendres','Dissabte'];
+    const comptDia = {1:0,2:0,3:0,4:0,5:0};
+    reservesFiltrades.forEach(r => {
+      const d = new Date(r.fecha + 'T12:00:00Z').getDay();
+      if (d >= 1 && d <= 5) comptDia[d] = (comptDia[d] || 0) + 1;
+    });
+    const perDia = [1,2,3,4,5].map(d => ({ dia: DIES[d], count: comptDia[d] }));
+
+    // --- Resum ---
+    const resum = {
+      total:            total,
+      espaiTop:         perRecurs.find(r => r.tipus.toLowerCase() === 'sala') || perRecurs[0] || null,
+      dispositiuTop:    perDispositiu[0] || null,
+      tramTop:          perTram[0] || null,
+      dataIniciStr:     Utilities.formatDate(dataInici, Session.getScriptTimeZone(), 'dd/MM/yyyy'),
+      dataFiStr:        Utilities.formatDate(dataFi,    Session.getScriptTimeZone(), 'dd/MM/yyyy')
+    };
+
+    return { success: true, resum: resum, perRecurs: perRecurs, perDispositiu: perDispositiu, perTram: perTram, perDia: perDia };
+
+  } catch(e) { return { success: false, error: e.toString() }; }
+}
+
+
+function exportarEstadistiquesXLSX(filtre) {
+  try {
+    if (!isUserAdmin()) throw new Error("Permiso denegado");
+
+    const stats = getEstadistiques(filtre);
+    if (!stats.success) throw new Error(stats.error);
+
+    const ss = SpreadsheetApp.create('Estadistiques_' + new Date().getTime());
+    const shMain = ss.getActiveSheet();
+    shMain.setName('Resum');
+
+    // Capçalera
+    shMain.getRange('A1').setValue('Estadístiques de reserves');
+    shMain.getRange('A2').setValue('Període: ' + stats.resum.dataIniciStr + ' – ' + stats.resum.dataFiStr);
+    shMain.getRange('A3').setValue('Total reserves: ' + stats.resum.total);
+
+    // Per recurs
+    shMain.getRange('A5').setValue('Ús per recurs');
+    shMain.getRange('A6:C6').setValues([['Recurs','Tipus','Reserves']]);
+    if (stats.perRecurs.length > 0) {
+      shMain.getRange(7, 1, stats.perRecurs.length, 3)
+        .setValues(stats.perRecurs.map(r => [r.nom, r.tipus, r.count]));
+    }
+
+    const rowOffset = 8 + stats.perRecurs.length;
+
+    // Per dispositiu
+    shMain.getRange(rowOffset, 1).setValue('Ús per dispositiu');
+    shMain.getRange(rowOffset + 1, 1, 1, 2).setValues([['Dispositiu','Reserves']]);
+    if (stats.perDispositiu.length > 0) {
+      shMain.getRange(rowOffset + 2, 1, stats.perDispositiu.length, 2)
+        .setValues(stats.perDispositiu.map(d => [d.nom, d.count]));
+    }
+
+    const rowOffset2 = rowOffset + 4 + stats.perDispositiu.length;
+
+    // Per tram
+    shMain.getRange(rowOffset2, 1).setValue('Ús per tram');
+    shMain.getRange(rowOffset2 + 1, 1, 1, 3).setValues([['Tram','Horari','Reserves']]);
+    if (stats.perTram.length > 0) {
+      shMain.getRange(rowOffset2 + 2, 1, stats.perTram.length, 3)
+        .setValues(stats.perTram.map(t => [t.nom, t.hora, t.count]));
+    }
+
+    // Obtenir URL de descàrrega XLSX
+    const fileId = ss.getId();
+    const xlsxUrl = 'https://docs.google.com/spreadsheets/d/' + fileId + '/export?format=xlsx';
+
+    // Moure a la carpeta de Drive arrel per accés fàcil (opcional)
+    // DriveApp.getFileById(fileId).setTrashed(false); // ja és visible
+
+    return { success: true, url: xlsxUrl, fileId: fileId };
+
+  } catch(e) { return { success: false, error: e.toString() }; }
+}
+
+/* ============================================
    FIN DEL ARCHIVO AdminFunctions.gs
    ============================================ */
 

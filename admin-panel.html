@@ -47,6 +47,10 @@
       <span data-i18n="admin.tabs.tramos">Tramos</span>
     </button>
 
+      <button class="admin-subtab flex-1 whitespace-nowrap flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 outline-none focus:outline-none focus:ring-0 text-gray-500 hover:text-gray-700 hover:bg-gray-200/50" data-section="estadistiques">
+      <iconify-icon icon="mdi:chart-bar" class="text-lg"></iconify-icon>
+      <span data-i18n="admin.tabs.estadistiques">Estadístiques</span>
+    </button>
       <button class="admin-subtab flex-1 whitespace-nowrap flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 outline-none focus:outline-none focus:ring-0 text-gray-500 hover:text-gray-700 hover:bg-gray-200/50" data-section="config">
       <iconify-icon icon="mdi:cog-outline" class="text-lg"></iconify-icon>
       <span data-i18n="admin.tabs.config">Config</span>
@@ -482,6 +486,142 @@
       <p class="text-xs text-center text-gray-400 mt-4" data-i18n="admin.usuarios.helpNote">
         Los cambios de nombre o email no afectan a la cuenta de Google, solo a cómo se ven aquí.
       </p>
+
+    </div>
+  </div>
+
+  <!-- ========================================
+     SECCIÓN: ESTADÍSTIQUES
+     ======================================== -->
+  <div id="admin-section-estadistiques" class="admin-section hidden">
+    <div class="max-w-5xl mx-auto">
+
+      <!-- Capçalera -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+            <iconify-icon icon="mdi:chart-bar" class="text-blue-600"></iconify-icon>
+            <span data-i18n="admin.estadistiques.title">Estadístiques d'ús</span>
+          </h2>
+          <p class="text-sm text-gray-500 mt-1" data-i18n="admin.estadistiques.subtitle">Anàlisi de l'ús d'espais i dispositius</p>
+        </div>
+        <!-- Botons d'exportació -->
+        <div class="flex gap-2">
+          <button onclick="exportarEstadistiquesCSV()"
+            class="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all text-sm font-medium">
+            <iconify-icon icon="mdi:file-delimited-outline" class="text-lg text-green-600"></iconify-icon>
+            <span data-i18n="admin.estadistiques.exportCSV">CSV</span>
+          </button>
+          <button onclick="exportarEstadistiquesXLSX()"
+            class="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all text-sm font-medium">
+            <iconify-icon icon="mdi:microsoft-excel" class="text-lg text-green-700"></iconify-icon>
+            <span data-i18n="admin.estadistiques.exportXLSX">Excel</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Selector de període -->
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-5">
+        <div class="flex flex-wrap items-end gap-3">
+          <div class="flex gap-1 flex-wrap">
+            <button onclick="seleccionarPeriode('mes')" data-periode="mes"
+              class="periode-btn px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-200 bg-gray-50 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all"
+              data-i18n="admin.estadistiques.periodemes">Aquest mes</button>
+            <button onclick="seleccionarPeriode('mes_anterior')" data-periode="mes_anterior"
+              class="periode-btn px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-200 bg-gray-50 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all"
+              data-i18n="admin.estadistiques.periodeMesAnterior">Mes anterior</button>
+            <button onclick="seleccionarPeriode('curs')" data-periode="curs"
+              class="periode-btn px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-200 bg-gray-50 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all"
+              data-i18n="admin.estadistiques.periodeCurs">Curs actual</button>
+            <button onclick="seleccionarPeriode('custom')" data-periode="custom"
+              class="periode-btn px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-200 bg-gray-50 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all"
+              data-i18n="admin.estadistiques.periodeCustom">Personalitzat</button>
+          </div>
+          <!-- Dates personalitzades (ocultes per defecte) -->
+          <div id="customDateRange" class="hidden flex items-center gap-2 flex-wrap">
+            <input type="date" id="statsDateInici" class="border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:border-blue-500 outline-none">
+            <span class="text-gray-400 text-sm">→</span>
+            <input type="date" id="statsDateFi" class="border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:border-blue-500 outline-none">
+          </div>
+          <button onclick="carregarEstadistiques()"
+            class="ml-auto flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-sm transition-all active:scale-95">
+            <iconify-icon icon="mdi:refresh" class="text-base"></iconify-icon>
+            <span data-i18n="admin.estadistiques.refresh">Actualitzar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Spinner de càrrega -->
+      <div id="statsSpinner" class="hidden flex flex-col items-center justify-center py-16 text-gray-400">
+        <iconify-icon icon="mdi:loading" class="text-4xl text-blue-400 animate-spin mb-3"></iconify-icon>
+        <span class="text-sm" data-i18n="admin.estadistiques.loading">Calculant estadístiques...</span>
+      </div>
+
+      <!-- Error -->
+      <div id="statsError" class="hidden bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 mb-4 text-sm"></div>
+
+      <!-- Contingut (ocult fins que hi ha dades) -->
+      <div id="statsContent" class="hidden space-y-5">
+
+        <!-- Targetes de resum -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="statsCards"></div>
+
+        <!-- Dues columnes: Per recurs + Per dispositiu -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <!-- Per recurs -->
+          <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
+              <iconify-icon icon="mdi:domain" class="text-blue-500"></iconify-icon>
+              <span class="font-semibold text-sm text-gray-700" data-i18n="admin.estadistiques.byResource">Per recurs</span>
+            </div>
+            <div id="statsPerRecurs" class="p-3 space-y-2 max-h-72 overflow-y-auto"></div>
+          </div>
+
+          <!-- Per dispositiu -->
+          <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
+              <iconify-icon icon="mdi:devices" class="text-cyan-500"></iconify-icon>
+              <span class="font-semibold text-sm text-gray-700" data-i18n="admin.estadistiques.byDevice">Per dispositiu</span>
+            </div>
+            <div id="statsPerDispositiu" class="p-3 space-y-2 max-h-72 overflow-y-auto"></div>
+          </div>
+
+        </div>
+
+        <!-- Dues columnes: Per tram + Per dia -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <!-- Per tram -->
+          <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
+              <iconify-icon icon="mdi:clock-time-four-outline" class="text-violet-500"></iconify-icon>
+              <span class="font-semibold text-sm text-gray-700" data-i18n="admin.estadistiques.bySlot">Per tram</span>
+            </div>
+            <div id="statsPerTram" class="p-3 space-y-2 max-h-72 overflow-y-auto"></div>
+          </div>
+
+          <!-- Per dia de la setmana -->
+          <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
+              <iconify-icon icon="mdi:calendar-week" class="text-amber-500"></iconify-icon>
+              <span class="font-semibold text-sm text-gray-700" data-i18n="admin.estadistiques.byDay">Per dia</span>
+            </div>
+            <div id="statsPerDia" class="p-3 space-y-2"></div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Estat buit inicial -->
+      <div id="statsEmpty" class="flex flex-col items-center justify-center py-16 text-gray-400">
+        <div class="bg-gray-50 p-5 rounded-full mb-3">
+          <iconify-icon icon="mdi:chart-bar" class="text-4xl text-blue-300"></iconify-icon>
+        </div>
+        <p class="text-base font-medium text-gray-500" data-i18n="admin.estadistiques.emptyTitle">Selecciona un període i prem Actualitzar</p>
+        <p class="text-sm mt-1" data-i18n="admin.estadistiques.emptySubtitle">Les estadístiques es calculen sota demanda</p>
+      </div>
 
     </div>
   </div>

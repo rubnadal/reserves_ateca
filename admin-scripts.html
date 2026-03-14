@@ -370,6 +370,8 @@ function setupAdminListeners() {
 
         if (sectionName === 'dispositivos') renderTablaDispositivos();
 
+        if (sectionName === 'estadistiques') iniciarEstadistiques();
+
         if (sectionName === 'recurrentes') {
           if (typeof cargarSolicitudesRecurrentes === 'function') cargarSolicitudesRecurrentes();
         }
@@ -3928,6 +3930,237 @@ window.agregarNouDispositiu       = agregarNouDispositiu;
 window.eliminarDispositiu         = eliminarDispositiu;
 window.guardarCambiosDispositivos = guardarCambiosDispositivos;
 window.descartarCambiosDispositivos = descartarCambiosDispositivos;
+
+
+/* =========================================================
+   6.6c. ESTADÍSTIQUES D'ÚS
+   ========================================================= */
+
+const StatsState = {
+  periode: 'mes',
+  dataInici: '',
+  dataFi: '',
+  dades: null
+};
+
+function iniciarEstadistiques() {
+  // Marcar botó actiu per defecte
+  seleccionarPeriode(StatsState.periode, false);
+}
+
+function seleccionarPeriode(tipus, carregar) {
+  StatsState.periode = tipus;
+
+  // Actualitzar botons
+  document.querySelectorAll('.periode-btn').forEach(btn => {
+    const isActive = btn.dataset.periode === tipus;
+    btn.classList.toggle('bg-blue-600', isActive);
+    btn.classList.toggle('text-white', isActive);
+    btn.classList.toggle('border-blue-600', isActive);
+    btn.classList.toggle('bg-gray-50', !isActive);
+    btn.classList.toggle('text-gray-700', !isActive);
+    btn.classList.toggle('border-gray-200', !isActive);
+  });
+
+  // Mostrar/ocultar rang de dates personalitzat
+  const customDiv = document.getElementById('customDateRange');
+  if (customDiv) customDiv.classList.toggle('hidden', tipus !== 'custom');
+}
+
+function carregarEstadistiques() {
+  const filtre = { tipus: StatsState.periode };
+
+  if (StatsState.periode === 'custom') {
+    filtre.dataInici = document.getElementById('statsDateInici')?.value || '';
+    filtre.dataFi    = document.getElementById('statsDateFi')?.value || '';
+    if (!filtre.dataInici || !filtre.dataFi) {
+      showToast('warning', window.t('admin.estadistiques.customDateRequired'));
+      return;
+    }
+  }
+
+  // Mostrar spinner
+  document.getElementById('statsSpinner').classList.remove('hidden');
+  document.getElementById('statsContent').classList.add('hidden');
+  document.getElementById('statsEmpty').classList.add('hidden');
+  document.getElementById('statsError').classList.add('hidden');
+
+  google.script.run
+    .withSuccessHandler(function(resp) {
+      document.getElementById('statsSpinner').classList.add('hidden');
+      if (!resp.success) {
+        document.getElementById('statsError').textContent = resp.error;
+        document.getElementById('statsError').classList.remove('hidden');
+        return;
+      }
+      StatsState.dades = resp;
+      renderEstadistiques(resp);
+    })
+    .withFailureHandler(function(err) {
+      document.getElementById('statsSpinner').classList.add('hidden');
+      document.getElementById('statsError').textContent = err.message || err;
+      document.getElementById('statsError').classList.remove('hidden');
+    })
+    .getEstadistiques(filtre);
+}
+
+function renderEstadistiques(data) {
+  document.getElementById('statsContent').classList.remove('hidden');
+  document.getElementById('statsEmpty').classList.add('hidden');
+
+  const maxCount = Math.max(1, ...[...data.perRecurs, ...data.perDispositiu, ...data.perTram].map(x => x.count));
+
+  // --- Targetes de resum ---
+  const cardsEl = document.getElementById('statsCards');
+  cardsEl.innerHTML = `
+    <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 text-center">
+      <p class="text-2xl font-bold text-blue-700">${data.resum.total}</p>
+      <p class="text-xs text-blue-500 mt-0.5 font-medium">${window.t('admin.estadistiques.totalReserves')}</p>
+    </div>
+    <div class="bg-cyan-50 border border-cyan-100 rounded-xl p-3 text-center">
+      <p class="text-lg font-bold text-cyan-700 truncate">${data.resum.espaiTop ? escaparHTML(data.resum.espaiTop.nom) : '—'}</p>
+      <p class="text-xs text-cyan-500 mt-0.5 font-medium">${window.t('admin.estadistiques.topSpace')}</p>
+    </div>
+    <div class="bg-violet-50 border border-violet-100 rounded-xl p-3 text-center">
+      <p class="text-lg font-bold text-violet-700 truncate">${data.resum.dispositiuTop ? escaparHTML(data.resum.dispositiuTop.nom) : '—'}</p>
+      <p class="text-xs text-violet-500 mt-0.5 font-medium">${window.t('admin.estadistiques.topDevice')}</p>
+    </div>
+    <div class="bg-amber-50 border border-amber-100 rounded-xl p-3 text-center">
+      <p class="text-lg font-bold text-amber-700 truncate">${data.resum.tramTop ? escaparHTML(data.resum.tramTop.nom) : '—'}</p>
+      <p class="text-xs text-amber-500 mt-0.5 font-medium">${window.t('admin.estadistiques.topSlot')}</p>
+    </div>
+  `;
+
+  // Helper: barra de progrés
+  function barraRow(nom, icono, count, maxVal, colorClass) {
+    const pct = Math.round((count / maxVal) * 100);
+    return `
+      <div class="flex items-center gap-2">
+        <iconify-icon icon="${icono}" class="text-base text-gray-400 shrink-0"></iconify-icon>
+        <div class="flex-1 min-w-0">
+          <div class="flex justify-between items-center mb-0.5">
+            <span class="text-xs font-medium text-gray-700 truncate">${escaparHTML(nom)}</span>
+            <span class="text-xs font-bold text-gray-500 ml-2 shrink-0">${count}</span>
+          </div>
+          <div class="w-full bg-gray-100 rounded-full h-1.5">
+            <div class="h-1.5 rounded-full ${colorClass}" style="width:${pct}%"></div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // --- Per recurs ---
+  const perRecursEl = document.getElementById('statsPerRecurs');
+  const maxRec = Math.max(1, ...(data.perRecurs.map(r => r.count)));
+  perRecursEl.innerHTML = data.perRecurs.length
+    ? data.perRecurs.map(r => barraRow(r.nom, r.icono || 'mdi:cube-outline', r.count, maxRec, 'bg-blue-500')).join('')
+    : `<p class="text-sm text-center text-gray-400 py-4">${window.t('admin.estadistiques.noData')}</p>`;
+
+  // --- Per dispositiu ---
+  const perDispEl = document.getElementById('statsPerDispositiu');
+  const maxDisp = Math.max(1, ...(data.perDispositiu.map(d => d.count)));
+  perDispEl.innerHTML = data.perDispositiu.length
+    ? data.perDispositiu.map(d => barraRow(d.nom, d.icono || 'mdi:laptop', d.count, maxDisp, 'bg-cyan-500')).join('')
+    : `<p class="text-sm text-center text-gray-400 py-4">${window.t('admin.estadistiques.noData')}</p>`;
+
+  // --- Per tram ---
+  const perTramEl = document.getElementById('statsPerTram');
+  const maxTram = Math.max(1, ...(data.perTram.map(t => t.count)));
+  perTramEl.innerHTML = data.perTram.length
+    ? data.perTram.map(t => barraRow(`${t.nom} (${t.hora})`, 'mdi:clock-time-four-outline', t.count, maxTram, 'bg-violet-500')).join('')
+    : `<p class="text-sm text-center text-gray-400 py-4">${window.t('admin.estadistiques.noData')}</p>`;
+
+  // --- Per dia ---
+  const perDiaEl = document.getElementById('statsPerDia');
+  const maxDia = Math.max(1, ...(data.perDia.map(d => d.count)));
+  perDiaEl.innerHTML = data.perDia.map(d =>
+    barraRow(d.dia, 'mdi:calendar-today', d.count, maxDia, 'bg-amber-400')
+  ).join('');
+}
+
+// --- Exportació CSV (al navegador, sense servidor) ---
+function exportarEstadistiquesCSV() {
+  if (!StatsState.dades) {
+    showToast('warning', window.t('admin.estadistiques.noDataExport'));
+    return;
+  }
+  const d = StatsState.dades;
+  const lines = [];
+
+  lines.push('Estadístiques de reserves');
+  lines.push(`Període,${d.resum.dataIniciStr} – ${d.resum.dataFiStr}`);
+  lines.push(`Total reserves,${d.resum.total}`);
+  lines.push('');
+
+  lines.push('Ús per recurs');
+  lines.push('Recurs,Tipus,Reserves');
+  d.perRecurs.forEach(r => lines.push(`"${r.nom}","${r.tipus}",${r.count}`));
+  lines.push('');
+
+  lines.push('Ús per dispositiu');
+  lines.push('Dispositiu,Reserves');
+  d.perDispositiu.forEach(x => lines.push(`"${x.nom}",${x.count}`));
+  lines.push('');
+
+  lines.push('Ús per tram');
+  lines.push('Tram,Horari,Reserves');
+  d.perTram.forEach(t => lines.push(`"${t.nom}","${t.hora}",${t.count}`));
+  lines.push('');
+
+  lines.push('Ús per dia de la setmana');
+  lines.push('Dia,Reserves');
+  d.perDia.forEach(x => lines.push(`"${x.dia}",${x.count}`));
+
+  const csv = lines.join('\n');
+  const bom = '\uFEFF'; // BOM per Excel
+  const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `estadistiques_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('success', window.t('admin.estadistiques.csvDownloaded'));
+}
+
+// --- Exportació XLSX via Google Sheets ---
+function exportarEstadistiquesXLSX() {
+  if (!StatsState.dades) {
+    showToast('warning', window.t('admin.estadistiques.noDataExport'));
+    return;
+  }
+
+  const filtre = { tipus: StatsState.periode };
+  if (StatsState.periode === 'custom') {
+    filtre.dataInici = document.getElementById('statsDateInici')?.value || '';
+    filtre.dataFi    = document.getElementById('statsDateFi')?.value   || '';
+  }
+
+  showLoading();
+  google.script.run
+    .withSuccessHandler(function(resp) {
+      hideLoading();
+      if (!resp.success) {
+        showToast('error', resp.error);
+        return;
+      }
+      // Obrir URL de descàrrega en una nova pestanya
+      window.open(resp.url, '_blank');
+      showToast('success', window.t('admin.estadistiques.xlsxReady'));
+    })
+    .withFailureHandler(function(err) {
+      hideLoading();
+      showToast('error', err.message || err);
+    })
+    .exportarEstadistiquesXLSX(filtre);
+}
+
+// EXPORTS
+window.iniciarEstadistiques    = iniciarEstadistiques;
+window.seleccionarPeriode      = seleccionarPeriode;
+window.carregarEstadistiques   = carregarEstadistiques;
+window.exportarEstadistiquesCSV  = exportarEstadistiquesCSV;
+window.exportarEstadistiquesXLSX = exportarEstadistiquesXLSX;
 
 
 /* =========================================================
