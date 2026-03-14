@@ -4008,14 +4008,16 @@ function renderEstadistiques(data) {
   document.getElementById('statsContent').classList.remove('hidden');
   document.getElementById('statsEmpty').classList.add('hidden');
 
-  const maxCount = Math.max(1, ...[...data.perRecurs, ...data.perDispositiu, ...data.perTram].map(x => x.count));
-
-  // --- Targetes de resum ---
+  // --- Targetes de resum (5) ---
   const cardsEl = document.getElementById('statsCards');
   cardsEl.innerHTML = `
     <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 text-center">
       <p class="text-2xl font-bold text-blue-700">${data.resum.total}</p>
       <p class="text-xs text-blue-500 mt-0.5 font-medium">${window.t('admin.estadistiques.totalReserves')}</p>
+    </div>
+    <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-center">
+      <p class="text-2xl font-bold text-emerald-700">${data.resum.totalAlumnat}</p>
+      <p class="text-xs text-emerald-500 mt-0.5 font-medium">${window.t('admin.estadistiques.totalAlumnat')}</p>
     </div>
     <div class="bg-cyan-50 border border-cyan-100 rounded-xl p-3 text-center">
       <p class="text-lg font-bold text-cyan-700 truncate">${data.resum.espaiTop ? escaparHTML(data.resum.espaiTop.nom) : '—'}</p>
@@ -4031,16 +4033,24 @@ function renderEstadistiques(data) {
     </div>
   `;
 
-  // Helper: barra de progrés
-  function barraRow(nom, icono, count, maxVal, colorClass) {
+  // Helper: barra de progrés amb badge d'alumnat opcional
+  function barraRow(nom, icono, count, maxVal, colorClass, alumnat) {
     const pct = Math.round((count / maxVal) * 100);
+    const alumnatBadge = (alumnat !== undefined && alumnat > 0)
+      ? `<span class="flex items-center gap-0.5 text-[10px] font-medium text-emerald-600 ml-1 shrink-0">
+           <iconify-icon icon="mdi:account-group" class="text-xs"></iconify-icon>${alumnat}
+         </span>`
+      : '';
     return `
       <div class="flex items-center gap-2">
         <iconify-icon icon="${icono}" class="text-base text-gray-400 shrink-0"></iconify-icon>
         <div class="flex-1 min-w-0">
           <div class="flex justify-between items-center mb-0.5">
             <span class="text-xs font-medium text-gray-700 truncate">${escaparHTML(nom)}</span>
-            <span class="text-xs font-bold text-gray-500 ml-2 shrink-0">${count}</span>
+            <div class="flex items-center ml-2 shrink-0">
+              <span class="text-xs font-bold text-gray-500">${count}</span>
+              ${alumnatBadge}
+            </div>
           </div>
           <div class="w-full bg-gray-100 rounded-full h-1.5">
             <div class="h-1.5 rounded-full ${colorClass}" style="width:${pct}%"></div>
@@ -4053,29 +4063,105 @@ function renderEstadistiques(data) {
   const perRecursEl = document.getElementById('statsPerRecurs');
   const maxRec = Math.max(1, ...(data.perRecurs.map(r => r.count)));
   perRecursEl.innerHTML = data.perRecurs.length
-    ? data.perRecurs.map(r => barraRow(r.nom, r.icono || 'mdi:cube-outline', r.count, maxRec, 'bg-blue-500')).join('')
+    ? data.perRecurs.map(r => barraRow(r.nom, r.icono || 'mdi:cube-outline', r.count, maxRec, 'bg-blue-500', r.alumnat)).join('')
     : `<p class="text-sm text-center text-gray-400 py-4">${window.t('admin.estadistiques.noData')}</p>`;
 
   // --- Per dispositiu ---
   const perDispEl = document.getElementById('statsPerDispositiu');
   const maxDisp = Math.max(1, ...(data.perDispositiu.map(d => d.count)));
   perDispEl.innerHTML = data.perDispositiu.length
-    ? data.perDispositiu.map(d => barraRow(d.nom, d.icono || 'mdi:laptop', d.count, maxDisp, 'bg-cyan-500')).join('')
+    ? data.perDispositiu.map(d => barraRow(d.nom, d.icono || 'mdi:devices', d.count, maxDisp, 'bg-cyan-500', d.alumnat)).join('')
     : `<p class="text-sm text-center text-gray-400 py-4">${window.t('admin.estadistiques.noData')}</p>`;
 
   // --- Per tram ---
   const perTramEl = document.getElementById('statsPerTram');
   const maxTram = Math.max(1, ...(data.perTram.map(t => t.count)));
   perTramEl.innerHTML = data.perTram.length
-    ? data.perTram.map(t => barraRow(`${t.nom} (${t.hora})`, 'mdi:clock-time-four-outline', t.count, maxTram, 'bg-violet-500')).join('')
+    ? data.perTram.map(t => barraRow(`${t.nom} (${t.hora})`, 'mdi:clock-time-four-outline', t.count, maxTram, 'bg-violet-500', t.alumnat)).join('')
     : `<p class="text-sm text-center text-gray-400 py-4">${window.t('admin.estadistiques.noData')}</p>`;
 
   // --- Per dia ---
   const perDiaEl = document.getElementById('statsPerDia');
   const maxDia = Math.max(1, ...(data.perDia.map(d => d.count)));
   perDiaEl.innerHTML = data.perDia.map(d =>
-    barraRow(d.dia, 'mdi:calendar-today', d.count, maxDia, 'bg-amber-400')
+    barraRow(d.dia, 'mdi:calendar-today', d.count, maxDia, 'bg-amber-400', d.alumnat)
   ).join('');
+
+  // --- Detall per dispositiu ---
+  const perDispDetallEl = document.getElementById('statsPerDispositiuDetall');
+  if (!data.perDispositiuDetall || data.perDispositiuDetall.length === 0) {
+    perDispDetallEl.innerHTML = `<p class="text-sm text-center text-gray-400 py-4 px-3">${window.t('admin.estadistiques.noData')}</p>`;
+  } else {
+    const DIE_COLORS = { Dl: 'bg-blue-100 text-blue-700', Dm: 'bg-violet-100 text-violet-700', Dc: 'bg-cyan-100 text-cyan-700', Dj: 'bg-amber-100 text-amber-700', Dv: 'bg-rose-100 text-rose-700' };
+    perDispDetallEl.innerHTML = `
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-xs text-gray-500 bg-gray-50 border-b border-gray-100">
+            <th class="text-left px-4 py-2 font-semibold">${window.t('admin.estadistiques.colDispositiu')}</th>
+            <th class="text-left px-4 py-2 font-semibold hidden sm:table-cell">${window.t('admin.estadistiques.colEspai')}</th>
+            <th class="text-right px-4 py-2 font-semibold">${window.t('admin.estadistiques.colReserves')}</th>
+            <th class="text-right px-4 py-2 font-semibold text-emerald-600">${window.t('admin.estadistiques.colAlumnat')}</th>
+            <th class="text-left px-4 py-2 font-semibold hidden md:table-cell">${window.t('admin.estadistiques.colDies')}</th>
+            <th class="text-right px-4 py-2 font-semibold hidden md:table-cell">${window.t('admin.estadistiques.colProfessors')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.perDispositiuDetall.map(d => `
+            <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-2">
+                <div class="flex items-center gap-2">
+                  <iconify-icon icon="${d.icono}" class="text-base text-gray-400 shrink-0"></iconify-icon>
+                  <div>
+                    <p class="font-medium text-gray-700 text-xs">${escaparHTML(d.nom)}</p>
+                    ${d.flotant ? `<span class="text-[10px] bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded font-medium">${window.t('admin.estadistiques.flotant')}</span>` : ''}
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-2 text-xs text-gray-500 hidden sm:table-cell">${escaparHTML(d.espaiText)}</td>
+              <td class="px-4 py-2 text-right font-medium text-gray-700">${d.numReserves}</td>
+              <td class="px-4 py-2 text-right font-bold text-emerald-600">${d.alumnat}</td>
+              <td class="px-4 py-2 hidden md:table-cell">
+                <div class="flex gap-1 flex-wrap">
+                  ${d.dies.map(dia => `<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold ${DIE_COLORS[dia] || 'bg-gray-100 text-gray-600'}">${dia}</span>`).join('')}
+                </div>
+              </td>
+              <td class="px-4 py-2 text-right text-xs text-gray-500 hidden md:table-cell">${d.numProfessors}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  // --- Per professor/a ---
+  const perProfEl = document.getElementById('statsPerProfessor');
+  if (!data.perProfessor || data.perProfessor.length === 0) {
+    perProfEl.innerHTML = `<p class="text-sm text-center text-gray-400 py-4 px-3">${window.t('admin.estadistiques.noData')}</p>`;
+  } else {
+    perProfEl.innerHTML = `
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-xs text-gray-500 bg-gray-50 border-b border-gray-100">
+            <th class="text-left px-4 py-2 font-semibold">${window.t('admin.estadistiques.colProfessor')}</th>
+            <th class="text-right px-4 py-2 font-semibold">${window.t('admin.estadistiques.colReserves')}</th>
+            <th class="text-right px-4 py-2 font-semibold text-emerald-600">${window.t('admin.estadistiques.colAlumnat')}</th>
+            <th class="text-left px-4 py-2 font-semibold hidden sm:table-cell">${window.t('admin.estadistiques.colRecursos')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.perProfessor.map(p => `
+            <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-2">
+                <p class="font-medium text-gray-700 text-xs">${escaparHTML(p.nom)}</p>
+                ${p.nom !== p.email ? `<p class="text-[10px] text-gray-400">${escaparHTML(p.email)}</p>` : ''}
+              </td>
+              <td class="px-4 py-2 text-right font-medium text-gray-700">${p.numReserves}</td>
+              <td class="px-4 py-2 text-right font-bold text-emerald-600">${p.alumnat}</td>
+              <td class="px-4 py-2 text-gray-500 text-xs hidden sm:table-cell">${escaparHTML(p.recursosUsats.join(', '))}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+  }
 }
 
 // --- Exportació CSV (al navegador, sense servidor) ---
@@ -4090,26 +4176,37 @@ function exportarEstadistiquesCSV() {
   lines.push('Estadístiques de reserves');
   lines.push(`Període,${d.resum.dataIniciStr} – ${d.resum.dataFiStr}`);
   lines.push(`Total reserves,${d.resum.total}`);
+  lines.push(`Total alumnat atès,${d.resum.totalAlumnat}`);
   lines.push('');
 
   lines.push('Ús per recurs');
-  lines.push('Recurs,Tipus,Reserves');
-  d.perRecurs.forEach(r => lines.push(`"${r.nom}","${r.tipus}",${r.count}`));
+  lines.push('Recurs,Tipus,Reserves,Alumnat');
+  d.perRecurs.forEach(r => lines.push(`"${r.nom}","${r.tipus}",${r.count},${r.alumnat}`));
   lines.push('');
 
   lines.push('Ús per dispositiu');
-  lines.push('Dispositiu,Reserves');
-  d.perDispositiu.forEach(x => lines.push(`"${x.nom}",${x.count}`));
+  lines.push('Dispositiu,Reserves,Alumnat');
+  d.perDispositiu.forEach(x => lines.push(`"${x.nom}",${x.count},${x.alumnat}`));
   lines.push('');
 
   lines.push('Ús per tram');
-  lines.push('Tram,Horari,Reserves');
-  d.perTram.forEach(t => lines.push(`"${t.nom}","${t.hora}",${t.count}`));
+  lines.push('Tram,Horari,Reserves,Alumnat');
+  d.perTram.forEach(t => lines.push(`"${t.nom}","${t.hora}",${t.count},${t.alumnat}`));
   lines.push('');
 
   lines.push('Ús per dia de la setmana');
-  lines.push('Dia,Reserves');
-  d.perDia.forEach(x => lines.push(`"${x.dia}",${x.count}`));
+  lines.push('Dia,Reserves,Alumnat');
+  d.perDia.forEach(x => lines.push(`"${x.dia}",${x.count},${x.alumnat}`));
+  lines.push('');
+
+  lines.push('Detall per dispositiu');
+  lines.push('Dispositiu,Espai,Flotant,Reserves,Alumnat,Dies usats,Professors');
+  d.perDispositiuDetall.forEach(x => lines.push(`"${x.nom}","${x.espaiText}","${x.flotant ? 'Sí' : 'No'}",${x.numReserves},${x.alumnat},"${x.dies.join(', ')}",${x.numProfessors}`));
+  lines.push('');
+
+  lines.push('Ús per professor/a');
+  lines.push('Professor/a,Email,Reserves,Alumnat,Recursos usats');
+  d.perProfessor.forEach(p => lines.push(`"${p.nom}","${p.email}",${p.numReserves},${p.alumnat},"${p.recursosUsats.join(', ')}"`));
 
   const csv = lines.join('\n');
   const bom = '\uFEFF'; // BOM per Excel

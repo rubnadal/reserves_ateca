@@ -564,7 +564,7 @@
       <div id="statsContent" class="hidden space-y-5">
 
         <!-- Targetes de resum -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="statsCards"></div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" id="statsCards"></div>
 
         <!-- Dues columnes: Per recurs + Per dispositiu -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -610,6 +610,24 @@
             <div id="statsPerDia" class="p-3 space-y-2"></div>
           </div>
 
+        </div>
+
+        <!-- Detall per dispositiu -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div class="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
+            <iconify-icon icon="mdi:monitor-edit" class="text-blue-500"></iconify-icon>
+            <span class="font-semibold text-sm text-gray-700" data-i18n="admin.estadistiques.byDeviceDetail">Detall per dispositiu</span>
+          </div>
+          <div id="statsPerDispositiuDetall" class="overflow-x-auto"></div>
+        </div>
+
+        <!-- Per professor/a -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div class="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
+            <iconify-icon icon="mdi:account-tie" class="text-emerald-500"></iconify-icon>
+            <span class="font-semibold text-sm text-gray-700" data-i18n="admin.estadistiques.byProfessor">Per professor/a</span>
+          </div>
+          <div id="statsPerProfessor" class="overflow-x-auto"></div>
         </div>
 
       </div>

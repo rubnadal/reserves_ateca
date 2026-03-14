@@ -1979,11 +1979,30 @@ function getEstadistiques(filtre) {
     const sheetRecursos = ss.getSheetByName(SHEETS.RECURSOS);
     const sheetTramos   = ss.getSheetByName(SHEETS.TRAMOS);
     const sheetDisp     = ss.getSheetByName(SHEETS.DISPOSITIVOS);
+    const sheetUsuaris  = ss.getSheetByName(SHEETS.USUARIOS);
 
     const todasReservas = sheetToObjects(sheetReservas);
     const recursos      = sheetToObjects(sheetRecursos);
     const tramos        = sheetToObjects(sheetTramos);
     const dispositivos  = sheetDisp && sheetDisp.getLastRow() > 1 ? sheetToObjects(sheetDisp) : [];
+    const usuaris       = sheetUsuaris && sheetUsuaris.getLastRow() > 1 ? sheetToObjects(sheetUsuaris) : [];
+
+    // --- Lookup maps ---
+    const recursosMap = {};
+    recursos.forEach(rec => { recursosMap[String(rec.id_recurso || '').trim()] = rec; });
+
+    const usuarisMap = {}; // email → nom
+    usuaris.forEach(u => {
+      const email = String(u.email || '').trim().toLowerCase();
+      if (email) usuarisMap[email] = String(u.nombre || '').trim();
+    });
+
+    // IDs d'espais (tipus 'sala')
+    const espaisIDs = new Set(
+      recursos
+        .filter(rec => String(rec.tipo || '').toLowerCase() === 'sala')
+        .map(rec => String(rec.id_recurso || '').trim())
+    );
 
     // --- Filtre de dates ---
     const avui = new Date();
@@ -1998,13 +2017,12 @@ function getEstadistiques(filtre) {
     } else if (filtre.tipus === 'curs') {
       // Curs escolar: setembre–juny
       const any = avui.getMonth() >= 8 ? avui.getFullYear() : avui.getFullYear() - 1;
-      dataInici = new Date(any, 8, 1);       // 1 setembre
-      dataFi    = new Date(any + 1, 5, 30);  // 30 juny
+      dataInici = new Date(any, 8, 1);
+      dataFi    = new Date(any + 1, 5, 30);
     } else if (filtre.tipus === 'custom' && filtre.dataInici && filtre.dataFi) {
       dataInici = new Date(filtre.dataInici + 'T00:00:00');
       dataFi    = new Date(filtre.dataFi    + 'T23:59:59');
     } else {
-      // Per defecte: mes actual
       dataInici = new Date(avui.getFullYear(), avui.getMonth(), 1);
       dataFi    = new Date(avui.getFullYear(), avui.getMonth() + 1, 0);
     }
@@ -2018,85 +2036,212 @@ function getEstadistiques(filtre) {
     });
 
     const total = reservesFiltrades.length;
+    const totalAlumnat = reservesFiltrades.reduce((sum, r) => sum + Number(r.num_alumnat || 0), 0);
 
-    // --- Per recurs ---
-    const comptRecurs = {};
+    // --- Per recurs (reserves + alumnat) ---
+    // L'alumnat d'un espai inclou: reserves directes de l'espai +
+    // reserves de dispositius flotants que declaren usar aquell espai
+    const comptRecurs = {}; // { id: { count, alumnat } }
     reservesFiltrades.forEach(r => {
-      const id = String(r.id_recurso || '');
-      comptRecurs[id] = (comptRecurs[id] || 0) + 1;
-    });
+      const idRec  = String(r.id_recurso || '').trim();
+      const du     = String(r.dispositius_usats || '').trim();
+      const alumnat = Number(r.num_alumnat || 0);
 
-    // Calcular slots disponibles per recurs en el període (aproximació: dies laborables × disponibilitat)
-    const perRecurs = recursos.map(rec => {
-      const id = String(rec.id_recurso || '');
-      const count = comptRecurs[id] || 0;
-      return {
-        id:     id,
-        nom:    rec.nombre || rec.Nombre || id,
-        icono:  rec.icono  || rec.Icono  || 'mdi:cube-outline',
-        tipus:  rec.tipo   || rec.Tipo   || '',
-        count:  count
-      };
-    }).filter(r => r.count > 0).sort((a, b) => b.count - a.count);
+      if (!comptRecurs[idRec]) comptRecurs[idRec] = { count: 0, alumnat: 0 };
+      comptRecurs[idRec].count++;
+      comptRecurs[idRec].alumnat += alumnat;
 
-    // --- Per dispositiu (espais: quin dispositiu s'ha usat) ---
-    const comptDisp = {};
-    reservesFiltrades.forEach(r => {
-      const du = String(r.dispositius_usats || '');
-      if (!du) return;
-      // Només comptar si és un ID de dispositiu (espais reservats amb dispositiu)
-      const rec = recursos.find(re => String(re.id_recurso || '') === String(r.id_recurso || ''));
-      if (rec && String(rec.tipo || '').toLowerCase() === 'sala') {
-        comptDisp[du] = (comptDisp[du] || 0) + 1;
+      // Dispositiu flotant que usa un espai ATECA: afegir alumnat a l'espai
+      if (!espaisIDs.has(idRec) && du && espaisIDs.has(du)) {
+        if (!comptRecurs[du]) comptRecurs[du] = { count: 0, alumnat: 0 };
+        comptRecurs[du].alumnat += alumnat;
       }
     });
 
-    const perDispositiu = Object.entries(comptDisp).map(([id, count]) => {
-      const d = dispositivos.find(x => String(x.id_dispositiu || x.ID_Dispositiu || '').toLowerCase() === id.toLowerCase());
+    const perRecurs = recursos.map(rec => {
+      const id   = String(rec.id_recurso || '').trim();
+      const data = comptRecurs[id] || { count: 0, alumnat: 0 };
       return {
-        id:    id,
-        nom:   d ? (d.nom || d.Nom || id) : id,
-        icono: d ? (d.icono || d.Icono || 'mdi:laptop') : 'mdi:laptop',
-        count: count
+        id,
+        nom:     String(rec.nombre || '').trim() || id,
+        icono:   String(rec.icono  || '').trim() || 'mdi:cube-outline',
+        tipus:   String(rec.tipo   || '').trim(),
+        count:   data.count,
+        alumnat: data.alumnat
+      };
+    }).filter(r => r.count > 0 || r.alumnat > 0).sort((a, b) => b.count - a.count);
+
+    // --- Per dispositiu (dispositius fixos dels espais) ---
+    const comptDisp = {}; // { id: { count, alumnat } }
+    reservesFiltrades.forEach(r => {
+      const idRec  = String(r.id_recurso || '').trim();
+      const du     = String(r.dispositius_usats || '').trim();
+      const alumnat = Number(r.num_alumnat || 0);
+
+      // Dispositiu fix: reserva d'un espai amb dispositiu associat indicat
+      if (espaisIDs.has(idRec) && du && du !== 'AULA_EXTERNA' && !espaisIDs.has(du)) {
+        if (!comptDisp[du]) comptDisp[du] = { count: 0, alumnat: 0 };
+        comptDisp[du].count++;
+        comptDisp[du].alumnat += alumnat;
+      }
+    });
+
+    const perDispositiu = Object.entries(comptDisp).map(([id, data]) => {
+      const d = dispositivos.find(x => String(x.id_dispositiu || '').trim().toLowerCase() === id.toLowerCase());
+      return {
+        id,
+        nom:     d ? (String(d.nom || '').trim() || id) : id,
+        icono:   d ? (String(d.icono || '').trim() || 'mdi:devices') : 'mdi:devices',
+        count:   data.count,
+        alumnat: data.alumnat
       };
     }).sort((a, b) => b.count - a.count);
 
-    // --- Per tram ---
-    const comptTram = {};
+    // --- Detall per dispositiu (fixes + flotants) ---
+    const comptDispDetall = {};
     reservesFiltrades.forEach(r => {
-      const id = String(r.id_tramo || '');
-      comptTram[id] = (comptTram[id] || 0) + 1;
+      const idRec  = String(r.id_recurso || '').trim();
+      const du     = String(r.dispositius_usats || '').trim();
+      const alumnat = Number(r.num_alumnat || 0);
+      const email  = String(r.email_usuario || '').trim().toLowerCase();
+      const dia    = new Date(r.fecha + 'T12:00:00Z').getDay();
+
+      if (espaisIDs.has(idRec) && du && du !== 'AULA_EXTERNA' && !espaisIDs.has(du)) {
+        // Dispositiu fix: reserva d'un espai amb dispositiu indicat
+        if (!comptDispDetall[du]) {
+          const disp = dispositivos.find(x => String(x.id_dispositiu || '').trim().toLowerCase() === du.toLowerCase());
+          const idEspai = disp ? String(disp.id_espai || '').trim() : '';
+          const espaiRec = recursosMap[idEspai] || recursosMap[idRec];
+          comptDispDetall[du] = {
+            nom:     disp ? (String(disp.nom   || '').trim() || du) : du,
+            icono:   disp ? (String(disp.icono || '').trim() || 'mdi:devices') : 'mdi:devices',
+            espaiNom: espaiRec ? (String(espaiRec.nombre || '').trim() || idEspai || idRec) : (idEspai || idRec),
+            flotant: false,
+            count: 0, alumnat: 0,
+            dies: new Set(), professors: new Set()
+          };
+        }
+        comptDispDetall[du].count++;
+        comptDispDetall[du].alumnat += alumnat;
+        if (dia >= 1 && dia <= 5) comptDispDetall[du].dies.add(dia);
+        if (email) comptDispDetall[du].professors.add(email);
+
+      } else if (!espaisIDs.has(idRec)) {
+        // Dispositiu flotant: la reserva és del dispositiu directament
+        if (!comptDispDetall[idRec]) {
+          const rec = recursosMap[idRec];
+          comptDispDetall[idRec] = {
+            nom:    rec ? (String(rec.nombre || '').trim() || idRec) : idRec,
+            icono:  rec ? (String(rec.icono  || '').trim() || 'mdi:devices') : 'mdi:devices',
+            espais: new Set(),
+            flotant: true,
+            count: 0, alumnat: 0,
+            dies: new Set(), professors: new Set()
+          };
+        }
+        comptDispDetall[idRec].count++;
+        comptDispDetall[idRec].alumnat += alumnat;
+        if (du) comptDispDetall[idRec].espais.add(du);
+        if (dia >= 1 && dia <= 5) comptDispDetall[idRec].dies.add(dia);
+        if (email) comptDispDetall[idRec].professors.add(email);
+      }
+    });
+
+    const DIES_CURTS = ['', 'Dl', 'Dm', 'Dc', 'Dj', 'Dv'];
+    const perDispositiuDetall = Object.entries(comptDispDetall).map(([id, data]) => {
+      let espaiText;
+      if (data.flotant) {
+        const llista = Array.from(data.espais).map(e => {
+          if (e === 'AULA_EXTERNA') return 'Aula externa';
+          const rec = recursosMap[e];
+          return rec ? (String(rec.nombre || '').trim() || e) : e;
+        });
+        espaiText = llista.length > 0 ? llista.join(', ') : '—';
+      } else {
+        espaiText = data.espaiNom || '—';
+      }
+      return {
+        id,
+        nom:          data.nom,
+        icono:        data.icono,
+        flotant:      data.flotant,
+        espaiText,
+        numReserves:  data.count,
+        alumnat:      data.alumnat,
+        dies:         [1,2,3,4,5].filter(d => data.dies.has(d)).map(d => DIES_CURTS[d]),
+        numProfessors: data.professors.size
+      };
+    }).sort((a, b) => b.alumnat - a.alumnat || b.numReserves - a.numReserves);
+
+    // --- Per tram ---
+    const comptTram = {}; // { id: { count, alumnat } }
+    reservesFiltrades.forEach(r => {
+      const id = String(r.id_tramo || '').trim();
+      if (!comptTram[id]) comptTram[id] = { count: 0, alumnat: 0 };
+      comptTram[id].count++;
+      comptTram[id].alumnat += Number(r.num_alumnat || 0);
     });
     const perTram = tramos.map(t => {
-      const id = String(t.id_tramo || '');
+      const id   = String(t.id_tramo || '').trim();
+      const data = comptTram[id] || { count: 0, alumnat: 0 };
       return {
-        id:    id,
-        nom:   t.nombre_tramo || t.Nombre_Tramo || id,
-        hora:  (t.hora_inicio || '') + '–' + (t.hora_fin || ''),
-        count: comptTram[id] || 0
+        id,
+        nom:     t.nombre_tramo || id,
+        hora:    (t.hora_inicio || '') + '–' + (t.hora_fin || ''),
+        count:   data.count,
+        alumnat: data.alumnat
       };
     }).filter(t => t.count > 0).sort((a, b) => b.count - a.count);
 
     // --- Per dia de la setmana ---
     const DIES = ['Diumenge','Dilluns','Dimarts','Dimecres','Dijous','Divendres','Dissabte'];
-    const comptDia = {1:0,2:0,3:0,4:0,5:0};
+    const comptDia = {};
+    [1,2,3,4,5].forEach(d => { comptDia[d] = { count: 0, alumnat: 0 }; });
     reservesFiltrades.forEach(r => {
       const d = new Date(r.fecha + 'T12:00:00Z').getDay();
-      if (d >= 1 && d <= 5) comptDia[d] = (comptDia[d] || 0) + 1;
+      if (d >= 1 && d <= 5) {
+        comptDia[d].count++;
+        comptDia[d].alumnat += Number(r.num_alumnat || 0);
+      }
     });
-    const perDia = [1,2,3,4,5].map(d => ({ dia: DIES[d], count: comptDia[d] }));
+    const perDia = [1,2,3,4,5].map(d => ({
+      dia:     DIES[d],
+      count:   comptDia[d].count,
+      alumnat: comptDia[d].alumnat
+    }));
+
+    // --- Per professor/a ---
+    const comptProf = {}; // { email: { count, alumnat, recursos: Set } }
+    reservesFiltrades.forEach(r => {
+      const email = String(r.email_usuario || '').trim().toLowerCase();
+      if (!email) return;
+      if (!comptProf[email]) comptProf[email] = { count: 0, alumnat: 0, recursos: new Set() };
+      comptProf[email].count++;
+      comptProf[email].alumnat += Number(r.num_alumnat || 0);
+      const rec = recursosMap[String(r.id_recurso || '').trim()];
+      comptProf[email].recursos.add(rec ? (rec.nombre || r.id_recurso) : r.id_recurso);
+    });
+
+    const perProfessor = Object.entries(comptProf).map(([email, data]) => ({
+      email,
+      nom:          usuarisMap[email] || email,
+      numReserves:  data.count,
+      alumnat:      data.alumnat,
+      recursosUsats: Array.from(data.recursos)
+    })).sort((a, b) => b.alumnat - a.alumnat || b.numReserves - a.numReserves);
 
     // --- Resum ---
     const resum = {
-      total:            total,
-      espaiTop:         perRecurs.find(r => r.tipus.toLowerCase() === 'sala') || perRecurs[0] || null,
-      dispositiuTop:    perDispositiu[0] || null,
-      tramTop:          perTram[0] || null,
-      dataIniciStr:     Utilities.formatDate(dataInici, Session.getScriptTimeZone(), 'dd/MM/yyyy'),
-      dataFiStr:        Utilities.formatDate(dataFi,    Session.getScriptTimeZone(), 'dd/MM/yyyy')
+      total:        total,
+      totalAlumnat: totalAlumnat,
+      espaiTop:     perRecurs.find(r => r.tipus.toLowerCase() === 'sala') || perRecurs[0] || null,
+      dispositiuTop: perDispositiu[0] || null,
+      tramTop:      perTram[0] || null,
+      dataIniciStr: Utilities.formatDate(dataInici, Session.getScriptTimeZone(), 'dd/MM/yyyy'),
+      dataFiStr:    Utilities.formatDate(dataFi,    Session.getScriptTimeZone(), 'dd/MM/yyyy')
     };
 
-    return { success: true, resum: resum, perRecurs: perRecurs, perDispositiu: perDispositiu, perTram: perTram, perDia: perDia };
+    return { success: true, resum, perRecurs, perDispositiu, perDispositiuDetall, perTram, perDia, perProfessor };
 
   } catch(e) { return { success: false, error: e.toString() }; }
 }
@@ -2117,33 +2262,54 @@ function exportarEstadistiquesXLSX(filtre) {
     shMain.getRange('A1').setValue('Estadístiques de reserves');
     shMain.getRange('A2').setValue('Període: ' + stats.resum.dataIniciStr + ' – ' + stats.resum.dataFiStr);
     shMain.getRange('A3').setValue('Total reserves: ' + stats.resum.total);
+    shMain.getRange('A4').setValue('Total alumnat atès: ' + stats.resum.totalAlumnat);
 
     // Per recurs
-    shMain.getRange('A5').setValue('Ús per recurs');
-    shMain.getRange('A6:C6').setValues([['Recurs','Tipus','Reserves']]);
+    shMain.getRange('A6').setValue('Ús per recurs');
+    shMain.getRange('A7:D7').setValues([['Recurs','Tipus','Reserves','Alumnat']]);
     if (stats.perRecurs.length > 0) {
-      shMain.getRange(7, 1, stats.perRecurs.length, 3)
-        .setValues(stats.perRecurs.map(r => [r.nom, r.tipus, r.count]));
+      shMain.getRange(8, 1, stats.perRecurs.length, 4)
+        .setValues(stats.perRecurs.map(r => [r.nom, r.tipus, r.count, r.alumnat]));
     }
 
-    const rowOffset = 8 + stats.perRecurs.length;
+    const rowOffset = 10 + stats.perRecurs.length;
 
     // Per dispositiu
     shMain.getRange(rowOffset, 1).setValue('Ús per dispositiu');
-    shMain.getRange(rowOffset + 1, 1, 1, 2).setValues([['Dispositiu','Reserves']]);
+    shMain.getRange(rowOffset + 1, 1, 1, 3).setValues([['Dispositiu','Reserves','Alumnat']]);
     if (stats.perDispositiu.length > 0) {
-      shMain.getRange(rowOffset + 2, 1, stats.perDispositiu.length, 2)
-        .setValues(stats.perDispositiu.map(d => [d.nom, d.count]));
+      shMain.getRange(rowOffset + 2, 1, stats.perDispositiu.length, 3)
+        .setValues(stats.perDispositiu.map(d => [d.nom, d.count, d.alumnat]));
     }
 
     const rowOffset2 = rowOffset + 4 + stats.perDispositiu.length;
 
     // Per tram
     shMain.getRange(rowOffset2, 1).setValue('Ús per tram');
-    shMain.getRange(rowOffset2 + 1, 1, 1, 3).setValues([['Tram','Horari','Reserves']]);
+    shMain.getRange(rowOffset2 + 1, 1, 1, 4).setValues([['Tram','Horari','Reserves','Alumnat']]);
     if (stats.perTram.length > 0) {
-      shMain.getRange(rowOffset2 + 2, 1, stats.perTram.length, 3)
-        .setValues(stats.perTram.map(t => [t.nom, t.hora, t.count]));
+      shMain.getRange(rowOffset2 + 2, 1, stats.perTram.length, 4)
+        .setValues(stats.perTram.map(t => [t.nom, t.hora, t.count, t.alumnat]));
+    }
+
+    const rowOffset3 = rowOffset2 + 4 + stats.perTram.length;
+
+    // Detall per dispositiu
+    shMain.getRange(rowOffset3, 1).setValue('Detall per dispositiu');
+    shMain.getRange(rowOffset3 + 1, 1, 1, 6).setValues([['Dispositiu','Espai','Flotant','Reserves','Alumnat','Dies usats','Professors']]);
+    if (stats.perDispositiuDetall.length > 0) {
+      shMain.getRange(rowOffset3 + 2, 1, stats.perDispositiuDetall.length, 7)
+        .setValues(stats.perDispositiuDetall.map(d => [d.nom, d.espaiText, d.flotant ? 'Sí' : 'No', d.numReserves, d.alumnat, d.dies.join(', '), d.numProfessors]));
+    }
+
+    const rowOffset4 = rowOffset3 + 4 + stats.perDispositiuDetall.length;
+
+    // Per professor/a
+    shMain.getRange(rowOffset4, 1).setValue('Ús per professor/a');
+    shMain.getRange(rowOffset4 + 1, 1, 1, 4).setValues([['Professor/a','Reserves','Alumnat','Recursos usats']]);
+    if (stats.perProfessor.length > 0) {
+      shMain.getRange(rowOffset4 + 2, 1, stats.perProfessor.length, 4)
+        .setValues(stats.perProfessor.map(p => [p.nom, p.numReserves, p.alumnat, p.recursosUsats.join(', ')]));
     }
 
     // Obtenir URL de descàrrega XLSX
